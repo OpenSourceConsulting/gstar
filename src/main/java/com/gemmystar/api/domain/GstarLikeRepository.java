@@ -14,7 +14,7 @@ import com.gemmystar.api.domain.GstarLike;
  * @version 1.0
  */
 @Repository
-public interface GstarLikeRepository extends JpaRepository<GstarLike, Integer> {
+public interface GstarLikeRepository extends JpaRepository<GstarLike, Long> {
 
 	
 }

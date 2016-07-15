@@ -48,7 +48,6 @@ public class CommonCode implements Serializable {
 	@Column(name = "group_cd")
 	private String groupCd;//그룹코드
 	
-	@Id
 	@Column(name = "code")
 	private String code;//코드
 	
@@ -62,7 +61,7 @@ public class CommonCode implements Serializable {
 	private String cdDesc;//
 	
 	@Column(name = "hidden")
-	private Object hidden;//
+	private boolean hidden;//
 
 	/**
 	 * <pre>
@@ -143,17 +142,11 @@ public class CommonCode implements Serializable {
 		this.cdDesc = cdDesc;
 	}
 
-	/**
-	 * @return the hidden
-	 */
-	public Object getHidden() {
+	public boolean isHidden() {
 		return hidden;
 	}
 
-	/**
-	 * @param hidden the hidden to set
-	 */
-	public void setHidden(Object hidden) {
+	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 	}
 

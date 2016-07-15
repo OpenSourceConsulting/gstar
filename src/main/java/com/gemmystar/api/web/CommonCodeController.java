@@ -1,18 +1,38 @@
+/* 
+ * Copyright (C) 2012-2015 Open Source Consulting, Inc. All rights reserved by Open Source Consulting, Inc.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Revision History
+ * Author			Date				Description
+ * ---------------	----------------	------------
+ * BongJin Kwon		2016. 3. 21.		First Draft.
+ */
 package com.gemmystar.api.web;
 
-import javax.servlet.http.HttpSession;
+import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.athena.peacock.controller.web.common.model.DtoJsonResponse;
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
-import com.athena.peacock.controller.web.common.model.GridJsonResponse;
-import com.athena.peacock.controller.web.common.model.SimpleJsonResponse;
 import com.gemmystar.api.domain.CommonCode;
 import com.gemmystar.api.service.CommonCodeService;
 
@@ -20,76 +40,25 @@ import com.gemmystar.api.service.CommonCodeService;
  * <pre>
  * 
  * </pre>
- * @author Bong-Jin Kwon
+ * @author Bongjin Kwon
  * @version 1.0
  */
 @Controller
-@RequestMapping("/CommonCode")
+@RequestMapping("/code")
 public class CommonCodeController {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(CommonCodeController.class);
 	
 	@Autowired
 	private CommonCodeService service;
-
-	/**
-	 * <pre>
-	 * 
-	 * </pre>
-	 */
-	public CommonCodeController() {
-		// TODO Auto-generated constructor stub
-	}
 	
-	@RequestMapping(value=""/list", method = RequestMethod.GET)
+	@RequestMapping(value = "/list/{gropId}", method = RequestMethod.GET)
 	@ResponseBody
-	public GridJsonResponse list(ExtjsGridParam gridParam){
-	
-		GridJsonResponse jsonRes = new GridJsonResponse();
-		jsonRes.setTotal(service.getCommonCodeListTotalCount(gridParam));
-		jsonRes.setList(service.getCommonCodeList(gridParam));
+	public List<CommonCode> list(@PathVariable("gropId") String gropId) {
 		
-		return jsonRes;
+		return service.getCodes(gropId);
 	}
 	
-	@RequestMapping(value=""/create")
-	@ResponseBody
-	public SimpleJsonResponse create(SimpleJsonResponse jsonRes, CommonCode commonCode){
-		
-		service.insertCommonCode(commonCode);
-		jsonRes.setMsg("사용자가 정상적으로 생성되었습니다.");
-		
-		
-		return jsonRes;
-	}
-	
-	@RequestMapping(value="/update")
-	@ResponseBody
-	public SimpleJsonResponse update(SimpleJsonResponse jsonRes, CommonCode commonCode){
-		
-		service.updateCommonCode(commonCode);
-		jsonRes.setMsg("사용자 정보가 정상적으로 수정되었습니다.");
-		
-		
-		return jsonRes;
-	}
-	
-	@RequestMapping(value="/delete")
-	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, CommonCode commonCode){
-		
-		service.deleteCommonCode(commonCode);
-		jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
-		
-		return jsonRes;
-	}
-	
-	@RequestMapping(value="/getCommonCode", method = RequestMethod.GET)
-	@ResponseBody
-	public SimpleJsonResponse getCommonCode(SimpleJsonResponse jsonRes, CommonCode commonCode){
-	
-		jsonRes.setData(service.getCommonCode(commonCode));
-		
-		return jsonRes;
-	}
 
 }
-//end of CommonCodeController.java
+//end of ProvisioningController.java

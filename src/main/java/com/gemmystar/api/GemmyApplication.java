@@ -20,7 +20,7 @@
  * ---------------	----------------	------------
  * BongJin Kwon		2016. 7. 5.		First Draft.
  */
-package com.bong.sample.boot;
+package com.gemmystar.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -31,16 +31,16 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableAutoConfiguration
-@ComponentScan(basePackages = { "com.bong.sample" })
-public class SampleBootApplication extends SpringBootServletInitializer {
+@ComponentScan(basePackages = { "com.gemmystar.api" })
+public class GemmyApplication extends SpringBootServletInitializer {
 
 	@Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-        return application.sources(SampleBootApplication.class);
+        return application.sources(GemmyApplication.class);
     }
 
 	public static void main(String[] args) {
-		SpringApplication.run(SampleBootApplication.class, args);
+		SpringApplication.run(GemmyApplication.class, args);
 	}
 
 }

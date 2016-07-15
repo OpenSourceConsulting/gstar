@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
 import com.gemmystar.api.domain.GstarContents;
 import com.gemmystar.api.domain.GstarContentsRepository;
 
@@ -23,32 +22,29 @@ public class GstarContentsService {
 	private GstarContentsRepository repository;
 	
 	public GstarContentsService() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
-	public void insertGstarContents(GstarContents gstarContents){
-		repository.insertGstarContents(gstarContents);
+	public void save(GstarContents gstarContents){
+		repository.save(gstarContents);
 	}
 	
-	public List<GstarContents> getGstarContentsList(ExtjsGridParam gridParam){
-		return repository.getGstarContentsList(gridParam);
+	public List<GstarContents> getGstarContentsAllList(){
+		return repository.findAll();
 	}
-	
-	public int getGstarContentsListTotalCount(ExtjsGridParam gridParam){
+	/*
+	public int getGstarContentsListTotalCount(GridParam gridParam){
 		
 		return repository.getGstarContentsListTotalCount(gridParam);
 	}
-	
-	public GstarContents getGstarContents(GstarContents gstarContents){
-		return repository.getGstarContents(gstarContents);
+	*/
+	public GstarContents getGstarContents(Long contentsId){
+		return repository.findOne(contentsId);
 	}
+
 	
-	public void updateGstarContents(GstarContents gstarContents){
-		repository.updateGstarContents(gstarContents);
-	}
-	
-	public void deleteGstarContents(GstarContents gstarContents){
-		repository.deleteGstarContents(gstarContents);
+	public void deleteGstarContents(Long contentsId){
+		repository.delete(contentsId);
 	}
 
 }

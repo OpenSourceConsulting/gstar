@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  */
 @Repository
-public interface GstarContentsRepository extends JpaRepository<GstarContents, Integer> {
+public interface GstarContentsRepository extends JpaRepository<GstarContents, Long> {
 
 	
 }

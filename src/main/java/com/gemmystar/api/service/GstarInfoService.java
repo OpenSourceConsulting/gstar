@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
 import com.gemmystar.api.domain.GstarInfo;
 import com.gemmystar.api.domain.GstarInfoRepository;
 
@@ -23,32 +22,27 @@ public class GstarInfoService {
 	private GstarInfoRepository repository;
 	
 	public GstarInfoService() {
-		// TODO Auto-generated constructor stub
 	}
 	
-	public void insertGstarInfo(GstarInfo gstarInfo){
-		repository.insertGstarInfo(gstarInfo);
+	public void save(GstarInfo gstarInfo){
+		repository.save(gstarInfo);
 	}
 	
-	public List<GstarInfo> getGstarInfoList(ExtjsGridParam gridParam){
-		return repository.getGstarInfoList(gridParam);
+	public List<GstarInfo> getGstarInfoAllList(){
+		return repository.findAll();
 	}
-	
-	public int getGstarInfoListTotalCount(ExtjsGridParam gridParam){
+	/*
+	public int getGstarInfoListTotalCount(GridParam gridParam){
 		
 		return repository.getGstarInfoListTotalCount(gridParam);
 	}
-	
-	public GstarInfo getGstarInfo(GstarInfo gstarInfo){
-		return repository.getGstarInfo(gstarInfo);
+	*/
+	public GstarInfo getGstarInfo(Long infoId){
+		return repository.findOne(infoId);
 	}
 	
-	public void updateGstarInfo(GstarInfo gstarInfo){
-		repository.updateGstarInfo(gstarInfo);
-	}
-	
-	public void deleteGstarInfo(GstarInfo gstarInfo){
-		repository.deleteGstarInfo(gstarInfo);
+	public void deleteGstarInfo(Long infoId){
+		repository.delete(infoId);
 	}
 
 }

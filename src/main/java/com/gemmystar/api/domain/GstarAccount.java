@@ -22,15 +22,22 @@
  */
 package com.gemmystar.api.domain;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * <pre>
@@ -41,7 +48,9 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "gstar_account")
-public class GstarAccount {
+public class GstarAccount implements Serializable, UserDetails{
+
+	private static final long serialVersionUID = -6369708557069341450L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -65,6 +74,9 @@ public class GstarAccount {
 	
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private GstarUser user;
 
 	/**
 	 * <pre>
@@ -173,9 +185,53 @@ public class GstarAccount {
 		this.createDt = createDt;
 	}
 	
+	public GstarUser getUser() {
+		return user;
+	}
+
+	public void setUser(GstarUser user) {
+		this.user = user;
+	}
+
 	@PrePersist
 	public void preInsert() {
 		this.createDt = new Date();
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+	@Override
+	public String getPassword() {
+		return getPasswd();
+	}
+
+	@Override
+	public String getUsername() {
+		
+		return getLoginId();
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return true;
 	}
 
 }

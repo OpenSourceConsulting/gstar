@@ -65,7 +65,7 @@ public class GstarInfo implements Serializable {
 	private Long gsLike;//좋아요 Count
 	
 	@Column(name = "gs_check")
-	private Object gsCheck;//false: 일반 도전모드 가능, true: 추천영상
+	private boolean gsCheck;//false: 일반 도전모드 가능, true: 추천영상
 	
 	@Column(name = "gs_state_cd")
 	private String gsStateCd;//상태코드 (1: 종료, 2:명예의전당, 3:중지, 4:HOT, 5:신규)
@@ -152,17 +152,11 @@ public class GstarInfo implements Serializable {
 		this.gsLike = gsLike;
 	}
 
-	/**
-	 * @return the gsCheck
-	 */
-	public Object getGsCheck() {
+	public boolean isGsCheck() {
 		return gsCheck;
 	}
 
-	/**
-	 * @param gsCheck the gsCheck to set
-	 */
-	public void setGsCheck(Object gsCheck) {
+	public void setGsCheck(boolean gsCheck) {
 		this.gsCheck = gsCheck;
 	}
 

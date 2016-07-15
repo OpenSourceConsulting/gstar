@@ -14,7 +14,7 @@ import com.gemmystar.api.domain.GstarRoom;
  * @version 1.0
  */
 @Repository
-public interface GstarRoomRepository extends JpaRepository<GstarRoom, Integer> {
+public interface GstarRoomRepository extends JpaRepository<GstarRoom, Long> {
 
 	
 }

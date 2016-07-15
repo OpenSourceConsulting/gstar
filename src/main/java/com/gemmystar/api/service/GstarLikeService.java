@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
 import com.gemmystar.api.domain.GstarLike;
 import com.gemmystar.api.domain.GstarLikeRepository;
 
@@ -23,32 +22,28 @@ public class GstarLikeService {
 	private GstarLikeRepository repository;
 	
 	public GstarLikeService() {
-		// TODO Auto-generated constructor stub
+
 	}
 	
-	public void insertGstarLike(GstarLike gstarLike){
-		repository.insertGstarLike(gstarLike);
+	public void save(GstarLike gstarLike){
+		repository.save(gstarLike);
 	}
 	
-	public List<GstarLike> getGstarLikeList(ExtjsGridParam gridParam){
-		return repository.getGstarLikeList(gridParam);
+	public List<GstarLike> getGstarLikeAllList(){
+		return repository.findAll();
 	}
-	
-	public int getGstarLikeListTotalCount(ExtjsGridParam gridParam){
+	/*
+	public int getGstarLikeListTotalCount(GridParam gridParam){
 		
 		return repository.getGstarLikeListTotalCount(gridParam);
 	}
-	
-	public GstarLike getGstarLike(GstarLike gstarLike){
-		return repository.getGstarLike(gstarLike);
+	*/
+	public GstarLike getGstarLike(Long likeId){
+		return repository.findOne(likeId);
 	}
 	
-	public void updateGstarLike(GstarLike gstarLike){
-		repository.updateGstarLike(gstarLike);
-	}
-	
-	public void deleteGstarLike(GstarLike gstarLike){
-		repository.deleteGstarLike(gstarLike);
+	public void deleteGstarLike(Long likeId){
+		repository.delete(likeId);
 	}
 
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
 import com.gemmystar.api.domain.GstarHashTag;
 import com.gemmystar.api.domain.GstarHashTagRepository;
 
@@ -23,32 +22,28 @@ public class GstarHashTagService {
 	private GstarHashTagRepository repository;
 	
 	public GstarHashTagService() {
-		// TODO Auto-generated constructor stub
 	}
 	
-	public void insertGstarHashTag(GstarHashTag gstarHashTag){
-		repository.insertGstarHashTag(gstarHashTag);
+	public void save(GstarHashTag gstarHashTag){
+		repository.save(gstarHashTag);
 	}
 	
-	public List<GstarHashTag> getGstarHashTagList(ExtjsGridParam gridParam){
-		return repository.getGstarHashTagList(gridParam);
+	public List<GstarHashTag> getGstarHashTagAllList(){
+		return repository.findAll();
 	}
-	
-	public int getGstarHashTagListTotalCount(ExtjsGridParam gridParam){
+	/*
+	public int getGstarHashTagListTotalCount(GridParam gridParam){
 		
 		return repository.getGstarHashTagListTotalCount(gridParam);
 	}
-	
-	public GstarHashTag getGstarHashTag(GstarHashTag gstarHashTag){
-		return repository.getGstarHashTag(gstarHashTag);
+	*/
+	public GstarHashTag getGstarHashTag(Long tagId){
+		return repository.findOne(tagId);
 	}
+
 	
-	public void updateGstarHashTag(GstarHashTag gstarHashTag){
-		repository.updateGstarHashTag(gstarHashTag);
-	}
-	
-	public void deleteGstarHashTag(GstarHashTag gstarHashTag){
-		repository.deleteGstarHashTag(gstarHashTag);
+	public void deleteGstarHashTag(Long tagId){
+		repository.delete(tagId);
 	}
 
 }

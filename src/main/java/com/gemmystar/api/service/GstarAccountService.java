@@ -3,9 +3,11 @@ package com.gemmystar.api.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
 import com.gemmystar.api.domain.GstarAccount;
 import com.gemmystar.api.domain.GstarAccountRepository;
 
@@ -17,38 +19,41 @@ import com.gemmystar.api.domain.GstarAccountRepository;
  * @version 1.0
  */
 @Service
-public class GstarAccountService {
+public class GstarAccountService implements UserDetailsService {
 
 	@Autowired
 	private GstarAccountRepository repository;
 	
 	public GstarAccountService() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
-	public void insertGstarAccount(GstarAccount gstarAccount){
-		repository.insertGstarAccount(gstarAccount);
+	public void save(GstarAccount gstarAccount){
+		repository.save(gstarAccount);
 	}
 	
-	public List<GstarAccount> getGstarAccountList(ExtjsGridParam gridParam){
-		return repository.getGstarAccountList(gridParam);
+	public List<GstarAccount> getGstarAccountAllList(){
+		return repository.findAll();
 	}
-	
-	public int getGstarAccountListTotalCount(ExtjsGridParam gridParam){
+	/*
+	public int getGstarAccountListTotalCount(GridParam gridParam){
 		
 		return repository.getGstarAccountListTotalCount(gridParam);
 	}
+	*/
 	
-	public GstarAccount getGstarAccount(GstarAccount gstarAccount){
-		return repository.getGstarAccount(gstarAccount);
+	public GstarAccount getGstarAccount(Long accountId){
+		return repository.findOne(accountId);
 	}
+
 	
-	public void updateGstarAccount(GstarAccount gstarAccount){
-		repository.updateGstarAccount(gstarAccount);
+	public void deleteGstarAccount(Long accountId){
+		repository.delete(accountId);
 	}
-	
-	public void deleteGstarAccount(GstarAccount gstarAccount){
-		repository.deleteGstarAccount(gstarAccount);
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return repository.findByLoginId(username);
 	}
 
 }

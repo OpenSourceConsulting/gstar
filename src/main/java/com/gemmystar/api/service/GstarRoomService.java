@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
 import com.gemmystar.api.domain.GstarRoom;
 import com.gemmystar.api.domain.GstarRoomRepository;
 
@@ -23,32 +22,28 @@ public class GstarRoomService {
 	private GstarRoomRepository repository;
 	
 	public GstarRoomService() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
-	public void insertGstarRoom(GstarRoom gstarRoom){
-		repository.insertGstarRoom(gstarRoom);
+	public void save(GstarRoom gstarRoom){
+		repository.save(gstarRoom);
 	}
 	
-	public List<GstarRoom> getGstarRoomList(ExtjsGridParam gridParam){
-		return repository.getGstarRoomList(gridParam);
+	public List<GstarRoom> getGstarRoomAllList(){
+		return repository.findAll();
 	}
-	
-	public int getGstarRoomListTotalCount(ExtjsGridParam gridParam){
+	/*
+	public int getGstarRoomListTotalCount(GridParam gridParam){
 		
 		return repository.getGstarRoomListTotalCount(gridParam);
 	}
-	
-	public GstarRoom getGstarRoom(GstarRoom gstarRoom){
-		return repository.getGstarRoom(gstarRoom);
+	*/
+	public GstarRoom getGstarRoom(Long roomId){
+		return repository.findOne(roomId);
 	}
 	
-	public void updateGstarRoom(GstarRoom gstarRoom){
-		repository.updateGstarRoom(gstarRoom);
-	}
-	
-	public void deleteGstarRoom(GstarRoom gstarRoom){
-		repository.deleteGstarRoom(gstarRoom);
+	public void deleteGstarRoom(Long roomId){
+		repository.delete(roomId);
 	}
 
 }

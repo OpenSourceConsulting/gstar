@@ -12,5 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GstarAccountRepository extends JpaRepository<GstarAccount, Long> {
 
+	GstarAccount findByLoginId(String loginId); 
 	
 }

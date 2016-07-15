@@ -1,20 +1,21 @@
 package com.gemmystar.api.web;
 
-import javax.servlet.http.HttpSession;
+
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.athena.peacock.controller.web.common.model.DtoJsonResponse;
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
-import com.athena.peacock.controller.web.common.model.GridJsonResponse;
-import com.athena.peacock.controller.web.common.model.SimpleJsonResponse;
+import com.gemmystar.api.common.model.GridJsonResponse;
+import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.domain.GstarUser;
 import com.gemmystar.api.service.GstarUserService;
+
+
 
 /**
  * <pre>
@@ -39,54 +40,44 @@ public class GstarUserController {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@RequestMapping(value=""/list", method = RequestMethod.GET)
+	@RequestMapping(value="/all", method = RequestMethod.GET)
 	@ResponseBody
-	public GridJsonResponse list(ExtjsGridParam gridParam){
+	public GridJsonResponse allList(GridJsonResponse jsonRes){
 	
-		GridJsonResponse jsonRes = new GridJsonResponse();
-		jsonRes.setTotal(service.getGstarUserListTotalCount(gridParam));
-		jsonRes.setList(service.getGstarUserList(gridParam));
+		List<GstarUser> list = service.getGstarUserAllList();
+
+		jsonRes.setTotal(list.size());
+		jsonRes.setList(list);
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(value=""/create")
+	@RequestMapping(value="/save", method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse create(SimpleJsonResponse jsonRes, GstarUser gstarUser){
+	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarUser gstarUser){
 		
-		service.insertGstarUser(gstarUser);
-		jsonRes.setMsg("사용자가 정상적으로 생성되었습니다.");
-		
-		
-		return jsonRes;
-	}
-	
-	@RequestMapping(value="/update")
-	@ResponseBody
-	public SimpleJsonResponse update(SimpleJsonResponse jsonRes, GstarUser gstarUser){
-		
-		service.updateGstarUser(gstarUser);
-		jsonRes.setMsg("사용자 정보가 정상적으로 수정되었습니다.");
+		service.save(gstarUser);
+		//jsonRes.setMsg(" 정상적으로 생성되었습니다.");
 		
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(value="/delete")
+	@RequestMapping(value="/{userId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, GstarUser gstarUser){
+	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("userId") Long userId){
 		
-		service.deleteGstarUser(gstarUser);
-		jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
+		service.deleteGstarUser(userId);
+		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(value="/getGstarUser", method = RequestMethod.GET)
+	@RequestMapping(value="/{gstarUserId}", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getGstarUser(SimpleJsonResponse jsonRes, GstarUser gstarUser){
+	public SimpleJsonResponse getGstarUser(SimpleJsonResponse jsonRes, @PathVariable("userId") Long userId){
 	
-		jsonRes.setData(service.getGstarUser(gstarUser));
+		jsonRes.setData(service.getGstarUser(userId));
 		
 		return jsonRes;
 	}

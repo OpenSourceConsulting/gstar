@@ -1,18 +1,16 @@
 package com.gemmystar.api.web;
 
-import javax.servlet.http.HttpSession;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.athena.peacock.controller.web.common.model.DtoJsonResponse;
-import com.athena.peacock.controller.web.common.model.ExtjsGridParam;
-import com.athena.peacock.controller.web.common.model.GridJsonResponse;
-import com.athena.peacock.controller.web.common.model.SimpleJsonResponse;
+import com.gemmystar.api.common.model.GridJsonResponse;
+import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.domain.GstarAccount;
 import com.gemmystar.api.service.GstarAccountService;
 
@@ -24,7 +22,7 @@ import com.gemmystar.api.service.GstarAccountService;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/GstarAccount")
+@RequestMapping("/account")
 public class GstarAccountController {
 	
 	@Autowired
@@ -36,57 +34,48 @@ public class GstarAccountController {
 	 * </pre>
 	 */
 	public GstarAccountController() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
-	@RequestMapping(value=""/list", method = RequestMethod.GET)
+	@RequestMapping(value="/all", method = RequestMethod.GET)
 	@ResponseBody
-	public GridJsonResponse list(ExtjsGridParam gridParam){
+	public GridJsonResponse allList(){
 	
+		List list = service.getGstarAccountAllList();
+		
 		GridJsonResponse jsonRes = new GridJsonResponse();
-		jsonRes.setTotal(service.getGstarAccountListTotalCount(gridParam));
-		jsonRes.setList(service.getGstarAccountList(gridParam));
+		jsonRes.setTotal(list.size());
+		jsonRes.setList(list);
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(value=""/create")
+	@RequestMapping(value="/save", method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse create(SimpleJsonResponse jsonRes, GstarAccount gstarAccount){
+	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarAccount gstarAccount){
 		
-		service.insertGstarAccount(gstarAccount);
+		service.save(gstarAccount);
 		jsonRes.setMsg("사용자가 정상적으로 생성되었습니다.");
 		
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(value="/update")
+	@RequestMapping(value="/{accountId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public SimpleJsonResponse update(SimpleJsonResponse jsonRes, GstarAccount gstarAccount){
+	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("accountId") Long accountId){
 		
-		service.updateGstarAccount(gstarAccount);
-		jsonRes.setMsg("사용자 정보가 정상적으로 수정되었습니다.");
-		
-		
-		return jsonRes;
-	}
-	
-	@RequestMapping(value="/delete")
-	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, GstarAccount gstarAccount){
-		
-		service.deleteGstarAccount(gstarAccount);
+		service.deleteGstarAccount(accountId);
 		jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(value="/getGstarAccount", method = RequestMethod.GET)
+	@RequestMapping(value="/{accountId}", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getGstarAccount(SimpleJsonResponse jsonRes, GstarAccount gstarAccount){
+	public SimpleJsonResponse getGstarAccount(SimpleJsonResponse jsonRes, @PathVariable("accountId") Long accountId){
 	
-		jsonRes.setData(service.getGstarAccount(gstarAccount));
+		jsonRes.setData(service.getGstarAccount(accountId));
 		
 		return jsonRes;
 	}
