@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,7 +42,8 @@ import com.gemmystar.api.service.GstarAccountService;
  * @author Bongjin Kwon
  * @version 1.0
  */
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebSecurity
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private SecurityProperties security;
@@ -55,7 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				"/", 
 				"/*.html", 
 				"/resources/**", 
-				//"/error", 
+
 				
 				"/auth/notLogin*", 
 				"/auth/loginFail*",
@@ -69,15 +71,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			//.anonymous()
 			//.disable()
 			.authorizeRequests()
-			.antMatchers("**").permitAll()
+			//.antMatchers("/**").permitAll()
 
 			//.antMatchers(HttpMethod.POST, "/user/**").access("hasRole('ROLE_USER_ADMIN')")
 			//.antMatchers(HttpMethod.GET, "/user/**").access("hasRole('ROLE_USER_USER')")
 
 			.anyRequest()// other request
-			.permitAll()
-			
-			//.fullyAuthenticated()
+			//.permitAll()
+			.fullyAuthenticated()
 			
 			.and().exceptionHandling().accessDeniedPage("/auth/accessDenied")
 			.and().formLogin()

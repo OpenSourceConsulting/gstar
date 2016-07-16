@@ -11,6 +11,7 @@
 
 	
 	<logger name="org.springframework" level="ERROR"/>
+	<logger name="org.springframework.context" level="DEBUG"/>
 	<logger name="org.springframework.web" level="DEBUG"/>
 	<logger name="org.springframework.web.websocket" level="DEBUG"/>
 	<logger name="org.springframework.web.context.support.StandardServletEnvironment" level="INFO"/>

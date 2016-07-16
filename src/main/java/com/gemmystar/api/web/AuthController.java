@@ -23,11 +23,13 @@
 package com.gemmystar.api.web;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
@@ -38,13 +40,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-
-
+import org.springframework.web.servlet.LocaleResolver;
 
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.service.GstarAccountService;
-import com.gemmystar.api.service.GstarUserService;
 
 /**
  * <pre>
@@ -59,6 +58,12 @@ import com.gemmystar.api.service.GstarUserService;
 public class AuthController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
+	
+	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
+	private LocaleResolver localeResolver;
 
 	@Autowired
 	private GstarAccountService service;
@@ -96,10 +101,10 @@ public class AuthController {
 	@ResponseStatus(value = HttpStatus.FORBIDDEN)
 	@RequestMapping("/notLogin")
 	@ResponseBody
-	public SimpleJsonResponse notLogin(SimpleJsonResponse jsonRes) {
+	public SimpleJsonResponse notLogin(SimpleJsonResponse jsonRes, HttpServletResponse response, HttpServletRequest request) {
 
 		jsonRes.setSuccess(false);
-		jsonRes.setMsg("로그인 정보가 없습니다. 관리자에게 문의하세요.");
+		jsonRes.setMsg(messageSource.getMessage("auth.not.login", null, localeResolver.resolveLocale(request)));
 		jsonRes.setData("notLogin");
 
 		return jsonRes;
