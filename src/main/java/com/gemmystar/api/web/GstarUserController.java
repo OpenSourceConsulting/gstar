@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
+import com.gemmystar.api.domain.GstarAccount;
 import com.gemmystar.api.domain.GstarUser;
 import com.gemmystar.api.service.GstarUserService;
 
@@ -25,7 +26,7 @@ import com.gemmystar.api.service.GstarUserService;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/GstarUser")
+@RequestMapping("/user")
 public class GstarUserController {
 	
 	@Autowired
@@ -52,11 +53,30 @@ public class GstarUserController {
 		return jsonRes;
 	}
 	
+	/**
+	 * <pre>
+	 * 회원 가입.
+	 * </pre>
+	 * @param jsonRes
+	 * @param user
+	 * @param account
+	 * @return
+	 */
+	@RequestMapping(value="/join", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse join(SimpleJsonResponse jsonRes, GstarUser user, GstarAccount account){
+		
+		
+		service.join(user, account);
+		
+		return jsonRes;
+	}
+	
 	@RequestMapping(value="/save", method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarUser gstarUser){
+	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarUser user){
 		
-		service.save(gstarUser);
+		service.save(user);
 		//jsonRes.setMsg(" 정상적으로 생성되었습니다.");
 		
 		

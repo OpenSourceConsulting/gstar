@@ -1,13 +1,14 @@
 package com.gemmystar.api.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.gemmystar.api.domain.GstarAccount;
 import com.gemmystar.api.domain.GstarUser;
 import com.gemmystar.api.domain.GstarUserRepository;
 
@@ -24,7 +25,21 @@ public class GstarUserService {
 	@Autowired
 	private GstarUserRepository repository;
 	
+	@Autowired
+	private GstarAccountService accountService;
+	
 	public GstarUserService() {
+	}
+	
+	@Transactional
+	public void join(GstarUser gstarUser, GstarAccount account){
+		
+		repository.save(gstarUser);
+		
+		account.setGstarUser(gstarUser);
+		
+		accountService.save(account);
+		
 	}
 	
 	public void save(GstarUser gstarUser){

@@ -22,7 +22,6 @@
  */
 package com.gemmystar.api.domain;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 
@@ -32,6 +31,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -48,7 +48,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Entity
 @Table(name = "gstar_account")
-public class GstarAccount implements Serializable, UserDetails{
+public class GstarAccount implements UserDetails{
 
 	private static final long serialVersionUID = -6369708557069341450L;
 
@@ -56,9 +56,6 @@ public class GstarAccount implements Serializable, UserDetails{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Long id;//
-	
-	@Column(name = "gstar_user_id")
-	private Long gstarUserId;//
 	
 	@Column(name = "account_type_cd")
 	private String accountTypeCd;//계정타입: (1:자체계정, 2: facbook계정, 3: 카카오계정)
@@ -76,7 +73,8 @@ public class GstarAccount implements Serializable, UserDetails{
 	private java.util.Date createDt;//
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	private GstarUser user;
+	@JoinColumn(name="gstar_user_id")
+	private GstarUser gstarUser;
 
 	/**
 	 * <pre>
@@ -99,20 +97,6 @@ public class GstarAccount implements Serializable, UserDetails{
 	 */
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the gstarUserId
-	 */
-	public Long getGstarUserId() {
-		return gstarUserId;
-	}
-
-	/**
-	 * @param gstarUserId the gstarUserId to set
-	 */
-	public void setGstarUserId(Long gstarUserId) {
-		this.gstarUserId = gstarUserId;
 	}
 
 	/**
@@ -184,13 +168,13 @@ public class GstarAccount implements Serializable, UserDetails{
 	public void setCreateDt(java.util.Date createDt) {
 		this.createDt = createDt;
 	}
-	
-	public GstarUser getUser() {
-		return user;
+
+	public GstarUser getGstarUser() {
+		return gstarUser;
 	}
 
-	public void setUser(GstarUser user) {
-		this.user = user;
+	public void setGstarUser(GstarUser gstarUser) {
+		this.gstarUser = gstarUser;
 	}
 
 	@PrePersist

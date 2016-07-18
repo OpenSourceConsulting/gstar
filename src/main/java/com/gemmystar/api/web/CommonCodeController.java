@@ -52,11 +52,11 @@ public class CommonCodeController {
 	@Autowired
 	private CommonCodeService service;
 	
-	@RequestMapping(value = "/list/{gropId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/list/{groupCd}", method = RequestMethod.GET)
 	@ResponseBody
-	public List<CommonCode> list(@PathVariable("gropId") String gropId) {
+	public List<CommonCode> list(@PathVariable("groupCd") String groupCd) {
 		
-		return service.getCodes(gropId);
+		return service.getCodes(groupCd);
 	}
 	
 

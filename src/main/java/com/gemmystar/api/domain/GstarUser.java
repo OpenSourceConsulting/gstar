@@ -37,6 +37,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * <pre>
@@ -47,6 +48,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table(name = "gstar_user")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) //http://stackoverflow.com/questions/24994440/no-serializer-found-for-class-org-hibernate-proxy-pojo-javassist-javassist
 public class GstarUser implements Serializable {
 
 	private static final long serialVersionUID = 7382139896085707035L;
@@ -77,7 +79,7 @@ public class GstarUser implements Serializable {
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//생성일시
 	
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "gstarUser", fetch = FetchType.LAZY)
 	@JsonIgnore
 	private List<GstarAccount> accounts;
 

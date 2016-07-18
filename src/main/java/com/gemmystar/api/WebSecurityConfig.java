@@ -71,17 +71,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			//.anonymous()
 			//.disable()
 			.authorizeRequests()
-			//.antMatchers("/**").permitAll()
+			.antMatchers("/**").authenticated()
 
 			//.antMatchers(HttpMethod.POST, "/user/**").access("hasRole('ROLE_USER_ADMIN')")
 			//.antMatchers(HttpMethod.GET, "/user/**").access("hasRole('ROLE_USER_USER')")
 
-			.anyRequest()// other request
+			//.anyRequest()// other request
 			//.permitAll()
-			.fullyAuthenticated()
+			//.fullyAuthenticated()
 			
 			.and().exceptionHandling().accessDeniedPage("/auth/accessDenied")
 			.and().formLogin()
+				.usernameParameter("loginId")
+				.passwordParameter("passwd")
 				.loginPage("/auth/notLogin")
 				.loginProcessingUrl("/auth/login")
 				.defaultSuccessUrl("/auth/onAfterLogin", true)
@@ -89,6 +91,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and().logout()
 				.logoutUrl("/auth/logout")
 				.logoutSuccessUrl("/auth/onAfterLogout")
+				
+			//remember me configuration
+			.and().rememberMe(). 
+                key("rem-me-key").
+                rememberMeParameter("remember-me-gstar").
+                rememberMeCookieName("gstar-remember-me").
+                tokenValiditySeconds(86400)
 			.and().csrf()
 				.disable();
 	}

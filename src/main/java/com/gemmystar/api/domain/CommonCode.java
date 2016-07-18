@@ -55,7 +55,7 @@ public class CommonCode implements Serializable {
 	private String codeNm;//코드명
 	
 	@Column(name = "order_seq")
-	private short orderSeq;//정렬순서
+	private Integer orderSeq;//정렬순서
 	
 	@Column(name = "cd_desc")
 	private String cdDesc;//
@@ -117,14 +117,14 @@ public class CommonCode implements Serializable {
 	/**
 	 * @return the orderSeq
 	 */
-	public short getOrderSeq() {
+	public Integer getOrderSeq() {
 		return orderSeq;
 	}
 
 	/**
 	 * @param orderSeq the orderSeq to set
 	 */
-	public void setOrderSeq(short orderSeq) {
+	public void setOrderSeq(Integer orderSeq) {
 		this.orderSeq = orderSeq;
 	}
 

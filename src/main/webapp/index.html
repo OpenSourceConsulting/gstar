@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<h2>Hello Gemmy Star!</h2>
+<br/>
+
+<a href="#" id="logout" style="display:none;">로그아웃</a> <a href="login.html" id="login" style="display:none;">로그인</a>
+	<script src="resources/js/jquery.min.js"></script>
+    <script src="resources/js/jquery.form-validator.min.js"></script>
+    <script>
+	    
+	    $( document ).ready(function() {
+	    	
+	    	$.ajax({
+	  			  method : "GET",
+				  url: "/gstar/auth/onAfterLogin",
+				  //data: $( "#regContract form" ).serialize(),
+				  dataType: "json"
+				  
+	  	    }).done(function( responseJson ) {
+			    //alert(responseJson);
+  				//alert( "Request failed: " + textStatus );
+  			
+	    		console.log("logined!!");
+	    		$("#logout").show();
+	    		$("#login").hide();
+  			
+			}).fail(function( jqXHR, textStatus, errorThrown ) {
+				
+				console.log('not logined.');
+				$("#logout").hide();
+	    		$("#login").show();
+			});
+	    	
+	    	$("#logout").click(function(){
+	    		$.ajax({
+		  			  method : "GET",
+					  url: "/gstar/auth/logout",
+					  dataType: "json"
+					  
+		  	    }).done(function( responseJson ) {
+	  			
+		    		console.log(responseJson);
+		    		$("#logout").hide();
+		    		$("#login").show();
+	  			
+				}).fail(function( jqXHR, textStatus, errorThrown ) {
+					
+					console.log(textStatus);
+				});
+	   	   	});
+	    	
+	    });
+    </script>
+</body>
+</html>
