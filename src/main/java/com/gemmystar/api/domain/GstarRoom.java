@@ -24,14 +24,21 @@ package com.gemmystar.api.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * <pre>
@@ -59,6 +66,10 @@ public class GstarRoom implements Serializable{
 	
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
+	
+	//@OneToMany(mappedBy = "gstarRoom", fetch = FetchType.EAGER)
+	@Transient
+	private List<GstarContents> gstarContentsList;
 
 	/**
 	 * <pre>
@@ -125,6 +136,14 @@ public class GstarRoom implements Serializable{
 		this.createDt = createDt;
 	}
 	
+	public List<GstarContents> getGstarContentsList() {
+		return gstarContentsList;
+	}
+
+	public void setGstarContentsList(List<GstarContents> gstarContentsList) {
+		this.gstarContentsList = gstarContentsList;
+	}
+
 	@PrePersist
 	public void preInsert() {
 		this.createDt = new Date();

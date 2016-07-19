@@ -21,6 +21,9 @@ public class GstarContentsService {
 	@Autowired
 	private GstarContentsRepository repository;
 	
+	@Autowired
+	private GstarRoomService roomService;
+	
 	public GstarContentsService() {
 		
 	}
@@ -40,6 +43,15 @@ public class GstarContentsService {
 	*/
 	public GstarContents getGstarContents(Long contentsId){
 		return repository.findOne(contentsId);
+	}
+	
+	public GstarContents getGstarContentsWithRoom(Long contentsId){
+		
+		GstarContents contents = repository.findOne(contentsId);
+		
+		contents.setGstarRoom(roomService.getGstarRoom(contents.getGstarRoomId()));
+		
+		return contents;
 	}
 
 	

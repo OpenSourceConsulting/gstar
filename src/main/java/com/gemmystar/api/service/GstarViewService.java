@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.gemmystar.api.domain.GstarLike;
-import com.gemmystar.api.domain.GstarLikeRepository;
+import com.gemmystar.api.domain.GstarView;
+import com.gemmystar.api.domain.GstarViewRepository;
 
 /**
  * <pre>
@@ -16,20 +16,20 @@ import com.gemmystar.api.domain.GstarLikeRepository;
  * @version 1.0
  */
 @Service
-public class GstarLikeService {
+public class GstarViewService {
 
 	@Autowired
-	private GstarLikeRepository repository;
+	private GstarViewRepository repository;
 	
-	public GstarLikeService() {
+	public GstarViewService() {
 
 	}
 	
-	public void save(GstarLike gstarLike){
+	public void save(GstarView gstarLike){
 		repository.save(gstarLike);
 	}
 	
-	public List<GstarLike> getGstarLikeAllList(){
+	public List<GstarView> getGstarLikeAllList(){
 		return repository.findAll();
 	}
 	/*
@@ -38,7 +38,7 @@ public class GstarLikeService {
 		return repository.getGstarLikeListTotalCount(gridParam);
 	}
 	*/
-	public GstarLike getGstarLike(Long likeId){
+	public GstarView getGstarLike(Long likeId){
 		return repository.findOne(likeId);
 	}
 	

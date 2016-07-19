@@ -23,13 +23,18 @@
 package com.gemmystar.api.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * <pre>
@@ -51,6 +56,10 @@ public class GstarHashTag implements Serializable{
 	
 	@Column(name = "tag")
 	private String tag;//
+	
+	@ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<GstarContents> gstarContentsList;
 
 	/**
 	 * <pre>
@@ -87,6 +96,14 @@ public class GstarHashTag implements Serializable{
 	 */
 	public void setTag(String tag) {
 		this.tag = tag;
+	}
+
+	public List<GstarContents> getGstarContentsList() {
+		return gstarContentsList;
+	}
+
+	public void setGstarContentsList(List<GstarContents> gstarContentsList) {
+		this.gstarContentsList = gstarContentsList;
 	}
 
 }

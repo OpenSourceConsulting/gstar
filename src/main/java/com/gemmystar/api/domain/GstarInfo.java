@@ -27,12 +27,17 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * <pre>
@@ -52,26 +57,25 @@ public class GstarInfo implements Serializable {
 	@Column(name = "id")
 	private Long id;//
 	
-	@Column(name = "gstar_contents_id")
-	private Long gstarContentsId;//컨텐츠ID
+	@Column(name = "victory_cnt")
+	private short victoryCnt;//우승횟수
 	
-	@Column(name = "gs_victory")
-	private short gsVictory;//우승횟수
+	@Column(name = "warn_sum")
+	private int warnSum;//신고 총합계
 	
-	@Column(name = "gs_report")
-	private int gsReport;//신고하기횟수
+	@Column(name = "point_sum")
+	private Long pointSum;//하트 총합계
 	
-	@Column(name = "gs_like")
-	private Long gsLike;//좋아요 Count
-	
-	@Column(name = "gs_check")
-	private boolean gsCheck;//false: 일반 도전모드 가능, true: 추천영상
-	
-	@Column(name = "gs_state_cd")
-	private String gsStateCd;//상태코드 (1: 종료, 2:명예의전당, 3:중지, 4:HOT, 5:신규)
+	@Column(name = "view_sum")
+	private Long viewSum;//조회 총합계
 	
 	@Column(name = "update_dt")
 	private java.util.Date updateDt;//업데이트 일시
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "gstar_contents_id")
+	@JsonIgnore
+	private GstarContents gstarContents;
 
 	/**
 	 * <pre>
@@ -96,82 +100,44 @@ public class GstarInfo implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return the gstarContentsId
-	 */
-	public Long getGstarContentsId() {
-		return gstarContentsId;
+	public GstarContents getGstarContents() {
+		return gstarContents;
 	}
 
-	/**
-	 * @param gstarContentsId the gstarContentsId to set
-	 */
-	public void setGstarContentsId(Long gstarContentsId) {
-		this.gstarContentsId = gstarContentsId;
+	public void setGstarContents(GstarContents gstarContents) {
+		this.gstarContents = gstarContents;
 	}
 
-	/**
-	 * @return the gsVictory
-	 */
-	public short getGsVictory() {
-		return gsVictory;
+	public short getVictoryCnt() {
+		return victoryCnt;
 	}
 
-	/**
-	 * @param gsVictory the gsVictory to set
-	 */
-	public void setGsVictory(short gsVictory) {
-		this.gsVictory = gsVictory;
+	public void setVictoryCnt(short victoryCnt) {
+		this.victoryCnt = victoryCnt;
 	}
 
-	/**
-	 * @return the gsReport
-	 */
-	public int getGsReport() {
-		return gsReport;
+	public int getWarnSum() {
+		return warnSum;
 	}
 
-	/**
-	 * @param gsReport the gsReport to set
-	 */
-	public void setGsReport(int gsReport) {
-		this.gsReport = gsReport;
+	public void setWarnSum(int warnSum) {
+		this.warnSum = warnSum;
 	}
 
-	/**
-	 * @return the gsLike
-	 */
-	public Long getGsLike() {
-		return gsLike;
+	public Long getPointSum() {
+		return pointSum;
 	}
 
-	/**
-	 * @param gsLike the gsLike to set
-	 */
-	public void setGsLike(Long gsLike) {
-		this.gsLike = gsLike;
+	public void setPointSum(Long pointSum) {
+		this.pointSum = pointSum;
 	}
 
-	public boolean isGsCheck() {
-		return gsCheck;
+	public Long getViewSum() {
+		return viewSum;
 	}
 
-	public void setGsCheck(boolean gsCheck) {
-		this.gsCheck = gsCheck;
-	}
-
-	/**
-	 * @return the gsStateCd
-	 */
-	public String getGsStateCd() {
-		return gsStateCd;
-	}
-
-	/**
-	 * @param gsStateCd the gsStateCd to set
-	 */
-	public void setGsStateCd(String gsStateCd) {
-		this.gsStateCd = gsStateCd;
+	public void setViewSum(Long viewSum) {
+		this.viewSum = viewSum;
 	}
 
 	/**

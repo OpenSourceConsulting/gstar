@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gemmystar.api.domain.GstarContentsRepository;
 import com.gemmystar.api.domain.GstarRoom;
 import com.gemmystar.api.domain.GstarRoomRepository;
 
@@ -20,6 +21,9 @@ public class GstarRoomService {
 
 	@Autowired
 	private GstarRoomRepository repository;
+	
+	@Autowired
+	private GstarContentsRepository contentsService;
 	
 	public GstarRoomService() {
 		
@@ -40,6 +44,15 @@ public class GstarRoomService {
 	*/
 	public GstarRoom getGstarRoom(Long roomId){
 		return repository.findOne(roomId);
+	}
+	
+	public GstarRoom getGstarRoomWithContents(Long roomId){
+		
+		GstarRoom room = repository.findOne(roomId);
+		
+		room.setGstarContentsList(contentsService.findByGstarRoomId(roomId));
+		
+		return room;
 	}
 	
 	public void deleteGstarRoom(Long roomId){

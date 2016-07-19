@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.gemmystar.api.domain.GstarLike;
+import com.gemmystar.api.domain.GstarView;
 
 /**
  * GstarLikeRepository
@@ -14,7 +14,7 @@ import com.gemmystar.api.domain.GstarLike;
  * @version 1.0
  */
 @Repository
-public interface GstarLikeRepository extends JpaRepository<GstarLike, Long> {
+public interface GstarViewRepository extends JpaRepository<GstarView, Long> {
 
 	
 }

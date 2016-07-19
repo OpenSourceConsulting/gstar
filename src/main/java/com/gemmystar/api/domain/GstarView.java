@@ -1,25 +1,4 @@
-/* 
- * Copyright (C) 2012-2015 Open Source Consulting, Inc. All rights reserved by Open Source Consulting, Inc.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * Revision History
- * Author			Date				Description
- * ---------------	----------------	------------
- * BongJin Kwon		2016. 7. 15.		First Draft.
- */
+
 package com.gemmystar.api.domain;
 
 import java.io.Serializable;
@@ -40,7 +19,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "gstar_like")
-public class GstarLike implements Serializable{
+public class GstarView implements Serializable{
 
 	private static final long serialVersionUID = -1382292277139367158L;
 
@@ -56,14 +35,14 @@ public class GstarLike implements Serializable{
 	private Long gstarContentsId;//
 	
 	@Column(name = "like_cnt")
-	private Long likeCnt;//좋아요 횟수
+	private Long viewCnt;//조회 횟수
 
 	/**
 	 * <pre>
 	 * 
 	 * </pre>
 	 */
-	public GstarLike() {
+	public GstarView() {
 		
 	}
 
@@ -109,18 +88,12 @@ public class GstarLike implements Serializable{
 		this.gstarContentsId = gstarContentsId;
 	}
 
-	/**
-	 * @return the likeCnt
-	 */
-	public Long getLikeCnt() {
-		return likeCnt;
+	public Long getViewCnt() {
+		return viewCnt;
 	}
 
-	/**
-	 * @param likeCnt the likeCnt to set
-	 */
-	public void setLikeCnt(Long likeCnt) {
-		this.likeCnt = likeCnt;
+	public void setViewCnt(Long viewCnt) {
+		this.viewCnt = viewCnt;
 	}
 
 }

@@ -24,14 +24,26 @@ package com.gemmystar.api.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * <pre>
@@ -51,29 +63,48 @@ public class GstarContents implements Serializable {
 	@Column(name = "id")
 	private Long id;//
 	
-	@Column(name = "gstar_user_id")
-	private Long gstarUserId;//
-	
 	@Column(name = "subject")
 	private String subject;//제목
 	
 	@Column(name = "url")
-	private String url;//컨텐츠URL(유투브URL)
+	private String url;//컨텐츠URL(유투브ID)
 	
 	@Column(name = "memo")
 	private String memo;//
 	
-	@Column(name = "gstar_category_id")
-	private int gstarCategoryId;//
-	
 	@Column(name = "gstar_room_id")
-	private Long gstarRoomId;//
+	private Long gstarRoomId;
+	
+	@Column(name = "gstar_category_id")
+	private Integer gstarCategoryId;//
+	
+	@Column(name = "member_type_cd")
+	private String memberTypeCd;
+	
+	@Column(name = "div_cd")
+	private String divCd;
 	
 	@Column(name = "status_cd")
-	private String statusCd;//컨텐츠상태 (1: master, 2: challenge)
+	private String statusCd;
 	
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
+	
+	
+	@ManyToOne
+	@JoinColumn(name = "gstar_user_id")
+	private GstarUser gstarUser;
+	
+	@Transient
+	private GstarRoom gstarRoom;
+
+	
+	@OneToOne(mappedBy = "gstarContents")
+	private GstarInfo gstarInfo;
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "gstar_contents_tags", joinColumns = @JoinColumn(name = "gstar_contents_id"), inverseJoinColumns = @JoinColumn(name = "gstar_hash_tag_id"))
+	private List<GstarHashTag> tags;
 
 	/**
 	 * <pre>
@@ -81,7 +112,7 @@ public class GstarContents implements Serializable {
 	 * </pre>
 	 */
 	public GstarContents() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	/**
@@ -98,18 +129,12 @@ public class GstarContents implements Serializable {
 		this.id = id;
 	}
 
-	/**
-	 * @return the gstarUserId
-	 */
-	public Long getGstarUserId() {
-		return gstarUserId;
+	public GstarUser getGstarUser() {
+		return gstarUser;
 	}
 
-	/**
-	 * @param gstarUserId the gstarUserId to set
-	 */
-	public void setGstarUserId(Long gstarUserId) {
-		this.gstarUserId = gstarUserId;
+	public void setGstarUser(GstarUser gstarUser) {
+		this.gstarUser = gstarUser;
 	}
 
 	/**
@@ -157,29 +182,15 @@ public class GstarContents implements Serializable {
 	/**
 	 * @return the gstarCategoryId
 	 */
-	public int getGstarCategoryId() {
+	public Integer getGstarCategoryId() {
 		return gstarCategoryId;
 	}
 
 	/**
 	 * @param gstarCategoryId the gstarCategoryId to set
 	 */
-	public void setGstarCategoryId(int gstarCategoryId) {
+	public void setGstarCategoryId(Integer gstarCategoryId) {
 		this.gstarCategoryId = gstarCategoryId;
-	}
-
-	/**
-	 * @return the gstarRoomId
-	 */
-	public Long getGstarRoomId() {
-		return gstarRoomId;
-	}
-
-	/**
-	 * @param gstarRoomId the gstarRoomId to set
-	 */
-	public void setGstarRoomId(Long gstarRoomId) {
-		this.gstarRoomId = gstarRoomId;
 	}
 
 	/**
@@ -196,6 +207,46 @@ public class GstarContents implements Serializable {
 		this.statusCd = statusCd;
 	}
 
+	public String getMemberTypeCd() {
+		return memberTypeCd;
+	}
+
+	public void setMemberTypeCd(String memberTypeCd) {
+		this.memberTypeCd = memberTypeCd;
+	}
+
+	public String getDivCd() {
+		return divCd;
+	}
+
+	public void setDivCd(String divCd) {
+		this.divCd = divCd;
+	}
+
+	public Long getGstarRoomId() {
+		return gstarRoomId;
+	}
+
+	public void setGstarRoomId(Long gstarRoomId) {
+		this.gstarRoomId = gstarRoomId;
+	}
+
+	public GstarRoom getGstarRoom() {
+		return gstarRoom;
+	}
+
+	public void setGstarRoom(GstarRoom gstarRoom) {
+		this.gstarRoom = gstarRoom;
+	}
+
+	public GstarInfo getGstarInfo() {
+		return gstarInfo;
+	}
+
+	public void setGstarInfo(GstarInfo gstarInfo) {
+		this.gstarInfo = gstarInfo;
+	}
+
 	/**
 	 * @return the createDt
 	 */
@@ -210,6 +261,14 @@ public class GstarContents implements Serializable {
 		this.createDt = createDt;
 	}
 	
+	public List<GstarHashTag> getTags() {
+		return tags;
+	}
+
+	public void setTags(List<GstarHashTag> tags) {
+		this.tags = tags;
+	}
+
 	@PrePersist
 	public void preInsert() {
 		this.createDt = new Date();
