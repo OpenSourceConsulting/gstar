@@ -25,6 +25,7 @@ package com.gemmystar.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -71,6 +72,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			//.anonymous()
 			//.disable()
 			.authorizeRequests()
+			.antMatchers(HttpMethod.PUT, "/user/locale").permitAll()
+			.antMatchers(HttpMethod.POST, "/user/join").permitAll()
 			.antMatchers("/**").authenticated()
 
 			//.antMatchers(HttpMethod.POST, "/user/**").access("hasRole('ROLE_USER_ADMIN')")

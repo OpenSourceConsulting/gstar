@@ -2,8 +2,11 @@ package com.gemmystar.api.user;
 
 
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +32,13 @@ import com.gemmystar.api.user.domain.GstarUser;
 public class GstarUserController {
 	
 	@Autowired
+	private MessageSource messageSource;
+	
+	@Autowired
 	private GstarUserService service;
+	
+	@Autowired
+	private GstarAccountService accountService;
 
 	/**
 	 * <pre>
@@ -63,8 +72,17 @@ public class GstarUserController {
 	 */
 	@RequestMapping(value="/join", method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse join(SimpleJsonResponse jsonRes, GstarUser user, GstarAccount account){
+	public SimpleJsonResponse join(SimpleJsonResponse jsonRes, GstarUser user, GstarAccount account, Locale locale){
 		
+		
+		UserDetails gstarAccount = accountService.loadUserByUsername(account.getLoginId());
+		
+		if (gstarAccount != null) {
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg(messageSource.getMessage("user.loginId.alreadyUse", new String[]{account.getLoginId()}, locale));
+			
+			return jsonRes;
+		}
 		
 		service.join(user, account);
 		
@@ -97,6 +115,15 @@ public class GstarUserController {
 	public SimpleJsonResponse getGstarUser(SimpleJsonResponse jsonRes, @PathVariable("userId") Long userId){
 	
 		jsonRes.setData(service.getGstarUser(userId));
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/locale", method = RequestMethod.PUT)
+	@ResponseBody
+	public SimpleJsonResponse chageLocale(SimpleJsonResponse jsonRes, Locale locale){
+	
+		jsonRes.setMsg(messageSource.getMessage("user.locale.change.success", null, locale));
 		
 		return jsonRes;
 	}

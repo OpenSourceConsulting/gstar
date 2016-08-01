@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,6 +19,9 @@ import com.gemmystar.api.common.model.SimpleJsonResponse;
 class GlobalDefaultExceptionHandler {
     //public static final String DEFAULT_ERROR_VIEW = "error";
 	private static final Logger LOGGER = LoggerFactory.getLogger(GlobalDefaultExceptionHandler.class);
+	
+	@Autowired
+	private MessageSource messageSource;
 
     @ExceptionHandler(value = Exception.class)
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
@@ -36,7 +41,15 @@ class GlobalDefaultExceptionHandler {
         SimpleJsonResponse json = new SimpleJsonResponse();
         
         json.setSuccess(false);
-        json.setMsg(e.toString());
+        
+        if (e instanceof AccountNotFoundException) {
+        	
+        	AccountNotFoundException ex = (AccountNotFoundException)e;
+        	
+        	json.setMsg(messageSource.getMessage("ex.msg.account.notFound", new Long[]{ex.getAccountId()}, ex.getLocale()));
+        } else {
+        	json.setMsg(e.toString());
+        }
         
         return json;
         
