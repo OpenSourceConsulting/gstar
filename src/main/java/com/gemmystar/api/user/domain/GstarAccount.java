@@ -69,6 +69,12 @@ public class GstarAccount implements UserDetails{
 	@Column(name = "last_login_dt")
 	private java.util.Date lastLoginDt;//마지막 로그인 일시
 	
+	@Column(name = "enabled")
+	private boolean enabled;
+	
+	@Column(name = "locked")
+	private boolean locked;
+	
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
 	
@@ -197,6 +203,18 @@ public class GstarAccount implements UserDetails{
 		
 		return getLoginId();
 	}
+	
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void setLocked(boolean locked) {
+		this.locked = locked;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 
 	@Override
 	public boolean isAccountNonExpired() {
@@ -205,7 +223,7 @@ public class GstarAccount implements UserDetails{
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return !locked;
 	}
 
 	@Override
@@ -215,7 +233,7 @@ public class GstarAccount implements UserDetails{
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return enabled;
 	}
 
 }

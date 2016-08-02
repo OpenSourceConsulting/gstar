@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarAccountRepository;
@@ -33,6 +35,9 @@ public class GstarAccountService implements UserDetailsService {
 	
 	@Autowired
 	private GstarPassresetTokenRepository tokenRepo;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	public GstarAccountService() {
 		
@@ -66,10 +71,15 @@ public class GstarAccountService implements UserDetailsService {
 		return repository.findByLoginId(username);
 	}
 	
-	public String createPasswordResetToken(Long accountId) { 
+	@Transactional
+	public String createPasswordResetToken(GstarAccount account) { 
+		
+		account.setLocked(true);
+		repository.save(account);
+		
 		String token = UUID.randomUUID().toString();
 		
-		GstarPassresetToken tokenEntity = new GstarPassresetToken(accountId, token, calculateExpiryDate());
+		GstarPassresetToken tokenEntity = new GstarPassresetToken(account.getId(), token, calculateExpiryDate());
 		
 		tokenRepo.save(tokenEntity);
 		
@@ -82,6 +92,22 @@ public class GstarAccountService implements UserDetailsService {
         cal.add(Calendar.MINUTE, EXPIRATION);
         return new Date(cal.getTime().getTime());
     }
+	
+	public GstarPassresetToken getPasswordResetToken(String token) {
+		return tokenRepo.findByToken(token);
+	}
+	
+	@Transactional
+	public void changeUserPassword(GstarAccount gstarAccount, String password) {
+		
+		gstarAccount.setLocked(false);
+		gstarAccount.setPasswd(passwordEncoder.encode(password));
+		
+		repository.save(gstarAccount);
+		
+		tokenRepo.updateExpireDt(gstarAccount.getId());
+		
+	}
 
 }
 //end of GstarAccountService.java

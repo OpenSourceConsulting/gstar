@@ -3,6 +3,7 @@ package com.gemmystar.api.contents.domain;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -70,6 +71,9 @@ public class GstarContents implements Serializable {
 	
 	@Column(name = "status_cd")
 	private String statusCd = "1";
+	
+	@Column(name = "locale")
+	private String locale;
 	
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
@@ -218,6 +222,14 @@ public class GstarContents implements Serializable {
 
 	public void setGstarInfo(GstarInfo gstarInfo) {
 		this.gstarInfo = gstarInfo;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
 	}
 
 	/**

@@ -1,15 +1,23 @@
 package com.gemmystar.api.user;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +28,7 @@ import com.gemmystar.api.common.exception.AccountNotFoundException;
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.user.domain.GstarAccount;
+import com.gemmystar.api.user.domain.GstarPassresetToken;
 
 /**
  * <pre>
@@ -31,6 +40,8 @@ import com.gemmystar.api.user.domain.GstarAccount;
 @Controller
 @RequestMapping("/account")
 public class GstarAccountController {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarAccountController.class);
 	
 	@Autowired
 	private GstarAccountService service;
@@ -117,17 +128,16 @@ public class GstarAccountController {
         	return jsonRes;
 		}
         
-        
-        String token = service.createPasswordResetToken(accountId);
+        String token = service.createPasswordResetToken(account);
         
         mailSender.send(constructResetTokenEmail(getAppUrl(request), locale, accountId, token, userEmail));
-        
+        LOGGER.info("email sended to {}", userEmail);
         
         return jsonRes;
     }
 	
 	private SimpleMailMessage constructResetTokenEmail(final String appUrl, final Locale locale, Long accountId, String token, String toEmail) {
-        final String url = appUrl + "/user/changePassword?id=" + accountId + "&token=" + token;
+        final String url = appUrl + "/account/"+accountId+"/changePassword?token=" + token;
         final String message = messageSource.getMessage("account.email.resetPassword.msg", null, locale);
         return constructEmail("Reset Password", message + " \r\n" + url, toEmail);
     }
@@ -143,6 +153,52 @@ public class GstarAccountController {
 
     private String getAppUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
+    }
+    
+    @RequestMapping(value = "/{accountId}/changePassword", method = RequestMethod.GET)
+    public String showChangePasswordPage(Locale locale, Model model, @PathVariable("accountId") Long accountId, @RequestParam("token") String token) {
+         
+    	GstarPassresetToken passToken = service.getPasswordResetToken(token);
+        GstarAccount user = null;
+        
+        if (passToken != null) {
+        	user = passToken.getGstarAccount();
+		}
+        
+        Calendar cal = Calendar.getInstance();
+        
+        String invalidMsg = null;
+        if (passToken == null || user.getId() != accountId) {
+        	invalidMsg = messageSource.getMessage("auth.invalidToken", null, locale);
+            
+        } else if ((passToken.getExpireDt().getTime() - cal.getTime().getTime()) <= 0) {
+        	invalidMsg = messageSource.getMessage("auth.expiredToken", null, locale);
+        }
+     
+        if (invalidMsg == null) {
+        	UserDetails userDetail = service.loadUserByUsername(user.getLoginId());
+            
+            Authentication auth = new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            
+		} else {
+			model.addAttribute("message", invalidMsg);
+		}
+     
+        //return "redirect:/updatePassword.html?lang=" + locale.getLanguage();
+        return "ChangePassword";
+    }
+    
+    @RequestMapping(value = "/save/password", method = RequestMethod.POST)
+    @ResponseBody
+    public SimpleJsonResponse savePassword(SimpleJsonResponse jsonRes, Locale locale, @RequestParam("password") String password) {
+        GstarAccount user = (GstarAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        service.changeUserPassword(user, password);
+        
+        jsonRes.setMsg(messageSource.getMessage("message.update.success.password", null, locale));
+        
+        return jsonRes;
     }
 
 }

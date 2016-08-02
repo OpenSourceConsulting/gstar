@@ -34,6 +34,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
 /**
@@ -50,10 +51,6 @@ public class GstarPassresetToken implements Serializable {
 	private static final long serialVersionUID = -8995962578792426679L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	private int id;//
-	
 	@Column(name = "gstar_account_id")
 	private Long gstarAccountId;//
 	
@@ -69,6 +66,11 @@ public class GstarPassresetToken implements Serializable {
 	@OneToOne
 	@JoinColumn(name = "gstar_account_id", insertable = false, updatable = false)
 	private GstarAccount gstarAccount;
+	
+	
+
+	public GstarPassresetToken() {
+	}
 
 	/**
 	 * <pre>
@@ -79,20 +81,6 @@ public class GstarPassresetToken implements Serializable {
 		this.gstarAccountId = gstarAccountId;
 		this.token = token;
 		this.expireDt = expiredDt;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public int getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(int id) {
-		this.id = id;
 	}
 
 	/**
@@ -160,6 +148,7 @@ public class GstarPassresetToken implements Serializable {
 	}
 	
 	@PrePersist
+	@PreUpdate
 	public void preInsert() {
 		this.createDt = new Date();
 	}

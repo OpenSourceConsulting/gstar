@@ -1,11 +1,9 @@
 package com.gemmystar.api.user.domain;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import com.gemmystar.api.user.domain.GstarPassresetToken;
 
 /**
  * GstarPassresetTokenRepository
@@ -16,5 +14,10 @@ import com.gemmystar.api.user.domain.GstarPassresetToken;
 @Repository
 public interface GstarPassresetTokenRepository extends JpaRepository<GstarPassresetToken, Integer> {
 
+	GstarPassresetToken findByToken(String token);
+	
+	@Modifying
+	@Query("update GstarPassresetToken pt set pt.expireDt = NOW() where pt.id = ?1")
+	int updateExpireDt(Long accountId);
 	
 }

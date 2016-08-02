@@ -28,10 +28,12 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "com.gemmystar.api" })
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class GemmyApplication extends SpringBootServletInitializer {
 
 	@Override
