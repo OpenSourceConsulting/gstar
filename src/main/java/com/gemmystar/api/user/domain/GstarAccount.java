@@ -185,6 +185,7 @@ public class GstarAccount implements UserDetails{
 
 	@PrePersist
 	public void preInsert() {
+		this.enabled = true;
 		this.createDt = new Date();
 	}
 

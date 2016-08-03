@@ -11,7 +11,9 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -80,10 +82,10 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	}
 	
 	
-	@Bean(name = "multipartResolver")
-	public CommonsMultipartResolver multipartResolver() {
+	@Bean
+	public MultipartResolver multipartResolver() {
 
-		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
+		StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
 		return resolver;
 	}
 	

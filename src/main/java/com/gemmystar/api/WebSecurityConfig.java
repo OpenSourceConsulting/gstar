@@ -50,9 +50,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			//.anonymous()
 			//.disable()
 			.authorizeRequests()
-			.antMatchers(HttpMethod.PUT, "/user/locale").permitAll()
-			.antMatchers(HttpMethod.POST, "/user/join").permitAll()
-			.antMatchers(HttpMethod.GET, "/account/*/changePassword").permitAll()
+			.antMatchers("/user/locale").permitAll()
+			.antMatchers("/user/join").permitAll()
+			.antMatchers("/account/*/changePassword").permitAll()
 
 			.anyRequest()// other request
 			.authenticated()
