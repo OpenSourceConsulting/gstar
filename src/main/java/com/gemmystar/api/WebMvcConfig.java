@@ -85,6 +85,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	public MultipartResolver multipartResolver() {
 
+		//CommonsMultipartResolver resolver = new CommonsMultipartResolver();//spring boot 1.2*
 		StandardServletMultipartResolver resolver = new StandardServletMultipartResolver();
 		return resolver;
 	}

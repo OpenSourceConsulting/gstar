@@ -7,9 +7,47 @@
 <body>
 
     <div class="container">
-
-      	<form action="youtube/upload" method="POST" enctype="multipart/form-data" >
-		    <input type="file" name="file" />
+		<h2>12. 일반영상정보 등록 API Test. (POST /contents)</h2>
+      	<form action="contents" method="POST" enctype="multipart/form-data" >
+      		<table>
+      			<tr>
+      				<td>제목</td><td><input type="text" name="subject" /></td>
+      			</tr>
+      			<tr>
+      				<td>내용</td><td><textarea name="memo" rows="" cols=""></textarea> </td>
+      			</tr>
+      			<tr>
+      				<td>태그</td><td><input type="text" name="tags" value="tag1,tag2,tag3,tag4"/></td>
+      			</tr>
+	      		<tr>
+      				<td>동영상파일 선택</td><td><input type="file" name="vFile" /></td>
+      			</tr>
+		    </table>
+		    <input type="submit" value="upload" />
+		</form>
+		
+		<h2>11. 대결 및 영상등록/도전하기 API Test. (POST /room)</h2>
+      	<form action="room" method="POST" enctype="multipart/form-data" >
+      		<table>
+      			<tr>
+      				<td>gstarRoomId</td><td><input type="text" name="gstarRoomId" /> 없으면 대결room 을 생성합니다.</td>
+      			</tr>
+      			<tr>
+      				<td>제목</td><td><input type="text" name="subject" /></td>
+      			</tr>
+      			<tr>
+      				<td>내용</td><td><textarea name="memo" rows="" cols=""></textarea> </td>
+      			</tr>
+      			<tr>
+      				<td>태그</td><td><input type="text" name="tags" value="tag1,tag2,tag3,tag4"/></td>
+      			</tr>
+      			<tr>
+      				<td>memberTypeCd</td><td><input type="text" name="memberTypeCd" value="1"/> 1:방장, 2:도전하기</td>
+      			</tr>
+	      		<tr>
+      				<td>동영상파일 선택</td><td><input type="file" name="vFile" /></td>
+      			</tr>
+		    </table>
 		    <input type="submit" value="upload" />
 		</form>
 

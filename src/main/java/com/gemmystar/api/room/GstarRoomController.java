@@ -1,7 +1,13 @@
 package com.gemmystar.api.room;
 
 
+import java.io.IOException;
+import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -10,13 +16,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.contents.GstarContentsService;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.room.domain.GstarRoom;
+import com.gemmystar.api.youtube.YoutubeService;
 
 
 
@@ -31,11 +39,19 @@ import com.gemmystar.api.room.domain.GstarRoom;
 @RequestMapping("/room")
 public class GstarRoomController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarRoomController.class);
+	
+	@Autowired
+	private MessageSource messageSource;
+	
 	@Autowired
 	private GstarRoomService service;
 	
 	@Autowired
 	private GstarContentsService contentsService;
+	
+	@Autowired
+	private YoutubeService youtubeService;
 
 	/**
 	 * <pre>
@@ -89,11 +105,32 @@ public class GstarRoomController {
 	 */
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse saveWithContents(SimpleJsonResponse jsonRes, GstarRoom gstarRoom, GstarContents contents, String[] tags){
+	public SimpleJsonResponse saveWithContents(SimpleJsonResponse jsonRes, GstarRoom gstarRoom, GstarContents contents, String[] tags,
+			@RequestParam("vFile") MultipartFile vFile, Locale locale){
 		
-		service.saveWithContents(gstarRoom, contents, tags);
+		
+		try{
+			String videoId = youtubeService.uploadVideo(vFile.getInputStream(), vFile.getSize(), contents);
+			jsonRes.setData(videoId);
+			
+			contents.setUrl(videoId);
+			contents.setLocale(locale.getLanguage());
+			
+			service.saveWithContents(gstarRoom, contents, tags);
+			
+		} catch (IOException e) {
+			LOGGER.error(e.toString(), e);
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg(messageSource.getMessage("ex.msg.video.upload.fail", null, locale));
+		}
 		
 		return jsonRes;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public String saveSuccess(){
+		
+		return "ContentsSuccess";
 	}
 	
 	@RequestMapping(value="/{gstarRoomId}", method = RequestMethod.DELETE)

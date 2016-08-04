@@ -1,18 +1,26 @@
 package com.gemmystar.api.contents;
 
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.contents.domain.GstarContents;
+import com.gemmystar.api.youtube.YoutubeService;
 
 
 
@@ -27,8 +35,16 @@ import com.gemmystar.api.contents.domain.GstarContents;
 @RequestMapping("/contents")
 public class GstarContentsController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarContentsController.class);
+	
+	@Autowired
+	private MessageSource messageSource;
+	
 	@Autowired
 	private GstarContentsService service;
+	
+	@Autowired
+	private YoutubeService youtubeService;
 
 
 	/**
@@ -54,13 +70,31 @@ public class GstarContentsController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarContents gstarContents, String[] tags){
+	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarContents gstarContents, String[] tags, 
+			@RequestParam("vFile") MultipartFile vFile, Locale locale){
 		
-		service.save(gstarContents, tags);
-		//jsonRes.setMsg(" 정상적으로 생성되었습니다.");
+		try {
+			String videoId = youtubeService.uploadVideo(vFile.getInputStream(), vFile.getSize(), gstarContents);
+			jsonRes.setData(videoId);
+			
+			gstarContents.setUrl(videoId);
+			gstarContents.setLocale(locale.getLanguage());
+			service.save(gstarContents, tags);
+		
+		} catch (IOException e) {
+			LOGGER.error(e.toString(), e);
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg(messageSource.getMessage("ex.msg.video.upload.fail", null, locale));
+		}
 		
 		
 		return jsonRes;
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public String saveSuccess(){
+		
+		return "ContentsSuccess";
 	}
 	
 	@RequestMapping(value="/{gstarContentsId}", method = RequestMethod.DELETE)

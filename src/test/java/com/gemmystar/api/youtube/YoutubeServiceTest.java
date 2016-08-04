@@ -26,6 +26,7 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Calendar;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,6 +39,7 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.gemmystar.api.GemmyApplication;
+import com.gemmystar.api.contents.domain.GstarContents;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -70,7 +72,13 @@ public class YoutubeServiceTest {
 		
 		try {
 			if (videoFile.exists()) {
-				youtubeService.uploadVideo(new FileInputStream(videoFile), videoFile.length());
+				
+				GstarContents contents = new GstarContents();
+				Calendar cal = Calendar.getInstance();
+				contents.setSubject("Test Upload via Java on " + cal.getTime());
+				contents.setMemo("Video uploaded via YouTube Data API V3 using the Java library " + "on " + cal.getTime());
+				
+				youtubeService.uploadVideo(new FileInputStream(videoFile), videoFile.length(), contents);
 			}
 		} catch (Exception e) {
 			fail(e.toString());

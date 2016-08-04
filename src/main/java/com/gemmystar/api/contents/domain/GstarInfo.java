@@ -64,10 +64,10 @@ public class GstarInfo implements Serializable {
 	private int warnCnt;//신고횟수
 	
 	@Column(name = "point_cnt")
-	private Long pointCnt;//하트 수
+	private Long pointCnt = 0L;//하트 수
 	
 	@Column(name = "view_cnt")
-	private Long viewCnt;//조회수
+	private Long viewCnt = 0L;//조회수
 	
 	@Column(name = "update_dt")
 	private java.util.Date updateDt;//업데이트 일시

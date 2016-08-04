@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 
+import com.gemmystar.api.contents.domain.GstarContents;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.java6.auth.oauth2.FileCredentialStore;
@@ -164,7 +165,7 @@ public class YoutubeService implements InitializingBean{
 		
 	}
 	
-	public String uploadVideo(InputStream inputStream, long fileSize) {
+	public String uploadVideo(InputStream inputStream, long fileSize, GstarContents contents) {
 		
 		String videoID = null;
 		// Scope required to upload to YouTube.
@@ -201,8 +202,11 @@ public class YoutubeService implements InitializingBean{
 	         * and use your own standard names.
 	         */
 	        Calendar cal = Calendar.getInstance();
-	        snippet.setTitle("Test Upload via Java on " + cal.getTime());
-	        snippet.setDescription("Video uploaded via YouTube Data API V3 using the Java library " + "on " + cal.getTime());
+	        //snippet.setTitle("Test Upload via Java on " + cal.getTime());
+	        //snippet.setDescription("Video uploaded via YouTube Data API V3 using the Java library " + "on " + cal.getTime());
+	        snippet.setTitle(contents.getSubject());
+	        snippet.setDescription(contents.getMemo());
+	        
 
 	        // Set completed snippet to the video object.
 	        videoObjectDefiningMetadata.setSnippet(snippet);
