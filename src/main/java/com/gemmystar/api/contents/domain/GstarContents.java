@@ -24,6 +24,8 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.tag.domain.GstarHashTag;
@@ -75,6 +77,7 @@ public class GstarContents implements Serializable {
 	@Column(name = "locale")
 	private String locale;
 	
+	@JsonSerialize(using = JsonDateSerializer.class)
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
 	
@@ -98,6 +101,11 @@ public class GstarContents implements Serializable {
 	 */
 	public GstarContents() {
 		
+	}
+
+	public GstarContents(Long id) {
+		super();
+		this.id = id;
 	}
 
 	/**

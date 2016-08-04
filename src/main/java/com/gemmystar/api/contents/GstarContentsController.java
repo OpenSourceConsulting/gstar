@@ -19,7 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
+import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
+import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.youtube.YoutubeService;
 
 
@@ -114,6 +116,19 @@ public class GstarContentsController {
 		GstarContents contents = service.getGstarContents(gstarContentsId);
 		
 		jsonRes.setData(contents);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/view", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse increaseViewCnt(SimpleJsonResponse jsonRes, @RequestParam("gstarContentsId") Long gstarContentsId,
+			@RequestParam(value = "gstarRoomId", required = false) Long gstarRoomId){
+		
+		GstarAccount account = WebUtil.getLoginUser();
+	
+		service.increaseViewCnt(gstarContentsId, account.getGstarUser().getId(), gstarRoomId);
+
 		
 		return jsonRes;
 	}

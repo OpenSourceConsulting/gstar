@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
+
+import com.gemmystar.api.code.domain.CommonCodePK;
 
 /**
  * <pre>
@@ -18,23 +21,21 @@ import javax.persistence.Table;
  * @version 1.0
  */
 @Entity
-@Table(name = "gstar_like")
+@Table(name = "gstar_view")
+@IdClass(GstarViewPK.class)
 public class GstarView implements Serializable{
 
 	private static final long serialVersionUID = -1382292277139367158L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "id")
-	private Long id;//
-	
 	@Column(name = "gstar_user_id")
 	private Long gstarUserId;//
 	
+	@Id
 	@Column(name = "gstar_contents_id")
 	private Long gstarContentsId;//
 	
-	@Column(name = "like_cnt")
+	@Column(name = "view_cnt")
 	private Long viewCnt;//조회 횟수
 
 	/**
@@ -46,18 +47,11 @@ public class GstarView implements Serializable{
 		
 	}
 
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
+	public GstarView(Long gstarUserId, Long gstarContentsId, Long viewCnt) {
+		super();
+		this.gstarUserId = gstarUserId;
+		this.gstarContentsId = gstarContentsId;
+		this.viewCnt = viewCnt;
 	}
 
 	/**

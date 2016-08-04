@@ -39,6 +39,8 @@ import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.contents.domain.GstarContents;
 
 /**
@@ -66,11 +68,12 @@ public class GstarRoom implements Serializable{
 	private Long masterContentsId;
 	
 	@Column(name = "view_sum")
-	private Long viewSum;//
+	private Long viewSum = 0L;//
 	
 	@Column(name = "point_sum")
-	private Long pointSum;//
+	private Long pointSum = 0L;//
 	
+	@JsonSerialize(using = JsonDateSerializer.class)
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
 	

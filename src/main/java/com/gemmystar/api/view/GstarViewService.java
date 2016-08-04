@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gemmystar.api.view.domain.GstarView;
+import com.gemmystar.api.view.domain.GstarViewPK;
 import com.gemmystar.api.view.domain.GstarViewRepository;
 
 /**
@@ -32,18 +33,13 @@ public class GstarViewService {
 	public List<GstarView> getGstarLikeAllList(){
 		return repository.findAll();
 	}
-	/*
-	public int getGstarLikeListTotalCount(GridParam gridParam){
-		
-		return repository.getGstarLikeListTotalCount(gridParam);
-	}
-	*/
-	public GstarView getGstarLike(Long likeId){
-		return repository.findOne(likeId);
+
+	public GstarView getGstarLike(Long userId, Long contentsId){
+		return repository.findOne(new GstarViewPK(userId, contentsId));
 	}
 	
-	public void deleteGstarLike(Long likeId){
-		repository.delete(likeId);
+	public void deleteGstarLike(Long userId, Long contentsId){
+		repository.delete(new GstarViewPK(userId, contentsId));
 	}
 
 }

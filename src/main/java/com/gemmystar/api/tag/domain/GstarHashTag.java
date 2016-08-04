@@ -33,6 +33,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gemmystar.api.contents.domain.GstarContents;
@@ -57,6 +58,9 @@ public class GstarHashTag implements Serializable{
 	
 	@Column(name = "tag")
 	private String tag;//
+	
+	@Column(insertable = false, updatable = false)
+	private int cnt;
 	
 	@ManyToMany(mappedBy = "gstarHashTags", fetch = FetchType.LAZY)
 	@JsonIgnore
@@ -110,6 +114,14 @@ public class GstarHashTag implements Serializable{
 
 	public void setGstarContentsList(List<GstarContents> gstarContentsList) {
 		this.gstarContentsList = gstarContentsList;
+	}
+
+	public int getCnt() {
+		return cnt;
+	}
+
+	public void setCnt(int cnt) {
+		this.cnt = cnt;
 	}
 
 }

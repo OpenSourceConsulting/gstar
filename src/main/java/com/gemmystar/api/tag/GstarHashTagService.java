@@ -39,12 +39,7 @@ public class GstarHashTagService {
 	public List<GstarHashTag> getGstarHashTagAllList(){
 		return repository.findAll();
 	}
-	/*
-	public int getGstarHashTagListTotalCount(GridParam gridParam){
-		
-		return repository.getGstarHashTagListTotalCount(gridParam);
-	}
-	*/
+	
 	public GstarHashTag getGstarHashTag(Long tagId){
 		return repository.findOne(tagId);
 	}
@@ -52,6 +47,10 @@ public class GstarHashTagService {
 	
 	public void deleteGstarHashTag(Long tagId){
 		repository.delete(tagId);
+	}
+	
+	public List<GstarHashTag> findMainTags() {
+		return repository.findMainTags();
 	}
 
 }

@@ -48,6 +48,7 @@ public class CommonCode implements Serializable {
 	@Column(name = "group_cd")
 	private String groupCd;//그룹코드
 	
+	@Id
 	@Column(name = "code")
 	private String code;//코드
 	
