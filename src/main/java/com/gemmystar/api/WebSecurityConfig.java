@@ -3,7 +3,8 @@ package com.gemmystar.api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.RememberMeAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -11,7 +12,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 
+import com.gemmystar.api.common.security.RefreshableRememberMeAuthenticationFilter;
 import com.gemmystar.api.user.GstarAccountService;
 
 /**
@@ -23,13 +28,15 @@ import com.gemmystar.api.user.GstarAccountService;
  */
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	private final static String REMEMBER_ME_KEY = "rem-me-key";
 
 	@Autowired
 	private SecurityProperties security;
 
 	@Autowired
 	private GstarAccountService userService;
-
+	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers(
@@ -70,18 +77,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/auth/onAfterLogout")
 				
 			//remember me configuration
-			.and().rememberMe(). 
-                key("rem-me-key").
-                rememberMeParameter("remember-me-gstar").
-                rememberMeCookieName("gstar-remember-me").
-                tokenValiditySeconds(86400)
-			.and().csrf()
-				.disable();
+			.and()
+			.addFilter(rememberMeAuthenticationFilter())
+			//.rememberMe()
+                //.key(REMEMBER_ME_KEY)
+                //.rememberMeParameter("remember-me-gstar")
+                //.rememberMeCookieName("gstar-remember-me")
+                //.tokenValiditySeconds(60 * 60 * 24)
+                //.rememberMeServices(tokenBasedRememberMeServices())
+			.csrf().disable()
+			.setSharedObject(RememberMeServices.class, tokenBasedRememberMeServices());
 	}
 
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userService).passwordEncoder(passwordEncoder());
+		auth
+		.authenticationProvider(rememberMeAuthenticationProvider())
+		.userDetailsService(userService).passwordEncoder(passwordEncoder());
 	}
 	
 	/**
@@ -95,6 +107,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder passwordEncoder() {
 		return NoOpPasswordEncoder.getInstance();
 		// return new BCryptPasswordEncoder();
+	}
+	
+	@Bean
+	public RememberMeAuthenticationFilter rememberMeAuthenticationFilter() throws Exception {
+		
+		return new RefreshableRememberMeAuthenticationFilter(authenticationManager(), tokenBasedRememberMeServices());
+	}
+	
+	@Bean
+    public TokenBasedRememberMeServices tokenBasedRememberMeServices() {
+        TokenBasedRememberMeServices rememberMeServices = new TokenBasedRememberMeServices(REMEMBER_ME_KEY, userService);
+        //rememberMeServices.setAlwaysRemember(true);
+        //rememberMeServices.setTokenValiditySeconds(60 * 60 * 24 * 31);
+        rememberMeServices.setTokenValiditySeconds(60 * 60 * 24);//86400
+        rememberMeServices.setCookieName("gstar-remember-me");
+        rememberMeServices.setParameter("remember-me-gstar");
+        return rememberMeServices;
+    }
+	
+	@Bean
+	public RememberMeAuthenticationProvider rememberMeAuthenticationProvider() {
+		return new RememberMeAuthenticationProvider(REMEMBER_ME_KEY);
 	}
 
 }
