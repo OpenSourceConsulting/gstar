@@ -77,7 +77,7 @@ public class GstarRoomService {
 		Page<GstarRoom> page = null;
 
 		if (search != null) {
-			Specifications<GstarRoom> spec = Specifications.where(GstarRoomSpecs.likeSubject(search));
+			Specifications<GstarRoom> spec = Specifications.where(GstarRoomSpecs.likeSubject(search)).or(GstarRoomSpecs.likeTag(search));
 			
 			page = repository.findAll(spec, pageable);
 		} else {

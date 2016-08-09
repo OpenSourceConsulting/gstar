@@ -132,6 +132,18 @@ public class GstarContentsController {
 		
 		return jsonRes;
 	}
+	
+	@RequestMapping(value="/{gstarContentsId}/warn", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse warnGstarContents(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId,
+			@RequestParam(value = "warnMemo") String warnMemo, @RequestParam(value = "warnTypeCd") String warnTypeCd){
+	
+		GstarAccount account = WebUtil.getLoginUser();
+		
+		service.warnGstarContents(account.getGstarUser().getId(), gstarContentsId, warnMemo, warnTypeCd);
+		
+		return jsonRes;
+	}
 
 }
 //end of GstarContentsController.java

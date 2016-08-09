@@ -77,7 +77,7 @@ public class GstarUser implements Serializable {
 	@Column(name = "bank_account")
 	private String bankAccount;//은행계좌
 	
-	@Column(name = "create_dt")
+	@Column(name = "create_dt", updatable = false)
 	private java.util.Date createDt;//생성일시
 	
 	@OneToMany(mappedBy = "gstarUser", fetch = FetchType.LAZY)

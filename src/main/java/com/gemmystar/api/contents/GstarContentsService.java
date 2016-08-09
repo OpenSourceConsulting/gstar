@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
+import com.gemmystar.api.contents.domain.GstarContentsWarn;
+import com.gemmystar.api.contents.domain.GstarContentsWarnRepository;
 import com.gemmystar.api.contents.domain.GstarInfo;
 import com.gemmystar.api.room.GstarRoomService;
 import com.gemmystar.api.room.domain.GstarRoomRepository;
@@ -50,6 +52,9 @@ public class GstarContentsService {
 	@Autowired
 	private GstarRoomRepository roomRepo;
 	
+	@Autowired
+	private GstarContentsWarnRepository warnRepo;
+	
 	public GstarContentsService() {
 		
 	}
@@ -91,6 +96,11 @@ public class GstarContentsService {
 		if (gstarRoomId != null && gstarRoomId > 0 ) {
 			roomRepo.increaseViewSum(gstarRoomId);
 		}
+	}
+	
+	public void warnGstarContents(Long gstarUserId, Long gstarContentsId, String warnMemo, String warnTypeCd){
+		
+		warnRepo.save(new GstarContentsWarn(gstarUserId, gstarContentsId, warnMemo, warnTypeCd));
 	}
 
 }

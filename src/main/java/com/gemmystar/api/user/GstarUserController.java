@@ -6,11 +6,13 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gemmystar.api.common.model.GridJsonResponse;
@@ -100,9 +102,9 @@ public class GstarUserController {
 		return jsonRes;
 	}
 	
-	@RequestMapping(value="/{userId}", method = RequestMethod.DELETE)
+	@RequestMapping(value="/{gstarUserId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("userId") Long userId){
+	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
 		
 		service.deleteGstarUser(userId);
 		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
@@ -110,11 +112,40 @@ public class GstarUserController {
 		return jsonRes;
 	}
 	
+
 	@RequestMapping(value="/{gstarUserId}", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getGstarUser(SimpleJsonResponse jsonRes, @PathVariable("userId") Long userId){
+	public SimpleJsonResponse getGstarUser(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
 	
 		jsonRes.setData(service.getGstarUser(userId));
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/my", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getMyInfo(SimpleJsonResponse jsonRes){
+	
+		GstarAccount account = (GstarAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		account.getGstarUser().getId();//lazy loading.
+		
+		jsonRes.setData(account.getGstarUser());
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/my", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse saveMyInfo(SimpleJsonResponse jsonRes, @RequestParam("id") Long gstarUserId, GstarUser gstarUser, Locale locale){
+	
+		GstarAccount account = (GstarAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if (account.getGstarUser().getId() != gstarUser.getId()) {
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg(messageSource.getMessage("user.my.update.denied", null, locale));
+		} else {
+			service.save(gstarUser);
+		}
 		
 		return jsonRes;
 	}
