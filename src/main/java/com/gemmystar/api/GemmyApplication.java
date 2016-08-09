@@ -26,6 +26,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "com.gemmystar.api" })
+@EnableCaching
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class GemmyApplication extends SpringBootServletInitializer {
 

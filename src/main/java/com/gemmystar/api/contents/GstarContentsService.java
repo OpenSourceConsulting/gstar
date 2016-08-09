@@ -3,14 +3,18 @@ package com.gemmystar.api.contents;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
+import com.gemmystar.api.contents.domain.GstarContentsSpecs;
 import com.gemmystar.api.contents.domain.GstarContentsWarn;
 import com.gemmystar.api.contents.domain.GstarContentsWarnRepository;
-import com.gemmystar.api.contents.domain.GstarInfo;
 import com.gemmystar.api.room.GstarRoomService;
 import com.gemmystar.api.room.domain.GstarRoomRepository;
 import com.gemmystar.api.tag.GstarContentsTagsService;
@@ -71,6 +75,17 @@ public class GstarContentsService {
 	
 	public List<GstarContents> getGstarContentsAllList(){
 		return repository.findAll();
+	}
+	
+	//@Cacheable("contents")
+	public Page<GstarContents> getUserGstarContentsList(Pageable pageable, Long gstarUserId){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myContents(gstarUserId));
+		
+		Page<GstarContents> page = repository.findAll(spec, pageable);
+		//Page<GstarContents> page = repository.getMyContents(new GstarUser(gstarUserId), pageable);
+		
+		return page;
 	}
 	
 	public GstarContents getGstarContents(Long contentsId){

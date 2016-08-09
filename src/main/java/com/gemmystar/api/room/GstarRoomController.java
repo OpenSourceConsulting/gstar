@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gemmystar.api.common.model.SimpleJsonResponse;
+import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.contents.GstarContentsService;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.room.domain.GstarRoom;
@@ -76,6 +77,28 @@ public class GstarRoomController {
 	public SimpleJsonResponse list(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
 	
 		Page<GstarRoom> page = service.getGstarRoomList(pageable, search);
+
+		jsonRes.setData(page);
+		
+		return jsonRes;
+	}
+	
+	/**
+	 * <pre>
+	 * 나의 대결 리스트
+	 * </pre>
+	 * @param jsonRes
+	 * @param pageable
+	 * @param search
+	 * @return
+	 */
+	@RequestMapping(value="/my", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse myList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable){
+		
+		Long gstarUserId = WebUtil.getLoginUserId();
+	
+		Page<GstarRoom> page = service.getUserGstarRoomList(pageable, gstarUserId);
 
 		jsonRes.setData(page);
 		

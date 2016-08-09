@@ -95,6 +95,12 @@ public class GstarUser implements Serializable {
 	 */
 	public GstarUser() {
 	}
+	
+	public GstarUser(Long id) {
+		super();
+		this.id = id;
+	}
+
 
 	/**
 	 * @return the id

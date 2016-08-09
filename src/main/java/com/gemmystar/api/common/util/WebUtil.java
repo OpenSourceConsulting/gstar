@@ -43,9 +43,14 @@ public class WebUtil {
 		return (GstarAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 	
+	public static Long getLoginAccountId() {
+		GstarAccount account = getLoginUser();
+		return account.getId();
+	}
+	
 	public static Long getLoginUserId() {
-		GstarAccount user = getLoginUser();
-		return user.getId();
+		GstarAccount account = getLoginUser();
+		return account.getGstarUser().getId();
 	}
 	
 	public static WebApplicationContext getWebApplicationContext(HttpServletRequest request) {

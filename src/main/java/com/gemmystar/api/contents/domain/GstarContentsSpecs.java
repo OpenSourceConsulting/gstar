@@ -8,6 +8,8 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.gemmystar.api.user.domain.GstarUser;
+
 /**
  * <pre>
  * 
@@ -38,6 +40,21 @@ public class GstarContentsSpecs {
 			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				
 				return cb.like(root.<String>get("subject"), search +"%");
+			}
+			
+		};
+	}
+	
+	public static Specification<GstarContents> myContents(final Long userId) {
+		
+		return new Specification<GstarContents>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				root.join("gstarInfo");
+		
+				return cb.equal(root.<GstarUser>get("gstarUser").get("id"), userId);
 			}
 			
 		};

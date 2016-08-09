@@ -88,6 +88,15 @@ public class GstarRoomService {
 		return page;
 	}
 	
+	public Page<GstarRoom> getUserGstarRoomList(Pageable pageable, Long gstarUserId){
+		
+		Specifications<GstarRoom> spec = Specifications.where(GstarRoomSpecs.myRoom(gstarUserId));
+		
+		Page<GstarRoom> page = repository.findAll(spec, pageable);
+		
+		return page;
+	}
+	
 	public Page<GstarRoom> getGstarRoomBestList(int size){
 		
 		Sort sort = new Sort(Sort.Direction.DESC, "pointSum", "createDt");

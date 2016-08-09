@@ -17,6 +17,7 @@ import org.springframework.data.jpa.domain.Specification;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.tag.domain.GstarContentsTags;
 import com.gemmystar.api.tag.domain.GstarHashTag;
+import com.gemmystar.api.user.domain.GstarUser;
 
 /**
  * <pre>
@@ -56,6 +57,25 @@ public class GstarRoomSpecs {
 				Join<GstarContents, GstarHashTag> tagJoin = contentsJoin.join("gstarHashTags");
 				
 				return cb.like(tagJoin.<String>get("tag"), search +"%");
+			}
+			
+		};
+	}
+	
+	public static Specification<GstarRoom> myRoom(final Long userId) {
+		
+		return new Specification<GstarRoom>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarRoom> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				Subquery<Long> contentsSubquery = query.subquery(Long.class);
+				Root<GstarContents> contents = contentsSubquery.from(GstarContents.class);
+				contentsSubquery.select(contents.<Long>get("gstarRoomId"));
+				contentsSubquery.where(cb.equal(contents.<GstarUser>get("gstarUser").get("id"), userId));
+				
+				
+				return cb.exists(contentsSubquery);
 			}
 			
 		};
