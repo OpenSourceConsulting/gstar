@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,17 +75,47 @@ public class GstarContentsService {
 		}
 	}
 	
-	public List<GstarContents> getGstarContentsAllList(){
-		return repository.findAll();
+	public Page<GstarContents> getGstarContentsList(Pageable pageable, String search){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notMatching());
+		
+		if (search != null) {
+			spec = spec.and(GstarContentsSpecs.search(search));
+		}
+		
+		return repository.findAll(spec, pageable);
 	}
 	
-	//@Cacheable("contents")
+	public List<GstarContents> getRecommandList(){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.recommands());
+		
+		return repository.findAll(spec, new Sort(Direction.DESC, "createDt"));
+	}
+	
 	public Page<GstarContents> getUserGstarContentsList(Pageable pageable, Long gstarUserId){
 		
 		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myContents(gstarUserId));
 		
 		Page<GstarContents> page = repository.findAll(spec, pageable);
 		//Page<GstarContents> page = repository.getMyContents(new GstarUser(gstarUserId), pageable);
+		
+		return page;
+	}
+	
+	/**
+	 * <pre>
+	 * 사용자 즐겨찾기 컨텐츠 목록.사용자가 좋아요(heart)했던 컨텐츠 목록.
+	 * </pre>
+	 * @param pageable
+	 * @param gstarUserId
+	 * @return
+	 */
+	public Page<GstarContents> getUserHeartGstarContentsList(Pageable pageable, Long gstarUserId){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myHeartContents(gstarUserId));
+		
+		Page<GstarContents> page = repository.findAll(spec, pageable);
 		
 		return page;
 	}

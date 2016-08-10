@@ -3,6 +3,8 @@ package com.gemmystar.api.room;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +49,7 @@ public class GstarRoomService {
 	}
 	
 	@Transactional
+	@CacheEvict(cacheNames="rooms", allEntries=true)
 	public void saveWithContents(GstarRoom gstarRoom, GstarContents contents, String[] tags){
 		
 		
@@ -72,6 +75,7 @@ public class GstarRoomService {
 		repository.save(gstarRoom);
 	}
 	
+	@Cacheable("rooms")
 	public Page<GstarRoom> getGstarRoomList(Pageable pageable, String search){
 		
 		Page<GstarRoom> page = null;

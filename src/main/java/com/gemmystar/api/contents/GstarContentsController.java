@@ -62,14 +62,24 @@ public class GstarContentsController {
 		
 	}
 	
-	@RequestMapping(value="/all", method = RequestMethod.GET)
+	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody
-	public GridJsonResponse allList(GridJsonResponse jsonRes){
+	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
 	
-		List<GstarContents> list = service.getGstarContentsAllList();
+		Page<GstarContents> list = service.getGstarContentsList(pageable, search);
 
-		jsonRes.setTotal(list.size());
-		jsonRes.setList(list);
+		jsonRes.setData(list);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/recommands", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse recommandList(SimpleJsonResponse jsonRes){
+	
+		List<GstarContents> list = service.getRecommandList();
+
+		jsonRes.setData(list);
 		
 		return jsonRes;
 	}
@@ -81,6 +91,19 @@ public class GstarContentsController {
 		Long gstarUserId = WebUtil.getLoginUserId();
 		
 		Page<GstarContents> list = service.getUserGstarContentsList(pageable, gstarUserId);
+
+		jsonRes.setData(list);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/myhearts", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse myHeartList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable){
+	
+		Long gstarUserId = WebUtil.getLoginUserId();
+		
+		Page<GstarContents> list = service.getUserHeartGstarContentsList(pageable, gstarUserId);
 
 		jsonRes.setData(list);
 		

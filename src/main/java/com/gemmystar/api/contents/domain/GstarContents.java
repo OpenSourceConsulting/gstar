@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -30,6 +31,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.common.util.WebUtil;
+import com.gemmystar.api.point.domain.GstarPointHistory;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.tag.domain.GstarHashTag;
 import com.gemmystar.api.user.domain.GstarAccount;
@@ -95,6 +97,10 @@ public class GstarContents implements Serializable {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "gstar_contents_tags", joinColumns = @JoinColumn(name = "gstar_contents_id"), inverseJoinColumns = @JoinColumn(name = "gstar_hash_tag_id"))
 	private List<GstarHashTag> gstarHashTags;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY)
+	private List<GstarPointHistory> gstarPointHistories;
 
 	/**
 	 * <pre>
@@ -262,6 +268,14 @@ public class GstarContents implements Serializable {
 
 	public void setGstarHashTags(List<GstarHashTag> gstarHashTags) {
 		this.gstarHashTags = gstarHashTags;
+	}
+
+	public List<GstarPointHistory> getGstarPointHistories() {
+		return gstarPointHistories;
+	}
+
+	public void setGstarPointHistories(List<GstarPointHistory> gstarPointHistories) {
+		this.gstarPointHistories = gstarPointHistories;
 	}
 
 	@PrePersist

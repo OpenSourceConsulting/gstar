@@ -22,7 +22,7 @@ public interface GstarContentsRepository extends JpaRepository<GstarContents, Lo
 
 	List<GstarContents> findByGstarRoomId(Long roomId);
 	
-	@Query(value = "select gm from GstarContents gm where gm.gstarRoomId = ?1 and gm.memberTypeCd = '2'")
+	@Query(value = "select gm from GstarContents gm where gm.gstarRoomId = ?1 and gm.memberTypeCd = '2' and gm.statusCd != '3'")
 	List<GstarContents> findChallengerContents(Long roomId);
 	
 	@Query(value = "SELECT DISTINCT gc FROM GstarContents gc INNER JOIN gc.gstarInfo gi INNER JOIN gc.gstarHashTags ht WHERE gc.gstarUser = ?1")
