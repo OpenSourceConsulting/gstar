@@ -1,5 +1,5 @@
 
-package com.gemmystar.api.contents.domain;
+package com.gemmystar.api.contents.specs;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -10,6 +10,7 @@ import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.point.domain.GstarPointHistory;
 import com.gemmystar.api.tag.domain.GstarHashTag;
 import com.gemmystar.api.user.domain.GstarUser;

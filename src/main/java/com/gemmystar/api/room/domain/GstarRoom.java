@@ -77,6 +77,16 @@ public class GstarRoom implements Serializable{
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
 	
+	@Column(name = "battle_status_cd")
+	private String battleStatusCd = "1";
+	
+	@Column(name = "battle_seq")
+	private int battleSeq = 1;// 배틀 순차수
+	
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@Column(name = "start_dt")
+	private Date startDt;
+	
 	@OneToOne
 	@JoinColumn(name = "master_contents_id", insertable = false, updatable = false)
 	@JsonManagedReference(value = "masterCnts")
@@ -176,9 +186,34 @@ public class GstarRoom implements Serializable{
 		this.challengerContentsList = challengerContentsList;
 	}
 
+	public String getBattleStatusCd() {
+		return battleStatusCd;
+	}
+
+	public void setBattleStatusCd(String battleStatusCd) {
+		this.battleStatusCd = battleStatusCd;
+	}
+
+	public int getBattleSeq() {
+		return battleSeq;
+	}
+
+	public void setBattleSeq(int battleSeq) {
+		this.battleSeq = battleSeq;
+	}
+
+	public Date getStartDt() {
+		return startDt;
+	}
+
+	public void setStartDt(Date startDt) {
+		this.startDt = startDt;
+	}
+
 	@PrePersist
 	public void preInsert() {
 		this.createDt = new Date();
+		this.startDt = this.createDt;
 	}
 
 }

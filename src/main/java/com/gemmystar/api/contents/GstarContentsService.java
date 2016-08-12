@@ -14,9 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
-import com.gemmystar.api.contents.domain.GstarContentsSpecs;
 import com.gemmystar.api.contents.domain.GstarContentsWarn;
 import com.gemmystar.api.contents.domain.GstarContentsWarnRepository;
+import com.gemmystar.api.contents.specs.GstarContentsSpecs;
 import com.gemmystar.api.room.GstarRoomService;
 import com.gemmystar.api.room.domain.GstarRoomRepository;
 import com.gemmystar.api.tag.GstarContentsTagsService;

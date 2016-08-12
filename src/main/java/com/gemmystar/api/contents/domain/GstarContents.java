@@ -91,6 +91,11 @@ public class GstarContents implements Serializable {
 	@JoinColumn(name = "gstar_user_id")
 	private GstarUser gstarUser;
 	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "gstar_room_id", insertable = false, updatable = false)
+	private GstarRoom gstarRoom;
+	
 	@OneToOne(mappedBy = "gstarContents", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
 	private GstarInfo gstarInfo;
 	
@@ -276,6 +281,14 @@ public class GstarContents implements Serializable {
 
 	public void setGstarPointHistories(List<GstarPointHistory> gstarPointHistories) {
 		this.gstarPointHistories = gstarPointHistories;
+	}
+
+	public GstarRoom getGstarRoom() {
+		return gstarRoom;
+	}
+
+	public void setGstarRoom(GstarRoom gstarRoom) {
+		this.gstarRoom = gstarRoom;
 	}
 
 	@PrePersist

@@ -30,12 +30,22 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
+/**
+ * Spring Boot Application
+ * 
+ * - required java option : -Dspring.profiles.active=[prd]
+ * 
+ * @author BongJin Kwon
+ * 
+ */
 @Configuration
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "com.gemmystar.api" })
 @EnableCaching
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableScheduling
 public class GemmyApplication extends SpringBootServletInitializer {
 
 	@Override

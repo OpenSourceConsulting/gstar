@@ -1,5 +1,6 @@
 package com.gemmystar.api.contents;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class GstarInfoService {
 	}
 	
 	public void increaseViewCnt(Long gstarContentsId) {
-		repository.increaseViewCnt(new GstarContents(gstarContentsId));
+		repository.increaseViewCnt(new GstarContents(gstarContentsId), new Date());
 	}
 
 }
