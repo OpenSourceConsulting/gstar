@@ -43,6 +43,10 @@ public class GemmyConstant {
 	
 	/** 추천 영상 */
 	public static final String CODE_CNTS_DIV_RECOMMAND = "2";
+	/** 명예의 전당 */
+	public static final String CODE_CNTS_DIV_HONOR = "4";
+	
+	public static final String S3_KEY_PREFIX_VIDEO = "video/";
 
 	
 

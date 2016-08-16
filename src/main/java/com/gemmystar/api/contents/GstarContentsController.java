@@ -1,6 +1,7 @@
 package com.gemmystar.api.contents;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -8,6 +9,7 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +53,9 @@ public class GstarContentsController {
 	
 	@Autowired
 	private YoutubeService youtubeService;
+	
+	@Value("${gemmy.upload.location}")
+	private String uploadPath;
 
 
 	/**
@@ -116,12 +121,18 @@ public class GstarContentsController {
 			@RequestParam("vFile") MultipartFile vFile, Locale locale){
 		
 		try {
+			
+			File uploadedFile = new File(uploadPath + vFile.getOriginalFilename());
+			vFile.transferTo(uploadedFile);
+			
 			String videoId = youtubeService.uploadVideo(vFile.getInputStream(), vFile.getSize(), gstarContents);
 			jsonRes.setData(videoId);
 			
 			gstarContents.setUrl(videoId);
 			gstarContents.setLocale(locale.getLanguage());
 			service.save(gstarContents, tags);
+			
+			service.backupForS3(uploadedFile, gstarContents.getId(), videoId);
 		
 		} catch (IOException e) {
 			LOGGER.error(e.toString(), e);

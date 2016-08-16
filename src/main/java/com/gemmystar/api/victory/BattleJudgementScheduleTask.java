@@ -35,9 +35,12 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
 import com.gemmystar.api.contents.domain.GstarInfo;
 import com.gemmystar.api.contents.domain.GstarInfoRepository;
+import com.gemmystar.api.contents.specs.GstarContentsSpecs;
 import com.gemmystar.api.contents.specs.GstarInfoSpecs;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.room.domain.GstarRoomRepository;
@@ -79,7 +82,7 @@ public class BattleJudgementScheduleTask {
 	}
 	
 	@Scheduled(cron="0 0/10 * * * *")
-	//@Scheduled(fixedRate = 60000)
+	//@Scheduled(fixedRate = 10000)
 	public void judge() {
 		
 		Calendar cal = Calendar.getInstance();
@@ -93,6 +96,23 @@ public class BattleJudgementScheduleTask {
 		
 		for (GstarRoom gstarRoom : rooms) {
 			doJudge(gstarRoom);
+			decideHonoraryWinner(gstarRoom.getId());
+		}
+	}
+	
+	/**
+	 * <pre>
+	 * 명예의 전당 선정.
+	 * </pre>
+	 * @param gstarRoomId
+	 */
+	protected void decideHonoraryWinner(Long gstarRoomId) {
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.fiveWinner(1L));
+		GstarContents gstarContents = contentsRepo.findOne(spec);
+		
+		if (gstarContents != null) {
+			gstarContents.setDivCd(GemmyConstant.CODE_CNTS_DIV_HONOR);
+			contentsRepo.save(gstarContents);
 		}
 	}
 	

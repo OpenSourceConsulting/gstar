@@ -1,8 +1,13 @@
 package com.gemmystar.api.room;
 
+import java.io.File;
+
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -12,6 +17,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.common.util.FileUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
 import com.gemmystar.api.room.domain.GstarRoom;
@@ -31,6 +42,8 @@ import com.gemmystar.api.tag.domain.GstarHashTag;
  */
 @Service
 public class GstarRoomService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarRoomService.class);
 
 	@Autowired
 	private GstarRoomRepository repository;
@@ -70,6 +83,7 @@ public class GstarRoomService {
 			contentsTagsService.save(new GstarContentsTags(contents.getId(), tag.getId()));
 		}
 	}
+	
 	
 	public void save(GstarRoom gstarRoom){
 		repository.save(gstarRoom);

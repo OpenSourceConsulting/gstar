@@ -51,7 +51,7 @@ public class GstarInfoSpecs {
 			@Override
 			public Predicate toPredicate(Root<GstarInfo> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				
-				Join<GstarInfo, GstarContents> contentsJoin = root.join("gstarContents");
+				//Join<GstarInfo, GstarContents> contentsJoin = root.join("gstarContents");
 				
 				Subquery<Long> maxSubquery = query.subquery(Long.class);
 				Root<GstarInfo> subRoot = maxSubquery.from(GstarInfo.class);
@@ -61,7 +61,8 @@ public class GstarInfoSpecs {
 				maxSubquery.where(cb.equal(subJoin.get("gstarRoomId"), gstarRoomId));
 				
 				
-				return cb.and(cb.equal(contentsJoin.get("gstarRoomId"), gstarRoomId), cb.equal(root.get("pointCnt"), maxSubquery));
+				return cb.and(cb.equal(root.get("gstarContents").get("gstarRoomId"), gstarRoomId), cb.equal(root.get("pointCnt"), maxSubquery));// cross join
+				//return cb.and(cb.equal(contentsJoin.get("gstarRoomId"), gstarRoomId), cb.equal(root.get("pointCnt"), maxSubquery)); // inner join
 			}
 			
 		};

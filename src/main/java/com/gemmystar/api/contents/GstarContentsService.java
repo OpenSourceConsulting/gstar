@@ -1,9 +1,12 @@
 package com.gemmystar.api.contents;
 
+import java.io.File;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,6 +15,12 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.common.util.FileUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
 import com.gemmystar.api.contents.domain.GstarContentsWarn;
@@ -36,6 +45,8 @@ import com.gemmystar.api.view.domain.GstarViewRepository;
  */
 @Service
 public class GstarContentsService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarContentsService.class);
 
 	@Autowired
 	private GstarContentsRepository repository;
@@ -61,6 +72,12 @@ public class GstarContentsService {
 	@Autowired
 	private GstarContentsWarnRepository warnRepo;
 	
+	@Value("${gemmy.s3.bucketName}")
+	private String s3BucketName;
+	
+	@Autowired
+	private S3UploadScheduledTask s3Uploader;
+	
 	public GstarContentsService() {
 		
 	}
@@ -73,6 +90,21 @@ public class GstarContentsService {
 			
 			contentsTagsService.save(new GstarContentsTags(gstarContents.getId(), tag.getId()));
 		}
+	}
+	
+	public void uploadToS3(File uploadedFile, Long gstarContentsId, String youtubeId) {
+		AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+        LOGGER.debug("Uploading a new object to S3 from a file\n");
+        String keyName = GemmyConstant.S3_KEY_PREFIX_VIDEO + "C" + gstarContentsId + "_" + youtubeId + "." + FileUtil.getExtension(uploadedFile);
+        s3client.putObject(new PutObjectRequest(s3BucketName, keyName, uploadedFile));
+	}
+	
+	public void backupForS3(File uploadedFile, Long gstarContentsId, String youtubeId) {
+		
+        String backupFileName = "C" + gstarContentsId + "_" + youtubeId + "." + FileUtil.getExtension(uploadedFile);
+        uploadedFile.renameTo(new File(s3Uploader.getBackupPath() + File.separator + backupFileName));
+        
+        LOGGER.debug("backup {}", backupFileName);
 	}
 	
 	public Page<GstarContents> getGstarContentsList(Pageable pageable, String search){

@@ -115,6 +115,27 @@ public class GstarContentsSpecs {
 		};
 	}
 	
+	/**
+	 * <pre>
+	 * gstarRoomId 에서 5번 우승자 찾기.
+	 * </pre>
+	 * @param gstarRoomId
+	 * @return
+	 */
+	public static Specification<GstarContents> fiveWinner(final Long gstarRoomId) {
+		
+		return new Specification<GstarContents>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				return cb.and( cb.equal(root.<Long>get("gstarRoomId"), gstarRoomId), cb.equal(root.get("gstarInfo").<Integer>get("victoryCnt"), 5));
+			}
+			
+		};
+	}
+	
+	/*
 	public static Specification<GstarContents> eqCode(final String codeAttributeName, final String code) {
 		
 		return new Specification<GstarContents>() {
@@ -127,8 +148,7 @@ public class GstarContentsSpecs {
 			
 		};
 	}
+	*/
 	
-	
-
 }
 //end of GstarContentsSpecs.java

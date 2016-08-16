@@ -1,12 +1,15 @@
 package com.gemmystar.api.room;
 
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +56,9 @@ public class GstarRoomController {
 	
 	@Autowired
 	private YoutubeService youtubeService;
+	
+	@Value("${gemmy.upload.location}")
+	private String uploadPath;
 
 	/**
 	 * <pre>
@@ -133,13 +139,18 @@ public class GstarRoomController {
 		
 		
 		try{
-			String videoId = youtubeService.uploadVideo(vFile.getInputStream(), vFile.getSize(), contents);
+			File uploadedFile = new File(uploadPath + vFile.getOriginalFilename());
+			vFile.transferTo(uploadedFile);
+			
+			String videoId = youtubeService.uploadVideo(new FileInputStream(uploadedFile), vFile.getSize(), contents);
 			jsonRes.setData(videoId);
 			
 			contents.setUrl(videoId);
 			contents.setLocale(locale.getLanguage());
 			
 			service.saveWithContents(gstarRoom, contents, tags);
+			
+			contentsService.backupForS3(uploadedFile, contents.getId(), videoId);
 			
 		} catch (IOException e) {
 			LOGGER.error(e.toString(), e);
