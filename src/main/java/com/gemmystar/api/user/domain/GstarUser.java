@@ -77,6 +77,9 @@ public class GstarUser implements Serializable {
 	@Column(name = "bank_account")
 	private String bankAccount;//은행계좌
 	
+	@Column(name = "fcm_token")
+	private String fcmToken;
+	
 	@Column(name = "create_dt", updatable = false)
 	private java.util.Date createDt;//생성일시
 	
@@ -198,6 +201,22 @@ public class GstarUser implements Serializable {
 	 */
 	public void setBankAccount(String bankAccount) {
 		this.bankAccount = bankAccount;
+	}
+
+	public String getFcmToken() {
+		return fcmToken;
+	}
+
+	public void setFcmToken(String fcmToken) {
+		this.fcmToken = fcmToken;
+	}
+
+	public List<GstarContents> getGstarContents() {
+		return gstarContents;
+	}
+
+	public void setGstarContents(List<GstarContents> gstarContents) {
+		this.gstarContents = gstarContents;
 	}
 
 	/**

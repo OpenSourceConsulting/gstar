@@ -69,8 +69,8 @@ public class S3UploadScheduledTask implements InitializingBean {
 		
 	}
 	
-	//@Scheduled(cron="0 0/10 * * * *")
-	@Scheduled(fixedRate = 15000)
+	@Scheduled(cron="0 0/10 * * * *")
+	//@Scheduled(fixedRate = 15000)
 	public void upload() {
 		
 		
@@ -83,7 +83,7 @@ public class S3UploadScheduledTask implements InitializingBean {
 			
 		});
 		
-		LOGGER.debug("file size : {}", files.length);
+		LOGGER.debug("files length : {}", files.length);
 		
 		for (int i = 0; i < files.length; i++) {
 			uploadToS3(files[i]);
