@@ -125,7 +125,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         TokenBasedRememberMeServices rememberMeServices = new TokenBasedRememberMeServices(REMEMBER_ME_KEY, userService);
         //rememberMeServices.setAlwaysRemember(true);
         //rememberMeServices.setTokenValiditySeconds(60 * 60 * 24 * 31);
-        rememberMeServices.setTokenValiditySeconds(60 * 60 * 24);//86400
+        //rememberMeServices.setTokenValiditySeconds(60 * 60 * 24);//86400, default 2weeks.
         rememberMeServices.setCookieName("gstar-remember-me");
         rememberMeServices.setParameter("remember-me-gstar");
         return rememberMeServices;
