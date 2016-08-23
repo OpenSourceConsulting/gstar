@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.transaction.Transactional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +114,7 @@ public class BattleJudgementScheduleTask {
 	 * @param gstarRoomId
 	 */
 	protected void decideHonoraryWinner(Long gstarRoomId) {
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.fiveWinner(1L));
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.fiveWinner(gstarRoomId));
 		GstarContents gstarContents = contentsRepo.findOne(spec);
 		
 		if (gstarContents != null) {
@@ -121,7 +123,7 @@ public class BattleJudgementScheduleTask {
 		}
 	}
 	
-	
+	@Transactional
 	protected void doJudge(GstarRoom gstarRoom) {
 		
 		Specifications<GstarInfo> infoSpec = Specifications.where(GstarInfoSpecs.topGstarInfos(gstarRoom.getId()));

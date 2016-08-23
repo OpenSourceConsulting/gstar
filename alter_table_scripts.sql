@@ -77,3 +77,16 @@ INSERT INTO `common_code` VALUES ('bank_cmpy', '13', '경남은행', 13, NULL,'\
 INSERT INTO `common_code` VALUES ('bank_cmpy', '14', '전북은행', 14, NULL,'\0');
 INSERT INTO `common_code` VALUES ('bank_cmpy', '15', '제주은행', 15, NULL,'\0');
 INSERT INTO `common_code` VALUES ('bank_cmpy', '16', '축협', 16, NULL,'\0');
+
+CREATE TABLE `gstar_room_contents` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `gstar_room_id` bigint(20) unsigned NOT NULL,
+  `gstar_contents_id` bigint(20) unsigned NOT NULL,
+  `start_dt` datetime DEFAULT NULL COMMENT '배틀 참여시작일시',
+  `end_dt` datetime DEFAULT NULL COMMENT '배틀 참여종료일시',
+  PRIMARY KEY (`id`),
+  KEY `fk_gstar_room_contents_gstar_room1_idx` (`gstar_room_id`),
+  KEY `fk_gstar_room_contents_gstar_contents1_idx` (`gstar_contents_id`),
+  CONSTRAINT `fk_gstar_room_contents_gstar_contents1` FOREIGN KEY (`gstar_contents_id`) REFERENCES `gstar_contents` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_gstar_room_contents_gstar_room1` FOREIGN KEY (`gstar_room_id`) REFERENCES `gstar_room` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;

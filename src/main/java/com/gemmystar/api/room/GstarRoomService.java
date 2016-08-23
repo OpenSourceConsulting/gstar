@@ -126,6 +126,7 @@ public class GstarRoomService {
 	 * @param gstarRoom
 	 * @param battleSeq 시작할 주차수.
 	 */
+	@Transactional
 	public void startBattle(GstarRoom gstarRoom, int battleSeq) {
 		gstarRoom.setBattleSeq(battleSeq);
 		gstarRoom.setStartDt(new Date());
