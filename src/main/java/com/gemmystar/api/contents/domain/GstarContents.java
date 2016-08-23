@@ -33,6 +33,7 @@ import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.point.domain.GstarPointHistory;
 import com.gemmystar.api.room.domain.GstarRoom;
+import com.gemmystar.api.room.domain.GstarRoomContents;
 import com.gemmystar.api.tag.domain.GstarHashTag;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarUser;
@@ -106,6 +107,9 @@ public class GstarContents implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY)
 	private List<GstarPointHistory> gstarPointHistories;
+	
+	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY)
+	private List<GstarRoomContents> gstarRommContentsList;
 
 	/**
 	 * <pre>
@@ -291,6 +295,15 @@ public class GstarContents implements Serializable {
 		this.gstarRoom = gstarRoom;
 	}
 
+	public List<GstarRoomContents> getGstarRommContentsList() {
+		return gstarRommContentsList;
+	}
+
+	public void setGstarRommContentsList(
+			List<GstarRoomContents> gstarRommContentsList) {
+		this.gstarRommContentsList = gstarRommContentsList;
+	}
+
 	@PrePersist
 	public void preInsert() {
 
@@ -300,7 +313,8 @@ public class GstarContents implements Serializable {
 		this.createDt = new Date();
 		
 		this.gstarInfo = new GstarInfo();
-		this.gstarInfo.setGstarContents(this);
+		//this.gstarInfo.setGstarContents(this);
+		this.gstarInfo.setGstarContentsId(this.id);
 	}
 
 }

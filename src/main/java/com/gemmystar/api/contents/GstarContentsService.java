@@ -20,6 +20,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.common.exception.ContentsNotFoundException;
 import com.gemmystar.api.common.util.FileUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
@@ -161,7 +162,14 @@ public class GstarContentsService {
 	}
 	
 	@Transactional
-	public void increaseViewCnt(Long contentsId, Long userId, Long gstarRoomId) {
+	public void increaseViewCnt(Long contentsId, Long userId) {
+		
+		GstarContents contents = getGstarContents(contentsId);
+		
+		if (contents == null) {
+			throw new ContentsNotFoundException(contentsId);
+		}
+		
 		infoService.increaseViewCnt(contentsId);
 		
 		GstarView view = viewRepo.findOne(new GstarViewPK(userId, contentsId));
@@ -172,8 +180,8 @@ public class GstarContentsService {
 			viewRepo.increaseViewCnt(userId, contentsId);
 		}
 		
-		if (gstarRoomId != null && gstarRoomId > 0 ) {
-			roomRepo.increaseViewSum(gstarRoomId);
+		if (contents.getGstarRoomId() != null && contents.getGstarRoomId() > 0 ) {
+			roomRepo.increaseViewSum(contents.getGstarRoomId());
 		}
 	}
 	

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gemmystar.api.common.exception.ContentsNotFoundException;
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.WebUtil;
@@ -173,12 +174,16 @@ public class GstarContentsController {
 	
 	@RequestMapping(value="/view", method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse increaseViewCnt(SimpleJsonResponse jsonRes, @RequestParam("gstarContentsId") Long gstarContentsId,
-			@RequestParam(value = "gstarRoomId", required = false) Long gstarRoomId){
+	public SimpleJsonResponse increaseViewCnt(SimpleJsonResponse jsonRes, @RequestParam("gstarContentsId") Long gstarContentsId){
 		
 		GstarAccount account = WebUtil.getLoginUser();
 	
-		service.increaseViewCnt(gstarContentsId, account.getGstarUser().getId(), gstarRoomId);
+		try{
+			service.increaseViewCnt(gstarContentsId, account.getGstarUser().getId());
+		}catch(ContentsNotFoundException e) {
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg(e.toString());
+		}
 
 		
 		return jsonRes;

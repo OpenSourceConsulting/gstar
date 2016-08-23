@@ -18,9 +18,9 @@
  * Revision History
  * Author			Date				Description
  * ---------------	----------------	------------
- * BongJin Kwon		2016. 8. 10.		First Draft.
+ * BongJin Kwon		2016. 8. 23.		First Draft.
  */
-package com.gemmystar.api;
+package com.gemmystar.api.common.exception;
 
 /**
  * <pre>
@@ -29,34 +29,25 @@ package com.gemmystar.api;
  * @author Bongjin Kwon
  * @version 1.0
  */
-public class GemmyConstant {
+public class ContentsNotFoundException extends RuntimeException {
 
-	public static final String CONTENTS_ATTR_MEMBER_TYPE_CD = "memberTypeCd";
-	public static final String CONTENTS_ATTR_STATUS_CD = "statusCd";
-	public static final String CONTENTS_ATTR_DIV_CD = "divCd";
-	
-	/** 방장영상  */
-	public static final String CODE_MEMBER_TYPE_MASTER = "1";
-	/** 도전영상 */
-	public static final String CODE_MEMBER_TYPE_CHALLENGER = "2";
-	
-	/** 영상 게시 종료 */
-	public static final String CODE_CNTS_STATUS_CLOSED = "3";
-	
-	/** 추천 영상 */
-	public static final String CODE_CNTS_DIV_RECOMMAND = "2";
-	/** 명예의 전당 */
-	public static final String CODE_CNTS_DIV_HONOR = "4";
-	
-	/** 대결준비중 */
-	public static final String CODE_BATTLE_STATUS_READY = "1";
-	/** 대결중 */
-	public static final String CODE_BATTLE_STATUS_ING = "2";
-	
-	
-	public static final String S3_KEY_PREFIX_VIDEO = "video/";
+	private static final long serialVersionUID = -252541681678132782L;
+	private Long gstarContentsId;
 
-	
+	/**
+	 * <pre>
+	 * 
+	 * </pre>
+	 */
+	public ContentsNotFoundException(Long gstarContentsId) {
+		
+		super("contents " + gstarContentsId + " is not found.");
+		this.gstarContentsId = gstarContentsId;
+	}
 
+	public Long getGstarContentsId() {
+		return gstarContentsId;
+	}
+	
 }
-//end of GemmyConstant.java
+//end of ContentsNotFoundException.java

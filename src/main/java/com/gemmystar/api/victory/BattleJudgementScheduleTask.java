@@ -36,12 +36,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.contents.GstarContentsService;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
 import com.gemmystar.api.contents.domain.GstarInfo;
 import com.gemmystar.api.contents.domain.GstarInfoRepository;
 import com.gemmystar.api.contents.specs.GstarContentsSpecs;
 import com.gemmystar.api.contents.specs.GstarInfoSpecs;
+import com.gemmystar.api.room.GstarRoomService;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.room.domain.GstarRoomRepository;
 import com.gemmystar.api.victory.domain.GstarVictory;
@@ -70,6 +72,9 @@ public class BattleJudgementScheduleTask {
 	
 	@Autowired
 	private GstarInfoRepository infoRepo;
+	
+	@Autowired
+	private GstarRoomService roomService;
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
@@ -148,7 +153,9 @@ public class BattleJudgementScheduleTask {
 						/*
 						 * 조회수까지 같으면 최근 등록한 영상이 우승.
 						 */
-						if(info.getGstarContents().getCreateDt().before(gstarInfo.getGstarContents().getCreateDt())){
+						GstarContents infoContents = contentsRepo.findOne(info.getGstarContentsId());
+						GstarContents otherContents = contentsRepo.findOne(gstarInfo.getGstarContentsId());
+						if(infoContents.getCreateDt().before(otherContents.getCreateDt())){
 							info = gstarInfo;
 						}
 					} else {
@@ -160,31 +167,16 @@ public class BattleJudgementScheduleTask {
 			
 		}
 		
-		victoryRepo.save(new GstarVictory(gstarRoom.getId(), info.getGstarContents().getId()));
+		victoryRepo.save(new GstarVictory(gstarRoom.getId(), info.getGstarContentsId()));
 		
 		
 		info.setVictoryCnt((short)(info.getVictoryCnt() + 1));
-		
 		infoRepo.save(info);
 		
 		
-		gstarRoom.setBattleStatusCd("2");// 대결 일시 중지.
-		roomRepo.save(gstarRoom);
+		// 새로운 배틀차수 시작.
+		roomService.startBattle(gstarRoom, gstarRoom.getBattleSeq() + 1);
 	}
 
-	
-	/*
-	public static void main(String[] args) {
-		for (String string : TimeZone.getAvailableIDs()) {
-			System.out.println(string);
-		}
-		
-		Calendar cal = Calendar.getInstance();
-		//dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		cal.add(Calendar.DAY_OF_WEEK, -7);
-		
-		System.out.println("========== " + dateFormat.format(cal.getTime()));
-	}
-*/
 }
 //end of BattleJudgementScheduleTask.java

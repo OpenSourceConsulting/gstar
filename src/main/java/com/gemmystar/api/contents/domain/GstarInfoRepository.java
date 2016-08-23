@@ -21,8 +21,8 @@ import com.gemmystar.api.contents.domain.GstarInfo;
 public interface GstarInfoRepository extends JpaRepository<GstarInfo, Long>, JpaSpecificationExecutor<GstarInfo> {
 
 	@Modifying
-	@Query(value = "update GstarInfo gi set gi.viewCnt = gi.viewCnt + 1, updateDt = ?2 where gi.gstarContents = ?1")
-	int increaseViewCnt(GstarContents gstarContents, Date updateDt);
+	@Query(value = "update GstarInfo gi set gi.viewCnt = gi.viewCnt + 1, updateDt = ?2 where gi.gstarContentsId = ?1")
+	int increaseViewCnt(Long gstarContentsId, Date updateDt);
 	
 	/*
 	@Query(value = "SELECT gi from GstarContents gc join GstarInfo gi "
@@ -30,5 +30,10 @@ public interface GstarInfoRepository extends JpaRepository<GstarInfo, Long>, Jpa
 			+ "AND gi.pointCnt = (SELECT max(b.pointCnt) from GstarContents a join GstarInfo b where a.gstarRoomId = ?1)")
 	List<GstarInfo> getTopGstarInfos(Long gstarRoomId);
 	*/
+	
+	@Query(value = "SELECT gi from GstarInfo gi, GstarRoomContents grc "
+			+ "where gi.gstarContentsId = grc.gstarContentsId "
+			+ "and grc.gstarRoomId = ?1 ")
+	List<GstarInfo> findByGstarRoomId(Long gstarRoomId);
 	
 }

@@ -213,7 +213,6 @@ public class GstarRoom implements Serializable{
 	@PrePersist
 	public void preInsert() {
 		this.createDt = new Date();
-		this.startDt = this.createDt;
 	}
 
 }

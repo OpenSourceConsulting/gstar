@@ -18,26 +18,23 @@
  * Revision History
  * Author			Date				Description
  * ---------------	----------------	------------
- * BongJin Kwon		2016. 7. 15.		First Draft.
+ * BongJin Kwon		2016. 8. 19.		First Draft.
  */
-package com.gemmystar.api.contents.domain;
+package com.gemmystar.api.room.domain;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gemmystar.api.contents.domain.GstarContents;
 
 /**
  * <pre>
@@ -47,37 +44,32 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * @version 1.0
  */
 @Entity
-@Table(name = "gstar_info")
-public class GstarInfo implements Serializable {
-
-	private static final long serialVersionUID = 5002717021887938531L;
+@Table(name = "gstar_room_contents")
+public class GstarRoomContents {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
 	private Long id;//
 	
+	@Column(name = "gstar_room_id")
+	private Long gstarRoomId;//
+	
 	@Column(name = "gstar_contents_id")
-	private Long gstarContentsId;
+	private Long gstarContentsId;//
 	
-	@Column(name = "victory_cnt")
-	private short victoryCnt;//우승횟수
+	@Column(name = "start_dt", updatable = false)
+	private java.util.Date startDt;//배틀 참여시작일시
 	
-	@Column(name = "warn_cnt")
-	private int warnCnt;//신고횟수
+	@Column(name = "end_dt")
+	private java.util.Date endDt;//배틀 참여종료일시
 	
-	@Column(name = "point_cnt")
-	private Long pointCnt = 0L;//하트 수
+	@ManyToOne
+	@JoinColumn(name = "gstar_room_id", insertable = false, updatable = false)
+	private GstarRoom gstarRoom;
 	
-	@Column(name = "view_cnt")
-	private Long viewCnt = 0L;//조회수
-	
-	@Column(name = "update_dt")
-	private java.util.Date updateDt;//업데이트 일시
-	
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name = "gstar_contents_id", insertable = false, updatable = false)
-	@JsonIgnore
 	private GstarContents gstarContents;
 
 	/**
@@ -85,8 +77,14 @@ public class GstarInfo implements Serializable {
 	 * 
 	 * </pre>
 	 */
-	public GstarInfo() {
+	public GstarRoomContents() {
 		
+	}
+
+	public GstarRoomContents(Long gstarRoomId, Long gstarContentsId) {
+		super();
+		this.gstarRoomId = gstarRoomId;
+		this.gstarContentsId = gstarContentsId;
 	}
 
 	/**
@@ -103,60 +101,70 @@ public class GstarInfo implements Serializable {
 		this.id = id;
 	}
 
+	/**
+	 * @return the gstarRoomId
+	 */
+	public Long getGstarRoomId() {
+		return gstarRoomId;
+	}
+
+	/**
+	 * @param gstarRoomId the gstarRoomId to set
+	 */
+	public void setGstarRoomId(Long gstarRoomId) {
+		this.gstarRoomId = gstarRoomId;
+	}
+
+	/**
+	 * @return the gstarContentsId
+	 */
 	public Long getGstarContentsId() {
 		return gstarContentsId;
 	}
 
+	/**
+	 * @param gstarContentsId the gstarContentsId to set
+	 */
 	public void setGstarContentsId(Long gstarContentsId) {
 		this.gstarContentsId = gstarContentsId;
 	}
 
-	public short getVictoryCnt() {
-		return victoryCnt;
-	}
-
-	public void setVictoryCnt(short victoryCnt) {
-		this.victoryCnt = victoryCnt;
-	}
-
-	public int getWarnCnt() {
-		return warnCnt;
-	}
-
-	public void setWarnCnt(int warnCnt) {
-		this.warnCnt = warnCnt;
-	}
-
-	public Long getPointCnt() {
-		return pointCnt;
-	}
-
-	public void setPointCnt(Long pointCnt) {
-		this.pointCnt = pointCnt;
-	}
-
-	public Long getViewCnt() {
-		return viewCnt;
-	}
-
-	public void setViewCnt(Long viewCnt) {
-		this.viewCnt = viewCnt;
+	/**
+	 * @return the startDt
+	 */
+	public java.util.Date getStartDt() {
+		return startDt;
 	}
 
 	/**
-	 * @return the updateDt
+	 * @param startDt the startDt to set
 	 */
-	public java.util.Date getUpdateDt() {
-		return updateDt;
+	public void setStartDt(java.util.Date startDt) {
+		this.startDt = startDt;
 	}
 
 	/**
-	 * @param updateDt the updateDt to set
+	 * @return the endDt
 	 */
-	public void setUpdateDt(java.util.Date updateDt) {
-		this.updateDt = updateDt;
+	public java.util.Date getEndDt() {
+		return endDt;
+	}
+
+	/**
+	 * @param endDt the endDt to set
+	 */
+	public void setEndDt(java.util.Date endDt) {
+		this.endDt = endDt;
 	}
 	
+	public GstarRoom getGstarRoom() {
+		return gstarRoom;
+	}
+
+	public void setGstarRoom(GstarRoom gstarRoom) {
+		this.gstarRoom = gstarRoom;
+	}
+
 	public GstarContents getGstarContents() {
 		return gstarContents;
 	}
@@ -166,10 +174,9 @@ public class GstarInfo implements Serializable {
 	}
 
 	@PrePersist
-	@PreUpdate
-	public void preSave(){
-		this.updateDt = new Date();
+	public void preInsert() {
+		this.startDt = new Date();
 	}
 
 }
-//end of GstarInfo.java
+//end of GstarRoomContents.java

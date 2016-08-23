@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.point.domain.GstarPointHistory;
+import com.gemmystar.api.room.domain.GstarRoomContents;
 import com.gemmystar.api.tag.domain.GstarHashTag;
 import com.gemmystar.api.user.domain.GstarUser;
 
@@ -130,6 +131,22 @@ public class GstarContentsSpecs {
 			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				
 				return cb.and( cb.equal(root.<Long>get("gstarRoomId"), gstarRoomId), cb.equal(root.get("gstarInfo").<Integer>get("victoryCnt"), 5));
+			}
+			
+		};
+	}
+	
+	public static Specification<GstarContents> challengers(final Long gstarRoomId) {
+		
+		return new Specification<GstarContents>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				Join<GstarContents, GstarRoomContents> join = root.join("gstarRommContentsList");
+				
+				return cb.and( cb.equal(root.get("memberTypeCd"), GemmyConstant.CODE_MEMBER_TYPE_CHALLENGER), 
+						cb.equal(join.<Long>get("gstarRoomId"), gstarRoomId));
 			}
 			
 		};
