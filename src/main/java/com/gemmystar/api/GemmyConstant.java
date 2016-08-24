@@ -53,6 +53,9 @@ public class GemmyConstant {
 	/** 대결중 */
 	public static final String CODE_BATTLE_STATUS_ING = "2";
 	
+	/** 정상구매 */
+	public static final String CODE_PC_STATUS_OK = "1";
+	
 	
 	public static final String S3_KEY_PREFIX_VIDEO = "video/";
 

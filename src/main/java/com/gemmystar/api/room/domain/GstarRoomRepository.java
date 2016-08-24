@@ -25,6 +25,10 @@ public interface GstarRoomRepository extends JpaRepository<GstarRoom, Long>, Jpa
 	@Query(value = "update GstarRoom gr set gr.viewSum = gr.viewSum + 1 where gr.id = ?1")
 	int increaseViewSum(Long gstarRoomId);
 	
+	@Modifying
+	@Query(value = "update GstarRoom gr set gr.pointSum = gr.pointSum + ?2 where gr.id = ?1")
+	int increasePointSum(Long gstarRoomId, Long usePoint);
+	
 	/**
 	 * <pre>
 	 * 판정 대상 대결room 가져오기.

@@ -189,6 +189,22 @@ public class GstarContentsService {
 		
 		warnRepo.save(new GstarContentsWarn(gstarUserId, gstarContentsId, warnMemo, warnTypeCd));
 	}
+	
+	@Transactional
+	public void increasePoint(Long contentsId, Long usePoint) {
+		
+		GstarContents contents = getGstarContents(contentsId);
+		
+		if (contents == null) {
+			throw new ContentsNotFoundException(contentsId);
+		}
+		
+		infoService.increasePointCnt(contentsId, usePoint);
+		
+		if (contents.getGstarRoomId() != null && contents.getGstarRoomId() > 0 ) {
+			roomRepo.increasePointSum(contents.getGstarRoomId(), usePoint);
+		}
+	}
 
 }
 //end of GstarContentsService.java

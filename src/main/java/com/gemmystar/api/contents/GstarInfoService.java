@@ -43,7 +43,11 @@ public class GstarInfoService {
 	}
 	
 	public void increaseViewCnt(Long gstarContentsId) {
-		repository.increaseViewCnt(gstarContentsId, new Date());
+		repository.increaseViewCnt(gstarContentsId);
+	}
+	
+	public void increasePointCnt(Long gstarContentsId, Long usePoint) {
+		repository.increasePointCnt(gstarContentsId, usePoint);
 	}
 
 }
