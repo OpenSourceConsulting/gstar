@@ -168,6 +168,10 @@ public class GstarInfo implements Serializable {
 	@PrePersist
 	@PreUpdate
 	public void preSave(){
+		if (this.gstarContentsId == null) {
+			this.gstarContentsId = this.gstarContents.getId();
+		}
+		
 		this.updateDt = new Date();
 	}
 

@@ -55,6 +55,7 @@ public class GstarRoomSpecs {
 				
 				Join<GstarRoom, GstarContents> contentsJoin = root.join("masterContents");
 				Join<GstarContents, GstarHashTag> tagJoin = contentsJoin.join("gstarHashTags");
+				query.distinct(true);
 				
 				return cb.like(tagJoin.<String>get("tag"), search +"%");
 			}

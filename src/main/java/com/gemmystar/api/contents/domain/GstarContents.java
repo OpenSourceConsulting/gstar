@@ -313,8 +313,7 @@ public class GstarContents implements Serializable {
 		this.createDt = new Date();
 		
 		this.gstarInfo = new GstarInfo();
-		//this.gstarInfo.setGstarContents(this);
-		this.gstarInfo.setGstarContentsId(this.id);
+		this.gstarInfo.setGstarContents(this);
 	}
 
 }
