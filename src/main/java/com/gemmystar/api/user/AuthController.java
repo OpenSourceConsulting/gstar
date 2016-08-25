@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -111,6 +112,9 @@ public class AuthController {
 
 		if (ex instanceof AuthenticationServiceException) {
 			jsonRes.setMsg(ex.toString());
+			
+		} else if (ex instanceof DisabledException) {
+			jsonRes.setMsg("로그인할수 없습니다. 회원 탈퇴 상태입니다.");
 			
 		} else if (ex instanceof LockedException) {
 			jsonRes.setMsg("비밀번호가 초기화 되었습니다. 전송된 비밀번호 재설정 메일을 통해서 비밀번호를 재설정해주세요.");

@@ -80,6 +80,15 @@ public class GstarUser implements Serializable {
 	@Column(name = "fcm_token")
 	private String fcmToken;
 	
+	@Column(name = "mobile_noti")
+	private boolean mobileNoti;
+	
+	@Column(name = "email_noti")
+	private boolean emailNoti;
+	
+	@Column(name = "mobile_app_ver")
+	private String mobileAppVer;
+	
 	@Column(name = "create_dt", updatable = false)
 	private java.util.Date createDt;//생성일시
 	
@@ -209,6 +218,30 @@ public class GstarUser implements Serializable {
 
 	public void setFcmToken(String fcmToken) {
 		this.fcmToken = fcmToken;
+	}
+
+	public boolean isMobileNoti() {
+		return mobileNoti;
+	}
+
+	public void setMobileNoti(boolean mobileNoti) {
+		this.mobileNoti = mobileNoti;
+	}
+
+	public boolean isEmailNoti() {
+		return emailNoti;
+	}
+
+	public void setEmailNoti(boolean emailNoti) {
+		this.emailNoti = emailNoti;
+	}
+
+	public String getMobileAppVer() {
+		return mobileAppVer;
+	}
+
+	public void setMobileAppVer(String mobileAppVer) {
+		this.mobileAppVer = mobileAppVer;
 	}
 
 	public List<GstarContents> getGstarContents() {

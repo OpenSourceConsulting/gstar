@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.exception.ContentsNotFoundException;
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
@@ -155,8 +156,9 @@ public class GstarContentsController {
 	@ResponseBody
 	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId){
 		
-		service.deleteGstarContents(gstarContentsId);
-		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
+		GstarContents contents = service.getGstarContents(gstarContentsId);
+		
+		service.deleteGstarContents(contents);
 		
 		return jsonRes;
 	}
@@ -197,6 +199,20 @@ public class GstarContentsController {
 		GstarAccount account = WebUtil.getLoginUser();
 		
 		service.warnGstarContents(account.getGstarUser().getId(), gstarContentsId, warnMemo, warnTypeCd);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarContentsId}/giveup", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse giveupBattle(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId,
+			@RequestParam(value = "gstarRoomId") Long gstarRoomId){
+	
+		GstarContents contents = service.getGstarContents(gstarContentsId);
+		
+		contents.setStatusCd(GemmyConstant.CODE_CNTS_STATUS_GIVEUP);
+		
+		service.save(contents);
 		
 		return jsonRes;
 	}

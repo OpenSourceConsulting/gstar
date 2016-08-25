@@ -221,8 +221,7 @@ public class GstarRoomService {
 	public GstarRoom getGstarRoomWithChallengers(Long roomId){
 		GstarRoom room = repository.findOne(roomId);
 		
-		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.challengers(roomId));
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.challengers(roomId)).and(GstarContentsSpecs.notDeteled());
 		room.setChallengerContentsList(contentsRepo.findAll(spec));
 		
 		return room;

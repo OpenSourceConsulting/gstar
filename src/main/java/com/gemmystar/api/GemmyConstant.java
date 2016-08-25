@@ -40,6 +40,8 @@ public class GemmyConstant {
 	/** 도전영상 */
 	public static final String CODE_MEMBER_TYPE_CHALLENGER = "2";
 	
+	/** 대결 포기 */
+	public static final String CODE_CNTS_STATUS_GIVEUP = "2";
 	/** 영상 게시 종료 */
 	public static final String CODE_CNTS_STATUS_CLOSED = "3";
 	

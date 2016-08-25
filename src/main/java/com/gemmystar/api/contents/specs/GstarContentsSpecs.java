@@ -88,6 +88,18 @@ public class GstarContentsSpecs {
 		};
 	}
 	
+	public static Specification<GstarContents> notDeteled() {
+		
+		return new Specification<GstarContents>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				return cb.equal(root.<Boolean>get("deleted"), false);
+			}
+		};
+	}
+	
 	public static Specification<GstarContents> myContents(final Long userId) {
 		
 		return new Specification<GstarContents>() {

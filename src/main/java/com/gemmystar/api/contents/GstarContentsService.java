@@ -83,6 +83,11 @@ public class GstarContentsService {
 		
 	}
 	
+	public void save(GstarContents gstarContents){
+		repository.save(gstarContents);
+	}
+	
+	@Transactional
 	public void save(GstarContents gstarContents, String[] tags){
 		repository.save(gstarContents);
 		
@@ -110,7 +115,7 @@ public class GstarContentsService {
 	
 	public Page<GstarContents> getGstarContentsList(Pageable pageable, String search){
 		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notMatching());
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notMatching()).and(GstarContentsSpecs.notDeteled());
 		
 		if (search != null) {
 			spec = spec.and(GstarContentsSpecs.search(search));
@@ -128,7 +133,7 @@ public class GstarContentsService {
 	
 	public Page<GstarContents> getUserGstarContentsList(Pageable pageable, Long gstarUserId){
 		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myContents(gstarUserId));
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myContents(gstarUserId)).and(GstarContentsSpecs.notDeteled());
 		
 		Page<GstarContents> page = repository.findAll(spec, pageable);
 		//Page<GstarContents> page = repository.getMyContents(new GstarUser(gstarUserId), pageable);
@@ -146,7 +151,7 @@ public class GstarContentsService {
 	 */
 	public Page<GstarContents> getUserHeartGstarContentsList(Pageable pageable, Long gstarUserId){
 		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myHeartContents(gstarUserId));
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myHeartContents(gstarUserId)).and(GstarContentsSpecs.notDeteled());
 		
 		Page<GstarContents> page = repository.findAll(spec, pageable);
 		
@@ -157,8 +162,18 @@ public class GstarContentsService {
 		return repository.findOne(contentsId);
 	}
 	
-	public void deleteGstarContents(Long contentsId){
-		repository.delete(contentsId);
+	@Transactional
+	public void deleteGstarContents(GstarContents contents){
+		
+		if (contents.getGstarPointHistories().size() > 0) {
+			
+			contents.setStatusCd(GemmyConstant.CODE_CNTS_STATUS_CLOSED);
+			contents.setDeleted(true);
+			
+			save(contents);
+		} else {
+			repository.delete(contents);
+		}
 	}
 	
 	@Transactional

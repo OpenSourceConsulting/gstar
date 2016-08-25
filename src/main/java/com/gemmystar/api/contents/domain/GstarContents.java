@@ -37,6 +37,7 @@ import com.gemmystar.api.room.domain.GstarRoomContents;
 import com.gemmystar.api.tag.domain.GstarHashTag;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarUser;
+import com.gemmystar.api.view.domain.GstarView;
 
 /**
  * <pre>
@@ -83,6 +84,9 @@ public class GstarContents implements Serializable {
 	@Column(name = "locale")
 	private String locale;
 	
+	@Column(name = "deleted")
+	private boolean deleted;
+	
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
@@ -108,8 +112,16 @@ public class GstarContents implements Serializable {
 	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY)
 	private List<GstarPointHistory> gstarPointHistories;
 	
-	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
 	private List<GstarRoomContents> gstarRommContentsList;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+	private List<GstarContentsWarn> gstarContentsWarns;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+	private List<GstarView> gstarViews;
 
 	/**
 	 * <pre>
@@ -257,6 +269,14 @@ public class GstarContents implements Serializable {
 		this.locale = locale;
 	}
 
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
 	/**
 	 * @return the createDt
 	 */
@@ -302,6 +322,22 @@ public class GstarContents implements Serializable {
 	public void setGstarRommContentsList(
 			List<GstarRoomContents> gstarRommContentsList) {
 		this.gstarRommContentsList = gstarRommContentsList;
+	}
+
+	public List<GstarContentsWarn> getGstarContentsWarns() {
+		return gstarContentsWarns;
+	}
+
+	public void setGstarContentsWarns(List<GstarContentsWarn> gstarContentsWarns) {
+		this.gstarContentsWarns = gstarContentsWarns;
+	}
+
+	public List<GstarView> getGstarViews() {
+		return gstarViews;
+	}
+
+	public void setGstarViews(List<GstarView> gstarViews) {
+		this.gstarViews = gstarViews;
 	}
 
 	@PrePersist
