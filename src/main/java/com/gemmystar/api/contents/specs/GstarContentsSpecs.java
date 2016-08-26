@@ -74,7 +74,7 @@ public class GstarContentsSpecs {
 	 * </pre>
 	 * @return
 	 */
-	public static Specification<GstarContents> notMatching() {
+	public static Specification<GstarContents> notBattle() {
 		
 		return new Specification<GstarContents>() {
 
@@ -83,6 +83,25 @@ public class GstarContentsSpecs {
 				
 				return cb.and(cb.isNull(root.<Long>get("gstarRoomId")), 
 						cb.notEqual(root.<String>get(GemmyConstant.CONTENTS_ATTR_STATUS_CD), GemmyConstant.CODE_CNTS_STATUS_CLOSED));
+			}
+			
+		};
+	}
+	
+	/**
+	 * <pre>
+	 * 명예의 전당 조건.
+	 * </pre>
+	 * @return
+	 */
+	public static Specification<GstarContents> honoraryWinner() {
+		
+		return new Specification<GstarContents>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				return cb.equal(root.<String>get(GemmyConstant.CONTENTS_ATTR_DIV_CD), GemmyConstant.CODE_CNTS_DIV_HONOR);
 			}
 			
 		};

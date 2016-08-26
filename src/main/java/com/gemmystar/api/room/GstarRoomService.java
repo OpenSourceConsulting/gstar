@@ -193,6 +193,15 @@ public class GstarRoomService {
 		return page;
 	}
 	
+	public Page<GstarRoom> getGstarRoomListByTag(Pageable pageable, String tag){
+		
+		Specifications<GstarRoom> spec = Specifications.where(GstarRoomSpecs.eqTag(tag));
+		
+		Page<GstarRoom> page = repository.findAll(spec, pageable);
+		
+		return page;
+	}
+	
 	public Page<GstarRoom> getUserGstarRoomList(Pageable pageable, Long gstarUserId){
 		
 		Specifications<GstarRoom> spec = Specifications.where(GstarRoomSpecs.myRoom(gstarUserId));
@@ -221,10 +230,15 @@ public class GstarRoomService {
 	public GstarRoom getGstarRoomWithChallengers(Long roomId){
 		GstarRoom room = repository.findOne(roomId);
 		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.challengers(roomId)).and(GstarContentsSpecs.notDeteled());
-		room.setChallengerContentsList(contentsRepo.findAll(spec));
+		room.setChallengerContentsList(getChallengerContentsList(roomId));
 		
 		return room;
+	}
+	
+	public List<GstarContents> getChallengerContentsList(Long roomId) {
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.challengers(roomId)).and(GstarContentsSpecs.notDeteled());
+		
+		return contentsRepo.findAll(spec);
 	}
 	
 	public GstarRoom getBestTopGstarRoom() {

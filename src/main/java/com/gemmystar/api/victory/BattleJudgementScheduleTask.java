@@ -137,6 +137,7 @@ public class BattleJudgementScheduleTask {
 		} else {
 			
 			/*
+			 * 포인트수가 같다면 조회수로 판정.
 			 * max 값 확인.
 			 */
 			long max = 0L;
@@ -169,15 +170,49 @@ public class BattleJudgementScheduleTask {
 			
 		}
 		
+		// 우승 이력 저장.
 		victoryRepo.save(new GstarVictory(gstarRoom.getId(), info.getGstarContentsId()));
 		
-		
-		info.setVictoryCnt((short)(info.getVictoryCnt() + 1));
+		// 우승 횟수 증가.
+		short victoryCnt = (short)(info.getVictoryCnt() + 1);
+		info.setVictoryCnt(victoryCnt);
 		infoRepo.save(info);
 		
 		
-		// 새로운 배틀차수 시작.
-		roomService.startBattle(gstarRoom, gstarRoom.getBattleSeq() + 1);
+		if (victoryCnt < 5) {
+			//5회 우승 이하일때는
+			
+			if(info.getGstarContents().getId() != gstarRoom.getMasterContentsId()) {
+				//우승자가 도전자라면 방장으로 교체.
+				changeRoomMaster(gstarRoom, info.getGstarContents());
+			}
+			
+			// 새로운 배틀차수 시작.
+			roomService.startBattle(gstarRoom, gstarRoom.getBattleSeq() + 1);
+		} else {
+			/*
+			 * 5회 우승자가 나오면 대결종료.
+			 */
+			gstarRoom.setBattleStatusCd(GemmyConstant.CODE_BATTLE_STATUS_FINISHED);
+			roomService.save(gstarRoom);
+		}
+		
+	}
+	
+	@Transactional
+	public void changeRoomMaster(GstarRoom gstarRoom, GstarContents newMaster) {
+		GstarContents oldMaster = gstarRoom.getMasterContents();
+		
+		oldMaster.setMemberTypeCd(GemmyConstant.CODE_MEMBER_TYPE_CHALLENGER);
+		newMaster.setMemberTypeCd(GemmyConstant.CODE_MEMBER_TYPE_MASTER);
+		
+		contentsRepo.save(oldMaster);
+		contentsRepo.save(newMaster);
+		
+		gstarRoom.setMasterContentsId(newMaster.getId());
+		gstarRoom.setMasterContents(newMaster);
+		
+		roomService.save(gstarRoom);
 	}
 
 }

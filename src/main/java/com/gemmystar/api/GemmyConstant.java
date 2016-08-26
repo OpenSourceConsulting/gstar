@@ -54,6 +54,13 @@ public class GemmyConstant {
 	public static final String CODE_BATTLE_STATUS_READY = "1";
 	/** 대결중 */
 	public static final String CODE_BATTLE_STATUS_ING = "2";
+	/** 대결종료 */
+	public static final String CODE_BATTLE_STATUS_FINISHED = "3";
+	
+	/** 주간배틀 대결중 */
+	public static final String CODE_WEEK_BATTLE_STATUS_ING = "1";
+	/** 주간배틀 대결종료 */
+	public static final String CODE_WEEK_BATTLE_STATUS_FINISHED = "2";
 	
 	/** 정상구매 */
 	public static final String CODE_PC_STATUS_OK = "1";

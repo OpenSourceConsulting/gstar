@@ -63,6 +63,23 @@ public class GstarRoomSpecs {
 		};
 	}
 	
+	public static Specification<GstarRoom> eqTag(final String tag) {
+		
+		return new Specification<GstarRoom>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarRoom> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				Join<GstarRoom, GstarContents> contentsJoin = root.join("masterContents");
+				Join<GstarContents, GstarHashTag> tagJoin = contentsJoin.join("gstarHashTags");
+				query.distinct(true);
+				
+				return cb.equal(tagJoin.<String>get("tag"), tag);
+			}
+			
+		};
+	}
+	
 	public static Specification<GstarRoom> myRoom(final Long userId) {
 		
 		return new Specification<GstarRoom>() {

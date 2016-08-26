@@ -87,8 +87,17 @@ public class GstarContentsService {
 		repository.save(gstarContents);
 	}
 	
+	/**
+	 * <pre>
+	 * 일반 동영상 등록.
+	 * </pre>
+	 * @param gstarContents
+	 * @param tags
+	 */
 	@Transactional
 	public void save(GstarContents gstarContents, String[] tags){
+		
+		gstarContents.setMemberTypeCd(null);
 		repository.save(gstarContents);
 		
 		for (int i = 0; i < tags.length; i++) {
@@ -115,11 +124,36 @@ public class GstarContentsService {
 	
 	public Page<GstarContents> getGstarContentsList(Pageable pageable, String search){
 		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notMatching()).and(GstarContentsSpecs.notDeteled());
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notBattle()).and(GstarContentsSpecs.notDeteled());
 		
 		if (search != null) {
 			spec = spec.and(GstarContentsSpecs.search(search));
 		}
+		
+		return repository.findAll(spec, pageable);
+	}
+	
+	public List<GstarContents> getGstarContentsList(String search){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notBattle())
+				.and(GstarContentsSpecs.notDeteled())
+				.and(GstarContentsSpecs.search(search));
+
+		
+		return repository.findAll(spec);
+	}
+	
+	/**
+	 * <pre>
+	 * 명예의 전당 영상 목록.
+	 * </pre>
+	 * @param pageable
+	 * @return
+	 */
+	public Page<GstarContents> getHonoraryWinnerList(Pageable pageable){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.honoraryWinner()).and(GstarContentsSpecs.notDeteled());
+		
 		
 		return repository.findAll(spec, pageable);
 	}

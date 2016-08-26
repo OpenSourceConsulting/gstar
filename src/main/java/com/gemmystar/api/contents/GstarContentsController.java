@@ -91,6 +91,17 @@ public class GstarContentsController {
 		return jsonRes;
 	}
 	
+	@RequestMapping(value="/honors", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getHonoraryWinnerList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable){
+	
+		Page<GstarContents> list = service.getHonoraryWinnerList(pageable);
+
+		jsonRes.setData(list);
+		
+		return jsonRes;
+	}
+	
 	@RequestMapping(value="/my", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse myList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable){
