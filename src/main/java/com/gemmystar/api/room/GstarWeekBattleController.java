@@ -50,7 +50,7 @@ public class GstarWeekBattleController {
 	@ResponseBody
 	public SimpleJsonResponse getCurrentWeekBattle(SimpleJsonResponse jsonRes){
 	
-		jsonRes.setData(service.getCurrentWeekBattle());
+		jsonRes.setData(service.getCurrentWeekBattleWithChallengers());
 		
 		return jsonRes;
 	}
@@ -71,7 +71,7 @@ public class GstarWeekBattleController {
 	@ResponseBody
 	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarWeekBattle gstarWeekBattle){
 		
-		service.insertGstarWeekBattle(gstarWeekBattle);
+		service.save(gstarWeekBattle);
 		//jsonRes.setMsg(" 정상적으로 생성되었습니다.");
 		
 		

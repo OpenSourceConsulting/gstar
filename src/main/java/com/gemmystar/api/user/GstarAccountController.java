@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -51,6 +52,9 @@ public class GstarAccountController {
 	
 	@Autowired
     private JavaMailSender mailSender;
+	
+	@Value("${spring.mail.username}")
+	private String fromMailAddr;
 
 	/**
 	 * <pre>
@@ -147,7 +151,7 @@ public class GstarAccountController {
         email.setSubject(subject);
         email.setText(body);
         email.setTo(toEmail);
-        email.setFrom("idkbj@osci.kr");
+        email.setFrom(fromMailAddr);
         return email;
     }
 

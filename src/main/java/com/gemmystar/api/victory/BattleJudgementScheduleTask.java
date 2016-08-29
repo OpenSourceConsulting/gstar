@@ -46,8 +46,10 @@ import com.gemmystar.api.contents.domain.GstarInfoRepository;
 import com.gemmystar.api.contents.specs.GstarContentsSpecs;
 import com.gemmystar.api.contents.specs.GstarInfoSpecs;
 import com.gemmystar.api.room.GstarRoomService;
+import com.gemmystar.api.room.GstarWeekBattleService;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.room.domain.GstarRoomRepository;
+import com.gemmystar.api.room.domain.GstarWeekBattle;
 import com.gemmystar.api.victory.domain.GstarVictory;
 import com.gemmystar.api.victory.domain.GstarVictoryRepository;
 
@@ -78,6 +80,9 @@ public class BattleJudgementScheduleTask {
 	@Autowired
 	private GstarRoomService roomService;
 	
+	@Autowired
+	private GstarWeekBattleService weekBattleService;
+	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
 	/**
@@ -101,9 +106,20 @@ public class BattleJudgementScheduleTask {
 		
 		List<GstarRoom> rooms = roomRepo.getJudgementRooms(cal.getTime());
 		
+		Integer gstarWeekBattleId = null;
+		
 		for (GstarRoom gstarRoom : rooms) {
 			doJudge(gstarRoom);
 			decideHonoraryWinner(gstarRoom.getId());
+			
+			if (gstarRoom.getGstarWeekBattleId() != null) {
+				gstarWeekBattleId = gstarRoom.getGstarWeekBattleId();
+			}
+		}
+		
+		if (gstarWeekBattleId != null) {
+			// 주간배틀 우승자들이 있으면
+			createWeekBattleRooms();
 		}
 	}
 	
@@ -213,6 +229,34 @@ public class BattleJudgementScheduleTask {
 		gstarRoom.setMasterContents(newMaster);
 		
 		roomService.save(gstarRoom);
+	}
+	
+	/**
+	 * <pre>
+	 * 주간배틀 우승자들끼리 1:1 신규 대결방 생성.
+	 * </pre>
+	 */
+	public void createWeekBattleRooms() {
+		
+		// 1. 진행중인 주간배틀정보 가져오기
+		GstarWeekBattle weekBattle = weekBattleService.getCurrentWeekBattle();
+		
+		
+		if (weekBattle.getBattleSeq() < 5) {
+			// 2. 주배틀의 우승자들 목록 random 으로 가져오기
+			List<GstarContents> winners = weekBattleService.getWeekBattleWinners(weekBattle.getId(), weekBattle.getBattleSeq());
+			
+			// 3. 1:1 의 새로운 주간배틀 room 생성하기.
+			weekBattleService.createWeekBattleRooms(weekBattle, weekBattle.getBattleSeq() + 1, winners);
+		} else {
+			/*
+			 * 5주차이면 종료처리. room 종료는 doJudge(..) 에서 처리.
+			 */
+			weekBattle.setEndDt(new Date());
+			weekBattle.setStatusCd(GemmyConstant.CODE_WEEK_BATTLE_STATUS_FINISHED);
+			
+			weekBattleService.save(weekBattle);
+		}
 	}
 
 }

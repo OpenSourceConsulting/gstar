@@ -32,6 +32,7 @@ import com.gemmystar.api.room.domain.GstarRoomRepository;
 import com.gemmystar.api.room.domain.GstarRoomSpecs;
 import com.gemmystar.api.room.domain.GstarRoomWeek;
 import com.gemmystar.api.room.domain.GstarRoomWeekRepository;
+import com.gemmystar.api.room.domain.GstarWeekBattle;
 import com.gemmystar.api.tag.GstarContentsTagsService;
 import com.gemmystar.api.tag.GstarHashTagService;
 import com.gemmystar.api.tag.domain.GstarContentsTags;
@@ -48,7 +49,7 @@ import com.gemmystar.api.tag.domain.GstarHashTag;
 public class GstarRoomService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GstarRoomService.class);
-
+	
 	@Autowired
 	private GstarRoomRepository repository;
 	
@@ -72,7 +73,6 @@ public class GstarRoomService {
 	
 	@Autowired
 	private GstarInfoRepository infoRepo;
-	
 	
 	
 	public GstarRoomService() {
@@ -128,9 +128,8 @@ public class GstarRoomService {
 	 */
 	@Transactional
 	public void startBattle(GstarRoom gstarRoom, int battleSeq) {
-		gstarRoom.setBattleSeq(battleSeq);
-		gstarRoom.setStartDt(new Date());
-		gstarRoom.setBattleStatusCd(GemmyConstant.CODE_BATTLE_STATUS_ING);
+		
+		Date startDt = new Date();
 		
 		if (battleSeq > 1) {
 			// 이전주차 종료처리 
@@ -140,11 +139,26 @@ public class GstarRoomService {
 			initInfo(gstarRoom.getId(), battleSeq -1);
 		}
 		
-		// 새로운 주차 등록.
-		roomWeekRepo.save(new GstarRoomWeek(gstarRoom.getId(), battleSeq, gstarRoom.getStartDt()));
+		
+		if (gstarRoom.getGstarWeekBattleId() == null) {
+			
+			// 새로운 주차 등록.
+			roomWeekRepo.save(new GstarRoomWeek(gstarRoom.getId(), battleSeq, startDt));
+			
+			// room 배틀정보 업데이트.
+			gstarRoom.setBattleSeq(battleSeq);
+			gstarRoom.setStartDt(startDt);
+			gstarRoom.setBattleStatusCd(GemmyConstant.CODE_BATTLE_STATUS_ING);
+			
+		} else {
+			// 주간배틀 room은 무조건 finished.
+			gstarRoom.setBattleStatusCd(GemmyConstant.CODE_BATTLE_STATUS_FINISHED);
+		}
 		
 		repository.save(gstarRoom);
+		
 	}
+	
 	
 	/**
 	 * <pre>
