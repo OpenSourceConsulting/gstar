@@ -58,9 +58,10 @@ public class AuthController {
 
 	@RequestMapping("/onAfterLogout")
 	@ResponseBody
-	public SimpleJsonResponse logout(SimpleJsonResponse jsonRes, HttpSession session) {
+	//public SimpleJsonResponse logout(SimpleJsonResponse jsonRes, HttpSession session) {
+	public SimpleJsonResponse logout(SimpleJsonResponse jsonRes) {
 
-		session.invalidate();
+		//session.invalidate();
 
 		jsonRes.setMsg("로그아웃 되었습니다.");
 
@@ -111,7 +112,13 @@ public class AuthController {
 		AuthenticationException ex = (AuthenticationException) request.getSession().getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
 
 		if (ex instanceof AuthenticationServiceException) {
-			jsonRes.setMsg(ex.toString());
+			
+			if (ex.getMessage().indexOf("UserDetailsService returned null") > -1) {
+				jsonRes.setMsg("계정정보를 찾을수 없습니다. 로그인id가 올바른지 확인하세요.");
+			} else {
+				jsonRes.setMsg(ex.toString());
+			}
+			
 			
 		} else if (ex instanceof DisabledException) {
 			jsonRes.setMsg("로그인할수 없습니다. 회원 탈퇴 상태입니다.");

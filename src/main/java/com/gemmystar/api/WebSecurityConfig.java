@@ -41,28 +41,42 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers(
-				"/", 
-				"/*.html", 
-				"/resources/**", 
-
+					"/", 
+					"/*.html", 
+					"/resources/**", 
+					
+					"/auth/notLogin*", 
+					"/auth/loginFail*",
+					"/auth/accessDenied*", 
+					"/auth/onAfterLogout*",
+					
+					"/user/locale*",
+					"/user/join*",
+					"/account/*/resetPassword",
+					"/account/*/changePassword"
 				
-				"/auth/notLogin*", 
-				"/auth/loginFail*",
-				"/auth/accessDenied*", 
-				"/auth/onAfterLogout*");
+				).antMatchers(HttpMethod.GET, 
+					"/code/list/*", 
+					"/room/*", 
+					"/hashtag/mains*", 
+					"/contents/list*", 
+					"/contents/recommands*",
+					"/contents/honors*",
+					"/weekbattle"
+				);
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-			//.anonymous()
-			//.disable()
+			.anonymous()
+			.disable()
 			.authorizeRequests()
-			.antMatchers("/user/locale", "/user/join").permitAll()
-			.antMatchers("/account/*/resetPassword", "/account/*/changePassword").permitAll()
-			.antMatchers(HttpMethod.GET, "/code/list/*").permitAll()
-			.antMatchers(HttpMethod.GET, "/room/*").permitAll()
-			.antMatchers(HttpMethod.GET, "/hashtag/mains").permitAll()
+			//.antMatchers("/user/locale", "/user/join").permitAll()
+			//.antMatchers("/account/*/resetPassword", "/account/*/changePassword").permitAll()
+			//.antMatchers(HttpMethod.GET, "/code/list/*").permitAll()
+			//.antMatchers(HttpMethod.GET, "/room/*").permitAll()
+			//.antMatchers(HttpMethod.GET, "/hashtag/mains").permitAll()
 			
 			//.antMatchers(HttpMethod.GET, "/user/**").access("hasRole('ROLE_ADMIN')")
 
@@ -80,6 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.and().logout()
 				.logoutUrl("/auth/logout")
 				.logoutSuccessUrl("/auth/onAfterLogout")
+				.addLogoutHandler(tokenBasedRememberMeServices())
 				
 			//remember me configuration
 			.and()
@@ -89,7 +104,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.rememberMeParameter("remember-me-gstar")
                 //.rememberMeCookieName("gstar-remember-me")
                 //.tokenValiditySeconds(60 * 60 * 24)
-                //.rememberMeServices(tokenBasedRememberMeServices())
 			.csrf().disable()
 			.setSharedObject(RememberMeServices.class, tokenBasedRememberMeServices());
 	}
