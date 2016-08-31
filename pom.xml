@@ -95,18 +95,50 @@
 	      <groupId>com.google.apis</groupId>
 	      <artifactId>google-api-services-youtube</artifactId>
 	      <version>${project.youtube.version}</version>
+	      <exclusions>
+	      	<exclusion>
+	      		<groupId>com.google.guava</groupId>
+	      		<artifactId>guava-jdk5</artifactId>
+	      	</exclusion>
+	      </exclusions>
 	    </dependency>
 	
 	    <dependency>
 	      <groupId>com.google.http-client</groupId>
 	      <artifactId>google-http-client-jackson2</artifactId>
 	      <version>${project.http.version}</version>
+	      <exclusions>
+	      	<exclusion>
+	      		<groupId>com.google.guava</groupId>
+	      		<artifactId>guava-jdk5</artifactId>
+	      	</exclusion>
+	      </exclusions>
 	    </dependency>
 	    <dependency>
 	      <groupId>com.google.oauth-client</groupId>
 	      <artifactId>google-oauth-client-jetty</artifactId>
 	      <version>${project.oauth.version}</version>
 	    </dependency>
+	    
+	    <!-- FCM 
+	    <dependency>
+		  <groupId>com.google.firebase</groupId>
+		  <artifactId>firebase-server-sdk</artifactId>
+		  <version>3.0.1</version>
+		  <exclusions>
+		  	<exclusion>
+		  		<groupId>com.google.guava</groupId>
+		  		<artifactId>guava-jdk5</artifactId>
+		  	</exclusion>
+		  </exclusions>
+	    </dependency>
+	    -->
+		
+		<dependency>
+		    <groupId>com.google.guava</groupId>
+		    <artifactId>guava</artifactId>
+		    <version>14.0.1</version>
+		</dependency>
 	    
 	    <dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -64,7 +64,7 @@ public class UploadVideo {
 
     // Load client secrets.
     GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
-        JSON_FACTORY, UploadVideo.class.getResourceAsStream("/client_secrets.json"));
+        JSON_FACTORY, UploadVideo.class.getResourceAsStream("/client_secret_gemmystar.json"));
 
     // Checks that the defaults have been replaced (Default = "Enter X here").
     if (clientSecrets.getDetails().getClientId().startsWith("Enter")
