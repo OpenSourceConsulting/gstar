@@ -122,7 +122,7 @@ public class YoutubeService implements InitializingBean{
 
 					// Load client secrets.
 					GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
-							JSON_FACTORY, YoutubeService.class.getResourceAsStream("/client_secrets.json"));
+							JSON_FACTORY, YoutubeService.class.getResourceAsStream("/client_secret_gemmystar.json"));
 		
 					// Checks that the defaults have been replaced (Default =
 					// "Enter X here").

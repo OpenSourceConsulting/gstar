@@ -9,10 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gemmystar.api.common.exception.AccountNotFoundException;
+import com.gemmystar.api.common.mail.MailSender;
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.user.domain.GstarAccount;
@@ -51,10 +49,7 @@ public class GstarAccountController {
 	private MessageSource messageSource;
 	
 	@Autowired
-    private JavaMailSender mailSender;
-	
-	@Value("${spring.mail.username}")
-	private String fromMailAddr;
+    private MailSender mailSender;
 
 	/**
 	 * <pre>
@@ -134,26 +129,19 @@ public class GstarAccountController {
         
         String token = service.createPasswordResetToken(account);
         
-        mailSender.send(constructResetTokenEmail(getAppUrl(request), locale, accountId, token, userEmail));
+        sendMail(getAppUrl(request), locale, accountId, token, userEmail);
         LOGGER.info("email sended to {}", userEmail);
         
         return jsonRes;
     }
 	
-	private SimpleMailMessage constructResetTokenEmail(final String appUrl, final Locale locale, Long accountId, String token, String toEmail) {
+	private void sendMail(final String appUrl, final Locale locale, Long accountId, String token, String toEmail) {
         final String url = appUrl + "/account/"+accountId+"/changePassword?token=" + token;
         final String message = messageSource.getMessage("account.email.resetPassword.msg", null, locale);
-        return constructEmail("Reset Password", message + " \r\n" + url, toEmail);
+        mailSender.sendMail("Reset Password", message + " \r\n" + url, toEmail);
     }
 
-    private SimpleMailMessage constructEmail(String subject, String body, String toEmail) {
-        final SimpleMailMessage email = new SimpleMailMessage();
-        email.setSubject(subject);
-        email.setText(body);
-        email.setTo(toEmail);
-        email.setFrom(fromMailAddr);
-        return email;
-    }
+    
 
     private String getAppUrl(HttpServletRequest request) {
         return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();

@@ -2,6 +2,7 @@ package com.gemmystar.api.contents;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -138,7 +139,7 @@ public class GstarContentsController {
 			File uploadedFile = new File(uploadPath + vFile.getOriginalFilename());
 			vFile.transferTo(uploadedFile);
 			
-			String videoId = youtubeService.uploadVideo(vFile.getInputStream(), vFile.getSize(), gstarContents);
+			String videoId = youtubeService.uploadVideo(new FileInputStream(uploadedFile), vFile.getSize(), gstarContents);
 			jsonRes.setData(videoId);
 			
 			gstarContents.setUrl(videoId);

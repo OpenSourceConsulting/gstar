@@ -36,7 +36,7 @@ public class SendTest {
 		GenericUrl url = new GenericUrl(PostUrl.replaceAll(" ", "%20"));
 		//make POST request
 
-		String requestBody = "{\"data\": {\"message\":\"gemmystar test message\"},\"to\": \"1234\"}";
+		String requestBody = "{\"data\": {\"message\":\"gemmystar test message\"},\"to\": \"cQV38jVuaFs:APA91bE1vNswl7qqZqeEYjCaYuIRzbcoWG-JMQCijfrIrhslGAFFpUJiW7lwjjNIIopyCkYZEJZO6V1gqzKcSJRm27TtCmGM7HojQOfu2PLnVbRn0W8MbeidOvicFlA-uLtBiKIeTIdH\"}";
 
 		HttpRequest request = requestFactory.buildPostRequest(url, ByteArrayContent.fromString(null, requestBody));
 		request.getHeaders().setContentType("application/json");

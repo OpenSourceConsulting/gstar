@@ -22,6 +22,7 @@
  */
 package com.gemmystar.api.victory;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,6 +39,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.common.mail.MailSender;
+import com.gemmystar.api.common.push.AndroidFcmSender;
 import com.gemmystar.api.contents.GstarContentsService;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
@@ -50,6 +53,7 @@ import com.gemmystar.api.room.GstarWeekBattleService;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.room.domain.GstarRoomRepository;
 import com.gemmystar.api.room.domain.GstarWeekBattle;
+import com.gemmystar.api.user.domain.GstarUser;
 import com.gemmystar.api.victory.domain.GstarVictory;
 import com.gemmystar.api.victory.domain.GstarVictoryRepository;
 
@@ -83,6 +87,12 @@ public class BattleJudgementScheduleTask {
 	@Autowired
 	private GstarWeekBattleService weekBattleService;
 	
+	@Autowired
+	private AndroidFcmSender fcmSender;
+	
+	@Autowired
+	private MailSender mailSender;
+	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
 	/**
@@ -109,11 +119,18 @@ public class BattleJudgementScheduleTask {
 		Integer gstarWeekBattleId = null;
 		
 		for (GstarRoom gstarRoom : rooms) {
-			doJudge(gstarRoom);
-			decideHonoraryWinner(gstarRoom.getId());
 			
-			if (gstarRoom.getGstarWeekBattleId() != null) {
-				gstarWeekBattleId = gstarRoom.getGstarWeekBattleId();
+			try {
+			
+				doJudge(gstarRoom);
+				decideHonoraryWinner(gstarRoom.getId());
+				
+				if (gstarRoom.getGstarWeekBattleId() != null) {
+					gstarWeekBattleId = gstarRoom.getGstarWeekBattleId();
+				}
+			
+			} catch (Exception e) {
+				LOGGER.error("judge fail. room.id="+ gstarRoom.getId(), e);
 			}
 		}
 		
@@ -141,6 +158,8 @@ public class BattleJudgementScheduleTask {
 	
 	@Transactional
 	protected void doJudge(GstarRoom gstarRoom) {
+		
+		LOGGER.info("judge start. room.id={}", gstarRoom.getId());
 		
 		Specifications<GstarInfo> infoSpec = Specifications.where(GstarInfoSpecs.topGstarInfos(gstarRoom.getId()));
 		//List<GstarInfo> gstarInfos = infoRepo.getTopGstarInfos(gstarRoom.getId());
@@ -188,6 +207,7 @@ public class BattleJudgementScheduleTask {
 		
 		// 우승 이력 저장.
 		victoryRepo.save(new GstarVictory(gstarRoom.getId(), info.getGstarContentsId()));
+		LOGGER.info("judged victory room.id={}, contents.id={}", gstarRoom.getId(), info.getGstarContentsId());
 		
 		// 우승 횟수 증가.
 		short victoryCnt = (short)(info.getVictoryCnt() + 1);
@@ -212,6 +232,9 @@ public class BattleJudgementScheduleTask {
 			gstarRoom.setBattleStatusCd(GemmyConstant.CODE_BATTLE_STATUS_FINISHED);
 			roomService.save(gstarRoom);
 		}
+		
+		
+		sendPushMessage(gstarRoom, info.getGstarContents().getGstarUser());
 		
 	}
 	
@@ -257,6 +280,28 @@ public class BattleJudgementScheduleTask {
 			
 			weekBattleService.save(weekBattle);
 		}
+	}
+	
+	private void sendPushMessage(GstarRoom room, GstarUser user) {
+		
+		if (user.getFcmToken() != null && user.isMobileNoti()) {
+			try {
+				fcmSender.sendPushMessage(makeVictoryMessage(room, user), user.getFcmToken());
+				
+				LOGGER.info("fcm send ok. room.id={}, user.id={}", room.getId(), user.getId());
+			} catch (IOException e) {
+				LOGGER.error("fcm fail. room.id={}, user.id={}", room.getId(), user.getId());
+				LOGGER.error(e.toString(), e);
+			}
+			
+		} else if (user.getEmail() != null && user.isEmailNoti()) {
+			mailSender.sendMail("배틀 우승을 축하합니다.", makeVictoryMessage(room, user), user.getEmail());
+			LOGGER.info("mail send ok. room.id={}, user.id={}", room.getId(), user.getId());
+		}
+	}
+	
+	private String makeVictoryMessage(GstarRoom room, GstarUser user) {
+		return "안녕하세요. "+ user.getName() + "님. 귀하의 동영상이 '" + room.getSubject() + "'배틀의 주간 우승자로 선정되었습니다.";
 	}
 
 }
