@@ -122,7 +122,7 @@ public class YoutubeService implements InitializingBean{
 
 					// Load client secrets.
 					GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
-							JSON_FACTORY, YoutubeService.class.getResourceAsStream("/client_secrets.json"));
+							JSON_FACTORY, YoutubeService.class.getResourceAsStream("/client_secret_gemmystar.json"));
 		
 					// Checks that the defaults have been replaced (Default =
 					// "Enter X here").
@@ -135,7 +135,8 @@ public class YoutubeService implements InitializingBean{
 		
 					// Set up file credential store.
 					FileCredentialStore credentialStore = new FileCredentialStore(
-							new File(System.getProperty("user.home"), ".credentials/youtube-api-uploadvideo.json"),
+							//new File(System.getProperty("user.home"), ".credentials/youtube-api-uploadvideo.json"),
+							apiJsonFile,
 							JSON_FACTORY);
 		
 					// Set up authorization code flow.

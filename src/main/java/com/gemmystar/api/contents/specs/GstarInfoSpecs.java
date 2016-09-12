@@ -44,6 +44,13 @@ import com.gemmystar.api.contents.domain.GstarInfo;
 public class GstarInfoSpecs {
 
 
+	/**
+	 * <pre>
+	 * 포인트가 가장 높은 GstarInfo
+	 * </pre>
+	 * @param gstarRoomId
+	 * @return
+	 */
 	public static Specification<GstarInfo> topGstarInfos(final Long gstarRoomId) {
 			
 		return new Specification<GstarInfo>() {

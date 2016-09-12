@@ -25,6 +25,17 @@ public interface GstarRoomRepository extends JpaRepository<GstarRoom, Long>, Jpa
 	@Query(value = "update GstarRoom gr set gr.viewSum = gr.viewSum + 1 where gr.id = ?1")
 	int increaseViewSum(Long gstarRoomId);
 	
-	@Query(value = "SELECT gr FROM GstarRoom gr WHERE gr.battleStatusCd = '1' and gr.startDt <= ?1")
+	@Modifying
+	@Query(value = "update GstarRoom gr set gr.pointSum = gr.pointSum + ?2 where gr.id = ?1")
+	int increasePointSum(Long gstarRoomId, Long usePoint);
+	
+	/**
+	 * <pre>
+	 * 판정 대상 대결room 가져오기.
+	 * </pre>
+	 * @param aWeekAgoDt
+	 * @return
+	 */
+	@Query(value = "SELECT gr FROM GstarRoom gr WHERE gr.battleStatusCd = '2' and gr.startDt is not null and gr.startDt <= ?1")
 	List<GstarRoom> getJudgementRooms(Date aWeekAgoDt);
 }

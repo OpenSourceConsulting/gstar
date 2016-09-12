@@ -75,6 +75,18 @@ public class GstarInfoSpecsTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void testFindByGstarRoomId() {
+		try{
+			List<GstarInfo> list = infoRepo.findByGstarRoomId(8L);
+			assertTrue(list.size() > 1);
+			assertTrue(list.get(0) instanceof GstarInfo);
+		} catch(Exception e) {
+			fail(e.toString());
+			e.printStackTrace();
+		}
+	}
 
 }
 //end of GstarInfoSpecsTest.java

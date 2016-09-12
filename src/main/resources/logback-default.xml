@@ -31,6 +31,8 @@
 	<logger name="org.apache.tomcat.jdbc.pool" level="DEBUG" />
 	<logger name="org.apache.tomcat.websocket" level="DEBUG" />
 	
+	<logger name="com.google.api.client.http" level="DEBUG" />
+	
 
 	<root level="ERROR">
 	    <appender-ref ref="CONSOLE" />

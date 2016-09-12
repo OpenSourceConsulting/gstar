@@ -4,10 +4,15 @@ package com.gemmystar.api.user;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
+import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarUser;
 
@@ -146,6 +152,46 @@ public class GstarUserController {
 		} else {
 			service.save(gstarUser);
 		}
+		
+		return jsonRes;
+	}
+	
+	/**
+	 * <pre>
+	 * 회원 탈퇴 요청.
+	 * </pre>
+	 * @param jsonRes
+	 * @return
+	 */
+	@RequestMapping(value="/withdraw", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse withdraw(SimpleJsonResponse jsonRes, HttpServletRequest request, HttpServletResponse response){
+	
+		GstarAccount account = WebUtil.getLoginUser();
+		
+		service.widthdraw(account.getGstarUser());
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (auth != null){    
+			new SecurityContextLogoutHandler().logout(request, response, auth);
+		}
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/settings", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse settings(SimpleJsonResponse jsonRes, 
+			@RequestParam(name = "mobileNoti") boolean mobileNoti, @RequestParam(name = "mobileAppVer") String mobileAppVer){
+	
+		Long gstarUserId = WebUtil.getLoginUserId();
+		GstarUser dbUser = service.getGstarUser(gstarUserId);
+		
+		dbUser.setMobileNoti(mobileNoti);
+		dbUser.setMobileAppVer(mobileAppVer);
+		
+		service.save(dbUser);
 		
 		return jsonRes;
 	}

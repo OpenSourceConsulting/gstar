@@ -36,7 +36,7 @@ public class GstarPointHistoryController {
 	 * </pre>
 	 */
 	public GstarPointHistoryController() {
-		
+		// TODO Auto-generated constructor stub
 	}
 	
 	@RequestMapping(value="/all", method = RequestMethod.GET)
@@ -55,7 +55,7 @@ public class GstarPointHistoryController {
 	@ResponseBody
 	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarPointHistory gstarPointHistory){
 		
-		service.save(gstarPointHistory);
+		service.insertGstarPointHistory(gstarPointHistory);
 		//jsonRes.setMsg(" 정상적으로 생성되었습니다.");
 		
 		

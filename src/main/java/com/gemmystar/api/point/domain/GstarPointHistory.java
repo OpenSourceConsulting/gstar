@@ -1,36 +1,21 @@
-/* 
- * Copyright (C) 2012-2015 Open Source Consulting, Inc. All rights reserved by Open Source Consulting, Inc.
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- * Revision History
- * Author			Date				Description
- * ---------------	----------------	------------
- * BongJin Kwon		2016. 8. 10.		First Draft.
- */
 package com.gemmystar.api.point.domain;
+
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.contents.domain.GstarContents;
 
 /**
@@ -55,21 +40,25 @@ public class GstarPointHistory {
 	@Column(name = "gstar_contents_id")
 	private Long gstarContentsId;//
 	
-	@Column(name = "gstar_point_id")
-	private Long gstarPointId;//
+	@Column(name = "gstar_user_point_id")
+	private Long gstarUserPointId;//
 	
-	@Column(name = "use_point")
+	@Column(name = "use_point", updatable = false)
 	private int usePoint;//사용포인트
 	
-	@Column(name = "use_price")
-	private int usePrice;//총사용금액
-	
-	@Column(name = "use_dt")
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@Column(name = "use_dt", updatable = false)
 	private java.util.Date useDt;//사용일시
 	
-	@ManyToOne
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "gstar_contents_id", insertable = false, updatable = false)
 	private GstarContents gstarContents;
+	
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "gstar_user_point_id", insertable = false, updatable = false)
+	private GstarUserPoint gstarUserPoint;
 
 	/**
 	 * <pre>
@@ -77,7 +66,14 @@ public class GstarPointHistory {
 	 * </pre>
 	 */
 	public GstarPointHistory() {
-
+		
+	}
+	
+	public GstarPointHistory(Long gstarUserId, Long gstarContentsId, Long gstarUserPointId, Integer usePoint) {
+		this.gstarUserId = gstarUserId;
+		this.gstarContentsId = gstarContentsId;
+		this.gstarUserPointId = gstarUserPointId;
+		this.usePoint = usePoint;
 	}
 
 	/**
@@ -123,17 +119,17 @@ public class GstarPointHistory {
 	}
 
 	/**
-	 * @return the gstarPointId
+	 * @return the gstarUserPointId
 	 */
-	public Long getGstarPointId() {
-		return gstarPointId;
+	public Long getGstarUserPointId() {
+		return gstarUserPointId;
 	}
 
 	/**
-	 * @param gstarPointId the gstarPointId to set
+	 * @param gstarUserPointId the gstarUserPointId to set
 	 */
-	public void setGstarPointId(Long gstarPointId) {
-		this.gstarPointId = gstarPointId;
+	public void setGstarUserPointId(Long gstarUserPointId) {
+		this.gstarUserPointId = gstarUserPointId;
 	}
 
 	/**
@@ -148,20 +144,6 @@ public class GstarPointHistory {
 	 */
 	public void setUsePoint(int usePoint) {
 		this.usePoint = usePoint;
-	}
-
-	/**
-	 * @return the usePrice
-	 */
-	public int getUsePrice() {
-		return usePrice;
-	}
-
-	/**
-	 * @param usePrice the usePrice to set
-	 */
-	public void setUsePrice(int usePrice) {
-		this.usePrice = usePrice;
 	}
 
 	/**
@@ -184,6 +166,19 @@ public class GstarPointHistory {
 
 	public void setGstarContents(GstarContents gstarContents) {
 		this.gstarContents = gstarContents;
+	}
+
+	public GstarUserPoint getGstarUserPoint() {
+		return gstarUserPoint;
+	}
+
+	public void setGstarUserPoint(GstarUserPoint gstarUserPoint) {
+		this.gstarUserPoint = gstarUserPoint;
+	}
+	
+	@PrePersist
+	public void preInsert() {
+		this.useDt = new Date();
 	}
 
 }

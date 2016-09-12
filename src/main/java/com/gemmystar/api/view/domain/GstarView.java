@@ -9,9 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.gemmystar.api.code.domain.CommonCodePK;
+import com.gemmystar.api.contents.domain.GstarContents;
 
 /**
  * <pre>
@@ -37,6 +40,10 @@ public class GstarView implements Serializable{
 	
 	@Column(name = "view_cnt")
 	private Long viewCnt;//조회 횟수
+	
+	@ManyToOne
+	@JoinColumn(name = "gstar_contents_id", insertable = false, updatable = false)
+	private GstarContents gstarContents;
 
 	/**
 	 * <pre>
@@ -88,6 +95,14 @@ public class GstarView implements Serializable{
 
 	public void setViewCnt(Long viewCnt) {
 		this.viewCnt = viewCnt;
+	}
+
+	public GstarContents getGstarContents() {
+		return gstarContents;
+	}
+
+	public void setGstarContents(GstarContents gstarContents) {
+		this.gstarContents = gstarContents;
 	}
 
 }

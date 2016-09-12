@@ -57,6 +57,9 @@ public class GstarInfo implements Serializable {
 	@Column(name = "id")
 	private Long id;//
 	
+	@Column(name = "gstar_contents_id")
+	private Long gstarContentsId;
+	
 	@Column(name = "victory_cnt")
 	private short victoryCnt;//우승횟수
 	
@@ -73,7 +76,7 @@ public class GstarInfo implements Serializable {
 	private java.util.Date updateDt;//업데이트 일시
 	
 	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "gstar_contents_id")
+	@JoinColumn(name = "gstar_contents_id", insertable = false, updatable = false)
 	@JsonIgnore
 	private GstarContents gstarContents;
 
@@ -100,12 +103,12 @@ public class GstarInfo implements Serializable {
 		this.id = id;
 	}
 
-	public GstarContents getGstarContents() {
-		return gstarContents;
+	public Long getGstarContentsId() {
+		return gstarContentsId;
 	}
 
-	public void setGstarContents(GstarContents gstarContents) {
-		this.gstarContents = gstarContents;
+	public void setGstarContentsId(Long gstarContentsId) {
+		this.gstarContentsId = gstarContentsId;
 	}
 
 	public short getVictoryCnt() {
@@ -154,9 +157,21 @@ public class GstarInfo implements Serializable {
 		this.updateDt = updateDt;
 	}
 	
+	public GstarContents getGstarContents() {
+		return gstarContents;
+	}
+
+	public void setGstarContents(GstarContents gstarContents) {
+		this.gstarContents = gstarContents;
+	}
+
 	@PrePersist
 	@PreUpdate
 	public void preSave(){
+		if (this.gstarContentsId == null) {
+			this.gstarContentsId = this.gstarContents.getId();
+		}
+		
 		this.updateDt = new Date();
 	}
 

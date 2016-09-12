@@ -87,6 +87,10 @@ public class GstarRoom implements Serializable{
 	@Column(name = "start_dt")
 	private Date startDt;
 	
+	@Column(name = "gstar_week_battle_id")
+	private Integer gstarWeekBattleId;
+	
+	
 	@OneToOne
 	@JoinColumn(name = "master_contents_id", insertable = false, updatable = false)
 	@JsonManagedReference(value = "masterCnts")
@@ -210,10 +214,17 @@ public class GstarRoom implements Serializable{
 		this.startDt = startDt;
 	}
 
+	public Integer getGstarWeekBattleId() {
+		return gstarWeekBattleId;
+	}
+
+	public void setGstarWeekBattleId(Integer gstarWeekBattleId) {
+		this.gstarWeekBattleId = gstarWeekBattleId;
+	}
+
 	@PrePersist
 	public void preInsert() {
 		this.createDt = new Date();
-		this.startDt = this.createDt;
 	}
 
 }

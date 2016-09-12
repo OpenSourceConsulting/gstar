@@ -28,6 +28,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
@@ -59,6 +61,10 @@ public class GstarContentsWarn {
 	
 	@Column(name = "warn_memo")
 	private String warnMemo;//
+	
+	@ManyToOne
+	@JoinColumn(name = "gstar_contents_id", insertable = false, updatable = false)
+	private GstarContents gstarContents;
 
 	/**
 	 * <pre>
@@ -140,6 +146,14 @@ public class GstarContentsWarn {
 		this.warnMemo = warnMemo;
 	}
 	
+	public GstarContents getGstarContents() {
+		return gstarContents;
+	}
+
+	public void setGstarContents(GstarContents gstarContents) {
+		this.gstarContents = gstarContents;
+	}
+
 	@PrePersist
 	public void preInsert() {
 		this.warnDt = new Date();

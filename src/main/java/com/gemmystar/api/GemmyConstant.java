@@ -35,9 +35,13 @@ public class GemmyConstant {
 	public static final String CONTENTS_ATTR_STATUS_CD = "statusCd";
 	public static final String CONTENTS_ATTR_DIV_CD = "divCd";
 	
-	/** 방장  */
+	/** 방장영상  */
 	public static final String CODE_MEMBER_TYPE_MASTER = "1";
+	/** 도전영상 */
+	public static final String CODE_MEMBER_TYPE_CHALLENGER = "2";
 	
+	/** 대결 포기 */
+	public static final String CODE_CNTS_STATUS_GIVEUP = "2";
 	/** 영상 게시 종료 */
 	public static final String CODE_CNTS_STATUS_CLOSED = "3";
 	
@@ -45,6 +49,22 @@ public class GemmyConstant {
 	public static final String CODE_CNTS_DIV_RECOMMAND = "2";
 	/** 명예의 전당 */
 	public static final String CODE_CNTS_DIV_HONOR = "4";
+	
+	/** 대결준비중 */
+	public static final String CODE_BATTLE_STATUS_READY = "1";
+	/** 대결중 */
+	public static final String CODE_BATTLE_STATUS_ING = "2";
+	/** 대결종료 */
+	public static final String CODE_BATTLE_STATUS_FINISHED = "3";
+	
+	/** 주간배틀 대결중 */
+	public static final String CODE_WEEK_BATTLE_STATUS_ING = "1";
+	/** 주간배틀 대결종료 */
+	public static final String CODE_WEEK_BATTLE_STATUS_FINISHED = "2";
+	
+	/** 정상구매 */
+	public static final String CODE_PC_STATUS_OK = "1";
+	
 	
 	public static final String S3_KEY_PREFIX_VIDEO = "video/";
 

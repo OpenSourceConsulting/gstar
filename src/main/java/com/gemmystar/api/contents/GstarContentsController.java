@@ -2,6 +2,7 @@ package com.gemmystar.api.contents;
 
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.common.exception.ContentsNotFoundException;
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.WebUtil;
@@ -89,6 +92,17 @@ public class GstarContentsController {
 		return jsonRes;
 	}
 	
+	@RequestMapping(value="/honors", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getHonoraryWinnerList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable){
+	
+		Page<GstarContents> list = service.getHonoraryWinnerList(pageable);
+
+		jsonRes.setData(list);
+		
+		return jsonRes;
+	}
+	
 	@RequestMapping(value="/my", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse myList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable){
@@ -125,7 +139,7 @@ public class GstarContentsController {
 			File uploadedFile = new File(uploadPath + vFile.getOriginalFilename());
 			vFile.transferTo(uploadedFile);
 			
-			String videoId = youtubeService.uploadVideo(vFile.getInputStream(), vFile.getSize(), gstarContents);
+			String videoId = youtubeService.uploadVideo(new FileInputStream(uploadedFile), vFile.getSize(), gstarContents);
 			jsonRes.setData(videoId);
 			
 			gstarContents.setUrl(videoId);
@@ -154,8 +168,9 @@ public class GstarContentsController {
 	@ResponseBody
 	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId){
 		
-		service.deleteGstarContents(gstarContentsId);
-		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
+		GstarContents contents = service.getGstarContents(gstarContentsId);
+		
+		service.deleteGstarContents(contents);
 		
 		return jsonRes;
 	}
@@ -173,12 +188,16 @@ public class GstarContentsController {
 	
 	@RequestMapping(value="/view", method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse increaseViewCnt(SimpleJsonResponse jsonRes, @RequestParam("gstarContentsId") Long gstarContentsId,
-			@RequestParam(value = "gstarRoomId", required = false) Long gstarRoomId){
+	public SimpleJsonResponse increaseViewCnt(SimpleJsonResponse jsonRes, @RequestParam("gstarContentsId") Long gstarContentsId){
 		
 		GstarAccount account = WebUtil.getLoginUser();
 	
-		service.increaseViewCnt(gstarContentsId, account.getGstarUser().getId(), gstarRoomId);
+		try{
+			service.increaseViewCnt(gstarContentsId, account.getGstarUser().getId());
+		}catch(ContentsNotFoundException e) {
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg(e.toString());
+		}
 
 		
 		return jsonRes;
@@ -192,6 +211,20 @@ public class GstarContentsController {
 		GstarAccount account = WebUtil.getLoginUser();
 		
 		service.warnGstarContents(account.getGstarUser().getId(), gstarContentsId, warnMemo, warnTypeCd);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarContentsId}/giveup", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse giveupBattle(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId,
+			@RequestParam(value = "gstarRoomId") Long gstarRoomId){
+	
+		GstarContents contents = service.getGstarContents(gstarContentsId);
+		
+		contents.setStatusCd(GemmyConstant.CODE_CNTS_STATUS_GIVEUP);
+		
+		service.save(contents);
 		
 		return jsonRes;
 	}

@@ -20,6 +20,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.common.exception.ContentsNotFoundException;
 import com.gemmystar.api.common.util.FileUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
@@ -82,7 +83,21 @@ public class GstarContentsService {
 		
 	}
 	
+	public void save(GstarContents gstarContents){
+		repository.save(gstarContents);
+	}
+	
+	/**
+	 * <pre>
+	 * 일반 동영상 등록.
+	 * </pre>
+	 * @param gstarContents
+	 * @param tags
+	 */
+	@Transactional
 	public void save(GstarContents gstarContents, String[] tags){
+		
+		gstarContents.setMemberTypeCd(null);
 		repository.save(gstarContents);
 		
 		for (int i = 0; i < tags.length; i++) {
@@ -109,11 +124,36 @@ public class GstarContentsService {
 	
 	public Page<GstarContents> getGstarContentsList(Pageable pageable, String search){
 		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notMatching());
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notBattle()).and(GstarContentsSpecs.notDeteled());
 		
 		if (search != null) {
 			spec = spec.and(GstarContentsSpecs.search(search));
 		}
+		
+		return repository.findAll(spec, pageable);
+	}
+	
+	public List<GstarContents> getGstarContentsList(String search){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notBattle())
+				.and(GstarContentsSpecs.notDeteled())
+				.and(GstarContentsSpecs.search(search));
+
+		
+		return repository.findAll(spec);
+	}
+	
+	/**
+	 * <pre>
+	 * 명예의 전당 영상 목록.
+	 * </pre>
+	 * @param pageable
+	 * @return
+	 */
+	public Page<GstarContents> getHonoraryWinnerList(Pageable pageable){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.honoraryWinner()).and(GstarContentsSpecs.notDeteled());
+		
 		
 		return repository.findAll(spec, pageable);
 	}
@@ -127,7 +167,7 @@ public class GstarContentsService {
 	
 	public Page<GstarContents> getUserGstarContentsList(Pageable pageable, Long gstarUserId){
 		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myContents(gstarUserId));
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myContents(gstarUserId)).and(GstarContentsSpecs.notDeteled());
 		
 		Page<GstarContents> page = repository.findAll(spec, pageable);
 		//Page<GstarContents> page = repository.getMyContents(new GstarUser(gstarUserId), pageable);
@@ -145,7 +185,7 @@ public class GstarContentsService {
 	 */
 	public Page<GstarContents> getUserHeartGstarContentsList(Pageable pageable, Long gstarUserId){
 		
-		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myHeartContents(gstarUserId));
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myHeartContents(gstarUserId)).and(GstarContentsSpecs.notDeteled());
 		
 		Page<GstarContents> page = repository.findAll(spec, pageable);
 		
@@ -156,12 +196,29 @@ public class GstarContentsService {
 		return repository.findOne(contentsId);
 	}
 	
-	public void deleteGstarContents(Long contentsId){
-		repository.delete(contentsId);
+	@Transactional
+	public void deleteGstarContents(GstarContents contents){
+		
+		if (contents.getGstarPointHistories().size() > 0) {
+			
+			contents.setStatusCd(GemmyConstant.CODE_CNTS_STATUS_CLOSED);
+			contents.setDeleted(true);
+			
+			save(contents);
+		} else {
+			repository.delete(contents);
+		}
 	}
 	
 	@Transactional
-	public void increaseViewCnt(Long contentsId, Long userId, Long gstarRoomId) {
+	public void increaseViewCnt(Long contentsId, Long userId) {
+		
+		GstarContents contents = getGstarContents(contentsId);
+		
+		if (contents == null) {
+			throw new ContentsNotFoundException(contentsId);
+		}
+		
 		infoService.increaseViewCnt(contentsId);
 		
 		GstarView view = viewRepo.findOne(new GstarViewPK(userId, contentsId));
@@ -172,14 +229,30 @@ public class GstarContentsService {
 			viewRepo.increaseViewCnt(userId, contentsId);
 		}
 		
-		if (gstarRoomId != null && gstarRoomId > 0 ) {
-			roomRepo.increaseViewSum(gstarRoomId);
+		if (contents.getGstarRoomId() != null && contents.getGstarRoomId() > 0 ) {
+			roomRepo.increaseViewSum(contents.getGstarRoomId());
 		}
 	}
 	
 	public void warnGstarContents(Long gstarUserId, Long gstarContentsId, String warnMemo, String warnTypeCd){
 		
 		warnRepo.save(new GstarContentsWarn(gstarUserId, gstarContentsId, warnMemo, warnTypeCd));
+	}
+	
+	@Transactional
+	public void increasePoint(Long contentsId, Long usePoint) {
+		
+		GstarContents contents = getGstarContents(contentsId);
+		
+		if (contents == null) {
+			throw new ContentsNotFoundException(contentsId);
+		}
+		
+		infoService.increasePointCnt(contentsId, usePoint);
+		
+		if (contents.getGstarRoomId() != null && contents.getGstarRoomId() > 0 ) {
+			roomRepo.increasePointSum(contents.getGstarRoomId(), usePoint);
+		}
 	}
 
 }
