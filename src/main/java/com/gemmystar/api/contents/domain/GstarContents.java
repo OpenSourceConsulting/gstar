@@ -33,9 +33,12 @@ import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.point.domain.GstarPointHistory;
 import com.gemmystar.api.room.domain.GstarRoom;
+import com.gemmystar.api.room.domain.GstarRoomContents;
 import com.gemmystar.api.tag.domain.GstarHashTag;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarUser;
+import com.gemmystar.api.victory.domain.GstarVictory;
+import com.gemmystar.api.view.domain.GstarView;
 
 /**
  * <pre>
@@ -82,6 +85,9 @@ public class GstarContents implements Serializable {
 	@Column(name = "locale")
 	private String locale;
 	
+	@Column(name = "deleted")
+	private boolean deleted;
+	
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@Column(name = "create_dt")
 	private java.util.Date createDt;//
@@ -106,6 +112,22 @@ public class GstarContents implements Serializable {
 	@JsonIgnore
 	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY)
 	private List<GstarPointHistory> gstarPointHistories;
+	
+	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+	private List<GstarRoomContents> gstarRommContentsList;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+	private List<GstarContentsWarn> gstarContentsWarns;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "gstarContents", fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+	private List<GstarView> gstarViews;
+	
+	@JsonIgnore
+	@OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
+	@JoinColumn(name = "gstar_contents_id")
+	private List<GstarVictory> gstarVictories;
 
 	/**
 	 * <pre>
@@ -253,6 +275,14 @@ public class GstarContents implements Serializable {
 		this.locale = locale;
 	}
 
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
+	}
+
 	/**
 	 * @return the createDt
 	 */
@@ -289,6 +319,39 @@ public class GstarContents implements Serializable {
 
 	public void setGstarRoom(GstarRoom gstarRoom) {
 		this.gstarRoom = gstarRoom;
+	}
+
+	public List<GstarRoomContents> getGstarRommContentsList() {
+		return gstarRommContentsList;
+	}
+
+	public void setGstarRommContentsList(
+			List<GstarRoomContents> gstarRommContentsList) {
+		this.gstarRommContentsList = gstarRommContentsList;
+	}
+
+	public List<GstarContentsWarn> getGstarContentsWarns() {
+		return gstarContentsWarns;
+	}
+
+	public void setGstarContentsWarns(List<GstarContentsWarn> gstarContentsWarns) {
+		this.gstarContentsWarns = gstarContentsWarns;
+	}
+
+	public List<GstarView> getGstarViews() {
+		return gstarViews;
+	}
+
+	public void setGstarViews(List<GstarView> gstarViews) {
+		this.gstarViews = gstarViews;
+	}
+
+	public List<GstarVictory> getGstarVictories() {
+		return gstarVictories;
+	}
+
+	public void setGstarVictories(List<GstarVictory> gstarVictories) {
+		this.gstarVictories = gstarVictories;
 	}
 
 	@PrePersist
