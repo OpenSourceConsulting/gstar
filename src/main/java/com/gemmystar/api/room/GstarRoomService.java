@@ -256,7 +256,11 @@ public class GstarRoomService {
 	}
 	
 	public GstarRoom getBestTopGstarRoom() {
-		return repository.findTopByOrderByPointSumDescCreateDtDesc();
+		GstarRoom room = repository.findTopByOrderByPointSumDescCreateDtDesc();
+		
+		room.setChallengerContentsList(getChallengerContentsList(room.getId()));
+		
+		return room;
 	}
 	
 	
