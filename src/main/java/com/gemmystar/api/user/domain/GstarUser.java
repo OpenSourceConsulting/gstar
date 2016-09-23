@@ -38,6 +38,8 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.gemmystar.api.common.converter.JsView;
 import com.gemmystar.api.contents.domain.GstarContents;
 
 /**
@@ -54,12 +56,15 @@ public class GstarUser implements Serializable {
 
 	private static final long serialVersionUID = 7382139896085707035L;
 
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
+	//@JsonView(JsView.UserPublic.class)
 	private Long id;//
 	
 	@Column(name = "name")
+	//@JsonView(JsView.UserPublic.class)
 	private String name;//사용자명
 	
 	@Column(name = "email")

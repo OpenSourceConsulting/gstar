@@ -22,8 +22,10 @@
  */
 package com.gemmystar.api.user.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,10 +35,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -81,6 +85,10 @@ public class GstarAccount implements UserDetails{
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="gstar_user_id")
 	private GstarUser gstarUser;
+	
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumn(name="gstar_account_id")
+	private List<GstarAccountAuth> accountAuths;
 
 	/**
 	 * <pre>
@@ -191,7 +199,16 @@ public class GstarAccount implements UserDetails{
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		Collection<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();
+		if (this.accountAuths != null) {
+			for (GstarAccountAuth auth : this.accountAuths) {
+				if (auth != null) {
+					authorities.add(new SimpleGrantedAuthority(auth.getAuthority()));
+				}
+			}
+		}
+
+		return authorities;
 	}
 
 	@Override

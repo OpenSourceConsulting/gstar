@@ -28,8 +28,13 @@ public class JsonDateSerializer extends JsonSerializer<Date> {
 	@Override
 	public void serialize(Date value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
 		String formattedDate = df.format(value);
+		
 		jgen.writeString(formattedDate);
 		
+	}
+	
+	public static String format(Date date) {
+		return df.format(date);
 	}
 
 }
