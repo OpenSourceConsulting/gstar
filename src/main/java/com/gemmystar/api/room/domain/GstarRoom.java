@@ -74,7 +74,7 @@ public class GstarRoom implements Serializable{
 	private Long pointSum = 0L;//
 	
 	@JsonSerialize(using = JsonDateSerializer.class)
-	@Column(name = "create_dt")
+	@Column(name = "create_dt", updatable = false)
 	private java.util.Date createDt;//
 	
 	@Column(name = "battle_status_cd")
@@ -89,6 +89,9 @@ public class GstarRoom implements Serializable{
 	
 	@Column(name = "gstar_week_battle_id")
 	private Integer gstarWeekBattleId;
+	
+	@Column(name = "gstar_tab_menu_id")
+	private Integer gstarTabMenuId;
 	
 	
 	@OneToOne
@@ -220,6 +223,14 @@ public class GstarRoom implements Serializable{
 
 	public void setGstarWeekBattleId(Integer gstarWeekBattleId) {
 		this.gstarWeekBattleId = gstarWeekBattleId;
+	}
+
+	public Integer getGstarTabMenuId() {
+		return gstarTabMenuId;
+	}
+
+	public void setGstarTabMenuId(Integer gstarTabMenuId) {
+		this.gstarTabMenuId = gstarTabMenuId;
 	}
 
 	@PrePersist

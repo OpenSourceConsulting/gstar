@@ -94,8 +94,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	public Module commonModule() {
 	    return new SimpleModule()
 	    		.addSerializer(PageImpl.class, new JsonPageSerializer())
-	    		.addSerializer(SimpleJsonResponse.class, new JsonSimpleJsonResSerializer())
-	    		.addSerializer(GstarUser.class, new JsonUserSerializer());
+	    		.addSerializer(SimpleJsonResponse.class, new JsonSimpleJsonResSerializer());
+	    		//.addSerializer(GstarUser.class, new JsonUserSerializer());
 	}
 	
 	

@@ -90,3 +90,14 @@ CREATE TABLE `gstar_room_contents` (
   CONSTRAINT `fk_gstar_room_contents_gstar_contents1` FOREIGN KEY (`gstar_contents_id`) REFERENCES `gstar_contents` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_gstar_room_contents_gstar_room1` FOREIGN KEY (`gstar_room_id`) REFERENCES `gstar_room` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE `gstar`.`gstar_room` 
+ADD COLUMN `gstar_tab_menu_id` INT UNSIGNED NULL AFTER `gstar_week_battle_id`,
+ADD INDEX `fk_gstar_room_gstar_tab_menu1_idx` (`gstar_tab_menu_id` ASC);
+ALTER TABLE `gstar`.`gstar_room` 
+ADD CONSTRAINT `fk_gstar_room_gstar_tab_menu1`
+  FOREIGN KEY (`gstar_tab_menu_id`)
+  REFERENCES `gstar`.`gstar_tab_menu` (`id`)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;

@@ -80,10 +80,14 @@ public class GstarRoomController {
 	 */
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse list(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search, String tag){
+	public SimpleJsonResponse list(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, 
+			String search, String tag, Integer tabMenuId){
 	
 		Page<GstarRoom> page = null;
-		if (tag != null) {
+		
+		if (tabMenuId != null) {
+			page = service.getGstarRoomListByTabMenu(pageable, tabMenuId);
+		} else if (tag != null) {
 			page = service.getGstarRoomListByTag(pageable, tag);
 		} else {
 			page = service.getGstarRoomList(pageable, search);

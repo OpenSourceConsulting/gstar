@@ -98,6 +98,19 @@ public class GstarRoomSpecs {
 			
 		};
 	}
+	
+	public static Specification<GstarRoom> eqTabMenuId(final Integer tabMenuId) {
+		
+		return new Specification<GstarRoom>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarRoom> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				return cb.equal(root.<Integer>get("gstarTabMenuId"), tabMenuId);
+			}
+			
+		};
+	}
 
 }
 //end of GstarRoomSpecs.java

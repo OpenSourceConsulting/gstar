@@ -296,7 +296,7 @@ public class GstarContents implements Serializable {
 	public void setCreateDt(java.util.Date createDt) {
 		this.createDt = createDt;
 	}
-	
+
 	public List<GstarHashTag> getGstarHashTags() {
 		return gstarHashTags;
 	}

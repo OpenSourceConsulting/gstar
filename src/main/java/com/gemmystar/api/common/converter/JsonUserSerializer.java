@@ -25,6 +25,7 @@ public class JsonUserSerializer extends JsonSerializer<GstarUser> {
 		gen.writeNumberField("id", value.getId());
 		gen.writeStringField("name", value.getName());
 		
+		/*
 		if (WebUtil.hasRole("ROLE_ADMIN")) {
 			gen.writeStringField("email", value.getEmail());
 			gen.writeStringField("genderCd", value.getGenderCd());
@@ -37,6 +38,7 @@ public class JsonUserSerializer extends JsonSerializer<GstarUser> {
 			gen.writeStringField("mobileAppVer", value.getMobileAppVer());
 			gen.writeStringField("createDate", JsonDateSerializer.format(value.getCreateDt()));
 		}
+		*/
 		
 		gen.writeEndObject();
 	}

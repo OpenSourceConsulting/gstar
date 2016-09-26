@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gemmystar.api.common.converter.JsView;
 import com.gemmystar.api.common.converter.JsonDateSerializer;
+import com.gemmystar.api.common.converter.JsonUserSerializer;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.user.domain.GstarUser;
 
@@ -64,6 +65,7 @@ public class GstarBoard {
 	@JoinColumn(name = "gstar_user_id", insertable = false, updatable = false)
 	@NotFound(action = NotFoundAction.IGNORE)
 	@JsonView(JsView.BordList.class)
+	@JsonSerialize(using = JsonUserSerializer.class)
 	private GstarUser writer;
 
 	/**

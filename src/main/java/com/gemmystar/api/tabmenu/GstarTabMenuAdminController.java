@@ -1,4 +1,4 @@
-package com.gemmystar.api.board;
+package com.gemmystar.api.tabmenu;
 
 
 import org.slf4j.Logger;
@@ -13,12 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.gemmystar.api.board.domain.GstarBoard;
-import com.gemmystar.api.common.converter.JsView;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
+import com.gemmystar.api.tabmenu.domain.GstarTabMenu;
 
 
 
@@ -30,13 +29,13 @@ import com.gemmystar.api.common.model.SimpleJsonResponse;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/admin/board")
-public class GstarBoardController {
+@RequestMapping("/admin/tabmenu")
+public class GstarTabMenuAdminController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(GstarBoardController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarTabMenuAdminController.class);
 	
 	@Autowired
-	private GstarBoardService service;
+	private GstarTabMenuService service;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -47,16 +46,16 @@ public class GstarBoardController {
 	 * 
 	 * </pre>
 	 */
-	public GstarBoardController() {
-		
+	public GstarTabMenuAdminController() {
+
 	}
+
 	
-	@JsonView(JsView.BordList.class)
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
 	
-		Page<GstarBoard> list = service.getGstarBoardList(pageable, search);
+		Page<GstarTabMenu> list = service.getGstarTabMenuList(pageable, search);
 
 		jsonRes.setData(list);
 		
@@ -65,34 +64,46 @@ public class GstarBoardController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarBoard gstarBoard){
+	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarTabMenu gstarTabMenu){
 		
-		service.save(gstarBoard);
+		service.save(gstarTabMenu);
 		//jsonRes.setMsg(messageSource.getMessage("account.email.not.reg", new String[]{userEmail}, locale));
 		
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(value="/{gstarBoardId}", method = RequestMethod.DELETE)
+	@RequestMapping(value="/{gstarTabMenuId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
+	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarTabMenuId") Integer gstarTabMenuId){
 		
-		service.deleteGstarBoard(gstarBoardId);
+		service.deleteGstarTabMenu(gstarTabMenuId);
 		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
 		
 		return jsonRes;
 	}
 	
-	@JsonView(JsView.BordAll.class)
-	@RequestMapping(value="/{gstarBoardId}", method = RequestMethod.GET)
+	@RequestMapping(value="/{gstarTabMenuId}", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getGstarBoard(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
+	public SimpleJsonResponse getGstarTabMenu(SimpleJsonResponse jsonRes, @PathVariable("gstarTabMenuId") Integer gstarTabMenuId){
 	
-		jsonRes.setData(service.getGstarBoard(gstarBoardId));
+		jsonRes.setData(service.getGstarTabMenu(gstarTabMenuId));
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarTabMenuId}", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse visibility(SimpleJsonResponse jsonRes, @PathVariable("gstarTabMenuId") Integer gstarTabMenuId, 
+			@RequestParam(name = "hidden") boolean hidden){
+		
+		GstarTabMenu tabMenu = service.getGstarTabMenu(gstarTabMenuId);
+		tabMenu.setHidden(hidden);
+		
+		service.save(tabMenu);
 		
 		return jsonRes;
 	}
 
 }
-//end of GstarBoardController.java
+//end of GstarTabMenuController.java
