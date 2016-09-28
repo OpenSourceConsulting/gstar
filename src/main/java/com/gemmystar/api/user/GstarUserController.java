@@ -150,7 +150,16 @@ public class GstarUserController {
 			jsonRes.setSuccess(false);
 			jsonRes.setMsg(messageSource.getMessage("user.my.update.denied", null, locale));
 		} else {
-			service.save(gstarUser);
+			
+			GstarUser dbUser = service.getGstarUser(account.getGstarUser().getId());
+			
+			dbUser.setName(gstarUser.getName());
+			dbUser.setNickname(gstarUser.getNickname());
+			dbUser.setEmail(gstarUser.getEmail());
+			dbUser.setBankCmpyCd(gstarUser.getBankCmpyCd());
+			dbUser.setBankAccount(gstarUser.getBankAccount());
+			
+			service.save(dbUser);
 		}
 		
 		return jsonRes;
@@ -158,7 +167,7 @@ public class GstarUserController {
 	
 	/**
 	 * <pre>
-	 * 회원 탈퇴 요청.
+	 * 회원 탈퇴 처리.
 	 * </pre>
 	 * @param jsonRes
 	 * @return

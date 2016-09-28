@@ -24,6 +24,7 @@ public class JsonUserSerializer extends JsonSerializer<GstarUser> {
 		
 		gen.writeNumberField("id", value.getId());
 		gen.writeStringField("name", value.getName());
+		gen.writeStringField("nickname", value.getNickname());
 		
 		/*
 		if (WebUtil.hasRole("ROLE_ADMIN")) {

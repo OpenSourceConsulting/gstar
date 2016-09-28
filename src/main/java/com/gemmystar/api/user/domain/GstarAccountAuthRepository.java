@@ -18,5 +18,5 @@ import com.gemmystar.api.user.domain.GstarAccountAuth;
 @Repository
 public interface GstarAccountAuthRepository extends JpaRepository<GstarAccountAuth, Integer>, JpaSpecificationExecutor<GstarAccountAuth> {
 
-	
+	Long deleteByGstarAccountId(Long gstarAccountId);
 }

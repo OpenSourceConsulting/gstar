@@ -35,6 +35,11 @@ public class GstarAccountAuth {
 	public GstarAccountAuth() {
 	}
 
+	public GstarAccountAuth(Long gstarAccountId, String authority) {
+		this.gstarAccountId = gstarAccountId;
+		this.authority = authority;
+	}
+
 	/**
 	 * @return the id
 	 */

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gemmystar.api.user.domain.GstarAccount;
+import com.gemmystar.api.user.domain.GstarAccountAuth;
+import com.gemmystar.api.user.domain.GstarAccountAuthRepository;
 import com.gemmystar.api.user.domain.GstarAccountRepository;
 import com.gemmystar.api.user.domain.GstarPassresetToken;
 import com.gemmystar.api.user.domain.GstarPassresetTokenRepository;
@@ -39,6 +41,9 @@ public class GstarAccountService implements UserDetailsService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private GstarAccountAuthRepository authRepo;
+	
 	public GstarAccountService() {
 		
 	}
@@ -47,8 +52,24 @@ public class GstarAccountService implements UserDetailsService {
 		repository.save(gstarAccount);
 	}
 	
+	public void saveRole(Long gstarAccountId, String[] roles) {
+		
+		for (String role : roles) {
+			GstarAccountAuth auth = new GstarAccountAuth(gstarAccountId, role);
+			authRepo.save(auth);
+		}
+	}
+	
+	public void deleteRole(Long gstarAccountId) {
+		authRepo.deleteByGstarAccountId(gstarAccountId);
+	}
+	
 	public List<GstarAccount> getGstarAccountAllList(){
 		return repository.findAll();
+	}
+	
+	public List<GstarAccount> getGstarAccountList(Long gstarUserId){
+		return repository.findByGstarUserId(gstarUserId);
 	}
 	/*
 	public int getGstarAccountListTotalCount(GridParam gridParam){

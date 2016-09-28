@@ -43,6 +43,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * <pre>
  * 
@@ -191,8 +193,21 @@ public class GstarAccount implements UserDetails{
 		this.gstarUser = gstarUser;
 	}
 
+	public List<GstarAccountAuth> getAccountAuths() {
+		return accountAuths;
+	}
+
+	public void setAccountAuths(List<GstarAccountAuth> accountAuths) {
+		this.accountAuths = accountAuths;
+	}
+
 	@PrePersist
 	public void preInsert() {
+		
+		if (this.accountTypeCd == null) {
+			this.accountTypeCd = "1";
+		}
+		
 		this.enabled = true;
 		this.createDt = new Date();
 	}
@@ -217,6 +232,7 @@ public class GstarAccount implements UserDetails{
 	}
 
 	@Override
+	@JsonIgnore
 	public String getUsername() {
 		
 		return getLoginId();

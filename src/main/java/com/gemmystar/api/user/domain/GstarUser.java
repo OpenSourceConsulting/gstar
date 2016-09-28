@@ -39,7 +39,9 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gemmystar.api.common.converter.JsView;
+import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.contents.domain.GstarContents;
 
 /**
@@ -60,12 +62,13 @@ public class GstarUser implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "id")
-	//@JsonView(JsView.UserPublic.class)
 	private Long id;//
 	
 	@Column(name = "name")
-	//@JsonView(JsView.UserPublic.class)
-	private String name;//사용자명
+	private String name;//사용자명(본명, 예금자명)
+	
+	@Column(name = "nickname")
+	private String nickname;//별명
 	
 	@Column(name = "email")
 	private String email;//
@@ -94,6 +97,7 @@ public class GstarUser implements Serializable {
 	@Column(name = "mobile_app_ver")
 	private String mobileAppVer;
 	
+	@JsonSerialize(using = JsonDateSerializer.class)
 	@Column(name = "create_dt", updatable = false)
 	private java.util.Date createDt;//생성일시
 	
@@ -145,6 +149,14 @@ public class GstarUser implements Serializable {
 	 */
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	/**
