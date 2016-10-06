@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gemmystar.api.common.converter.JsonDateSerializer;
+import com.gemmystar.api.common.converter.JsonUserSerializer;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.point.domain.GstarPointHistory;
 import com.gemmystar.api.room.domain.GstarRoom;
@@ -85,6 +86,9 @@ public class GstarContents implements Serializable {
 	@Column(name = "locale")
 	private String locale;
 	
+	@Column(name = "order_seq")
+	private int orderSeq;
+	
 	@Column(name = "deleted")
 	private boolean deleted;
 	
@@ -95,6 +99,7 @@ public class GstarContents implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "gstar_user_id")
+	@JsonSerialize(using = JsonUserSerializer.class)
 	private GstarUser gstarUser;
 	
 	@JsonIgnore
@@ -273,6 +278,14 @@ public class GstarContents implements Serializable {
 
 	public void setLocale(String locale) {
 		this.locale = locale;
+	}
+
+	public int getOrderSeq() {
+		return orderSeq;
+	}
+
+	public void setOrderSeq(int orderSeq) {
+		this.orderSeq = orderSeq;
 	}
 
 	public boolean isDeleted() {

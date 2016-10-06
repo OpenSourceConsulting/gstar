@@ -12,7 +12,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
+import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarAccountAuth;
 import com.gemmystar.api.user.domain.GstarAccountAuthRepository;
@@ -82,11 +84,26 @@ public class GstarAccountService implements UserDetailsService {
 		return repository.findOne(accountId);
 	}
 
+	/**
+	 * admin 계정만 명시적으로 삭제한다.
+	 * @param gstarUserId
+	 */
+	@Transactional
+	public void deleteAdminAccountByUserId(Long gstarUserId, GstarAccount account) {
+		
+		Assert.isTrue(GemmyConstant.CODE_ACCOUNT_TYPE_ADMIN.equals(account.getAccountTypeCd()), "삭제하려는 계정이 관리자 계정이 아닙니다.");
+		
+		if(tokenRepo.findOne(account.getId()) != null) {
+			tokenRepo.delete(account.getId());//위 if문 없으면 에러남.
+		}
+		
+		repository.delete(account);
+	}
 	
 	public void deleteGstarAccount(Long accountId){
 		repository.delete(accountId);
 	}
-
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		return repository.findByLoginId(username);

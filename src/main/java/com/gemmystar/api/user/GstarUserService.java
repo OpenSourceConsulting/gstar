@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +29,8 @@ import com.gemmystar.api.user.specs.GstarUserSpecs;
  */
 @Service
 public class GstarUserService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarUserService.class);
 
 	@Autowired
 	private GstarUserRepository repository;
@@ -57,7 +61,7 @@ public class GstarUserService {
 		gstarUser.setNickname(gstarUser.getName());
 		account.setAccountTypeCd(GemmyConstant.CODE_ACCOUNT_TYPE_ADMIN);
 		
-		if (account.getId() > 0) {
+		if (account.getId() == null || account.getId() > 0) {
 			accountService.deleteRole(account.getId());
 		}
 		
@@ -66,8 +70,37 @@ public class GstarUserService {
 		accountService.saveRole(account.getId(), roles);
 	}
 	
+	@Transactional
+	public void saveAccountRoles(Long accountId, String[] roles) {
+		if (accountId == null || accountId > 0) {
+			accountService.deleteRole(accountId);
+		}
+		
+		accountService.saveRole(accountId, roles);
+	}
+	
 	public void save(GstarUser gstarUser){
 		repository.save(gstarUser);
+	}
+	
+	@Transactional
+	public void lockUser(Long gstarUserId) {
+		List<GstarAccount> accounts = getGstarUser(gstarUserId).getAccounts();
+		for (GstarAccount gstarAccount : accounts) {
+			gstarAccount.setLocked(true);
+			
+			accountService.save(gstarAccount);
+		}
+	}
+	
+	@Transactional
+	public void unlockUser(Long gstarUserId) {
+		List<GstarAccount> accounts = getGstarUser(gstarUserId).getAccounts();
+		for (GstarAccount gstarAccount : accounts) {
+			gstarAccount.setLocked(false);
+			
+			accountService.save(gstarAccount);
+		}
 	}
 	
 	public List<GstarUser> getGstarUserAllList(){
@@ -126,8 +159,32 @@ public class GstarUserService {
 		}
 	}
 	
-	public void deleteGstarUser(Long userId){
-		repository.delete(userId);
+	@Transactional
+	public void deleteAdminUser(Long userId){
+		
+		GstarUser dbUser = getGstarUser(userId);
+		
+		accountService.deleteAdminAccountByUserId(userId, dbUser.getAccounts().get(0));
+		
+		try{
+			repository.delete(userId);
+		} catch (Exception e) {
+			LOGGER.error(e.toString(), e);
+			
+			/**
+			 * update.
+			 */
+			GstarUser deleteUser = new GstarUser();
+			
+			deleteUser.setId(dbUser.getId());
+			deleteUser.setName(dbUser.getName());
+			deleteUser.setNickname(dbUser.getNickname());
+			deleteUser.setMobileNoti(false);
+			deleteUser.setEmailNoti(false);
+			deleteUser.setCreateDt(dbUser.getCreateDt());
+			
+			repository.save(deleteUser);
+		}
 	}
 
 }

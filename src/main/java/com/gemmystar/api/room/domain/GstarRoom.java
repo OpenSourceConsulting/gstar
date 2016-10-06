@@ -34,6 +34,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -41,6 +42,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gemmystar.api.common.converter.JsonDateSerializer;
+import com.gemmystar.api.common.util.DateUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
 
 /**
@@ -80,12 +82,19 @@ public class GstarRoom implements Serializable{
 	@Column(name = "battle_status_cd")
 	private String battleStatusCd = "1";
 	
+	@Column(name = "battle_term")
+	private int battleTerm = 7;
+	
 	@Column(name = "battle_seq")
 	private int battleSeq = 1;// 배틀 순차수
 	
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@Column(name = "start_dt")
 	private Date startDt;
+	
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@Column(name = "end_dt")
+	private Date endDt;
 	
 	@Column(name = "gstar_week_battle_id")
 	private Integer gstarWeekBattleId;
@@ -100,7 +109,10 @@ public class GstarRoom implements Serializable{
 	private GstarContents masterContents;
 	
 	@Transient
-	private List<GstarContents> challengerContentsList;
+	private GstarContents topChallenger;
+	
+	//@Transient
+	//private List<GstarContents> challengerContentsList;
 
 	/**
 	 * <pre>
@@ -185,14 +197,6 @@ public class GstarRoom implements Serializable{
 		this.masterContents = masterContents;
 	}
 
-	public List<GstarContents> getChallengerContentsList() {
-		return challengerContentsList;
-	}
-
-	public void setChallengerContentsList(List<GstarContents> challengerContentsList) {
-		this.challengerContentsList = challengerContentsList;
-	}
-
 	public String getBattleStatusCd() {
 		return battleStatusCd;
 	}
@@ -207,6 +211,22 @@ public class GstarRoom implements Serializable{
 
 	public void setBattleSeq(int battleSeq) {
 		this.battleSeq = battleSeq;
+	}
+
+	public int getBattleTerm() {
+		return battleTerm;
+	}
+
+	public void setBattleTerm(int battleTerm) {
+		this.battleTerm = battleTerm;
+	}
+
+	public Date getEndDt() {
+		return endDt;
+	}
+
+	public void setEndDt(Date endDt) {
+		this.endDt = endDt;
 	}
 
 	public Date getStartDt() {
@@ -233,9 +253,24 @@ public class GstarRoom implements Serializable{
 		this.gstarTabMenuId = gstarTabMenuId;
 	}
 
+	public GstarContents getTopChallenger() {
+		return topChallenger;
+	}
+
+	public void setTopChallenger(GstarContents topChallenger) {
+		this.topChallenger = topChallenger;
+	}
+
 	@PrePersist
 	public void preInsert() {
 		this.createDt = new Date();
+	}
+	
+	@PreUpdate
+	public void preUpdate() {
+		if (this.startDt != null && this.endDt == null) {
+			this.endDt = DateUtil.addDay(this.startDt, this.battleTerm);
+		}
 	}
 
 }

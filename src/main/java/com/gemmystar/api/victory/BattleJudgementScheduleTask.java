@@ -42,6 +42,7 @@ import org.springframework.stereotype.Component;
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.mail.MailSender;
 import com.gemmystar.api.common.push.AndroidFcmSender;
+import com.gemmystar.api.common.util.DateUtil;
 import com.gemmystar.api.contents.GstarContentsService;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
@@ -109,14 +110,11 @@ public class BattleJudgementScheduleTask {
 	//@Scheduled(fixedRate = 10000)
 	public void judge() {
 		
-		Calendar cal = Calendar.getInstance();
+		Date now = DateUtil.getCurrentDate();
 		
-		cal.add(Calendar.DAY_OF_WEEK, -7);
+		LOGGER.debug("==== check {}.", dateFormat.format(now) );
 		
-		//dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-		LOGGER.debug("==== check {} ago.", dateFormat.format(cal.getTime()) );
-		
-		List<GstarRoom> rooms = roomRepo.getJudgementRooms(cal.getTime());
+		List<GstarRoom> rooms = roomRepo.getJudgementRooms(now);
 		
 		Integer gstarWeekBattleId = null;
 		

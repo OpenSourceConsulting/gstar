@@ -1,6 +1,7 @@
 package com.gemmystar.api.contents;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -23,9 +24,11 @@ import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.exception.ContentsNotFoundException;
 import com.gemmystar.api.common.util.FileUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
+import com.gemmystar.api.contents.domain.GstarContentsQRepository;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
 import com.gemmystar.api.contents.domain.GstarContentsWarn;
 import com.gemmystar.api.contents.domain.GstarContentsWarnRepository;
+import com.gemmystar.api.contents.specs.GstarContentsPredicate;
 import com.gemmystar.api.contents.specs.GstarContentsSpecs;
 import com.gemmystar.api.room.GstarRoomService;
 import com.gemmystar.api.room.domain.GstarRoomRepository;
@@ -53,6 +56,9 @@ public class GstarContentsService {
 	private GstarContentsRepository repository;
 	
 	@Autowired
+	private GstarContentsQRepository qrepository;
+	
+	@Autowired
 	private GstarRoomService roomService;
 	
 	@Autowired
@@ -78,6 +84,7 @@ public class GstarContentsService {
 	
 	@Autowired
 	private S3UploadScheduledTask s3Uploader;
+	
 	
 	public GstarContentsService() {
 		
@@ -133,6 +140,17 @@ public class GstarContentsService {
 		return repository.findAll(spec, pageable);
 	}
 	
+	public Page<GstarContents> getGstarBattleWarnContentsList(Pageable pageable, String search){
+		
+		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.battleWarn(10)).and(GstarContentsSpecs.notDeteled());
+		
+		if (search != null) {
+			spec = spec.and(GstarContentsSpecs.search(search));
+		}
+		
+		return repository.findAll(spec, pageable);
+	}
+	
 	public List<GstarContents> getGstarContentsList(String search){
 		
 		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.notBattle())
@@ -158,11 +176,35 @@ public class GstarContentsService {
 		return repository.findAll(spec, pageable);
 	}
 	
-	public List<GstarContents> getRecommandList(){
+	public Iterable<GstarContents> getRecommandList(boolean isAll){
 		
+		return qrepository.findAll(GstarContentsPredicate.recommands(isAll), new Sort("orderSeq"));// default asc.
+		
+		/*
 		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.recommands());
 		
 		return repository.findAll(spec, new Sort(Direction.DESC, "createDt"));
+		*/
+	}
+	
+	/**
+	 * 정렬순서 수정.
+	 * @param ids
+	 */
+	public void ordering(Long[] ids) {
+		
+		List<GstarContents> contentsList = new ArrayList<GstarContents>();
+		
+		int orderSeq = 1;
+		for (Long contentsId : ids) {
+			GstarContents contents = getGstarContents(contentsId);
+			contents.setOrderSeq(orderSeq);
+			contentsList.add(contents);
+			
+			orderSeq++;
+		}
+		
+		repository.save(contentsList);
 	}
 	
 	public Page<GstarContents> getUserGstarContentsList(Pageable pageable, Long gstarUserId){

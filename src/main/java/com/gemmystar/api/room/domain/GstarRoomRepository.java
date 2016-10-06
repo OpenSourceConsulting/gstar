@@ -36,6 +36,6 @@ public interface GstarRoomRepository extends JpaRepository<GstarRoom, Long>, Jpa
 	 * @param aWeekAgoDt
 	 * @return
 	 */
-	@Query(value = "SELECT gr FROM GstarRoom gr WHERE gr.battleStatusCd = '2' and gr.startDt is not null and gr.startDt <= ?1")
-	List<GstarRoom> getJudgementRooms(Date aWeekAgoDt);
+	@Query(value = "SELECT gr FROM GstarRoom gr WHERE gr.battleStatusCd = '2' and gr.endDt is not null and gr.endDt <= ?1")
+	List<GstarRoom> getJudgementRooms(Date now);
 }

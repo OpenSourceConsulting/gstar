@@ -31,7 +31,8 @@ import javax.persistence.Table;
 
 /**
  * <pre>
- * 
+ * 쨈으로 최근 변경됨. 
+ * - 이전엔 '하트'였음.
  * </pre>
  * @author Bongjin Kwon
  * @version 1.0

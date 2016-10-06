@@ -16,6 +16,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -134,5 +135,15 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localeChangeInterceptor());
     }
-
+    /*
+    @Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**")
+			.allowedOrigins("https://gemmystar.com", "http://gemmystar.com", "chrome-extension://aicmkgpgakddgnaphhhpliifpcfhicfo")
+			//.allowedMethods("PUT", "DELETE")
+			//.allowedHeaders("header1", "header2", "header3")
+			//.exposedHeaders("header1", "header2")
+			.allowCredentials(false).maxAge(3600);
+	}
+	*/
 }

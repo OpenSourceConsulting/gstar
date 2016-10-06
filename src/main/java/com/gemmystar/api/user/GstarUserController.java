@@ -107,17 +107,7 @@ public class GstarUserController {
 		
 		return jsonRes;
 	}
-	
-	@RequestMapping(value="/{gstarUserId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
-		
-		service.deleteGstarUser(userId);
-		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
-		
-		return jsonRes;
-	}
-	
+
 
 	@RequestMapping(value="/{gstarUserId}", method = RequestMethod.GET)
 	@ResponseBody

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
  * @version 1.0
  */
 @Repository
-public interface GstarPassresetTokenRepository extends JpaRepository<GstarPassresetToken, Integer> {
+public interface GstarPassresetTokenRepository extends JpaRepository<GstarPassresetToken, Long> {
 
 	GstarPassresetToken findByToken(String token);
 	

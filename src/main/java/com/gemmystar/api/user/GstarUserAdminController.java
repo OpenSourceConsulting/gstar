@@ -29,6 +29,7 @@ import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarUser;
+import com.gemmystar.api.user.viewmodel.GstarAdminUser;
 
 
 
@@ -72,7 +73,7 @@ public class GstarUserAdminController {
 		return jsonRes;
 	}
 	
-	@RequestMapping(value="/list", method = RequestMethod.GET)
+	@RequestMapping(value="/users", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse getAdminList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
 	
@@ -115,9 +116,9 @@ public class GstarUserAdminController {
 	
 	@RequestMapping(value="/user/{gstarUserId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
+	public SimpleJsonResponse deleteAdminUser(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
 		
-		service.deleteGstarUser(userId);
+		service.deleteAdminUser(userId);
 		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
 		
 		return jsonRes;
@@ -125,6 +126,17 @@ public class GstarUserAdminController {
 	
 
 	@RequestMapping(value="/user/{gstarUserId}", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getGstarAdminUser(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
+	
+		GstarUser user = service.getGstarUser(userId);
+		
+		jsonRes.setData(new GstarAdminUser(user));
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/member/{gstarUserId}", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse getGstarUser(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
 	
@@ -141,6 +153,34 @@ public class GstarUserAdminController {
 	
 		jsonRes.setData(accountService.getGstarAccountList(userId));
 		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarAccountId}/roles", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse saveGstarUser(SimpleJsonResponse jsonRes, @PathVariable("gstarAccountId") Long accountId,
+			@RequestParam(name = "roles") String[] roles){
+	
+		service.saveAccountRoles(accountId, roles);
+
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/member/{gstarUserId}/lock", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse lockGstarUser(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
+	
+		service.lockUser(userId);
+
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/member/{gstarUserId}/unlock", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse unlockGstarUser(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
+	
+		service.unlockUser(userId);
+
 		return jsonRes;
 	}
 	

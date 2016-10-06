@@ -63,7 +63,8 @@ public class GstarWeekBattleService {
 			List<GstarRoom> rooms = weekBattle.getGstarRooms();
 			for (GstarRoom gstarRoom : rooms) {
 				
-				gstarRoom.setChallengerContentsList(roomService.getChallengerContentsList(gstarRoom.getId()));
+				//TODO 사용시 다른 로직으로 변경.
+				//gstarRoom.setChallengerContentsList(roomService.getChallengerContentsList(gstarRoom.getId()));
 			}
 		}
 		

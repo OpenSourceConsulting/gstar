@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -88,8 +89,8 @@ public class GstarAccount implements UserDetails{
 	@JoinColumn(name="gstar_user_id")
 	private GstarUser gstarUser;
 	
-	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumn(name="gstar_account_id")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "gstarAccount", cascade = CascadeType.REMOVE)// TODO 단방향 연결 삭제 테스트
+	@JsonIgnore
 	private List<GstarAccountAuth> accountAuths;
 
 	/**

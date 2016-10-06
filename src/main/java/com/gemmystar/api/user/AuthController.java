@@ -124,7 +124,7 @@ public class AuthController {
 			jsonRes.setMsg("로그인할수 없습니다. 회원 탈퇴 상태입니다.");
 			
 		} else if (ex instanceof LockedException) {
-			jsonRes.setMsg("비밀번호가 초기화 되었습니다. 전송된 비밀번호 재설정 메일을 통해서 비밀번호를 재설정해주세요.");
+			jsonRes.setMsg("로그인 일시 정지상태입니다.\n비밀번호 변경중일수 있습니다. 메일을 확인하세요.");
 			
 		} else {
 			jsonRes.setMsg("login ID 또는 password 가 잘못되었습니다.");

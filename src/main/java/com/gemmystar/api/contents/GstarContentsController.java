@@ -85,7 +85,7 @@ public class GstarContentsController {
 	@ResponseBody
 	public SimpleJsonResponse recommandList(SimpleJsonResponse jsonRes){
 	
-		List<GstarContents> list = service.getRecommandList();
+		Iterable<GstarContents> list = service.getRecommandList(false);
 
 		jsonRes.setData(list);
 		
@@ -170,6 +170,13 @@ public class GstarContentsController {
 		
 		GstarContents contents = service.getGstarContents(gstarContentsId);
 		
+		Long myUserId = WebUtil.getLoginUserId();
+		
+		if (myUserId.equals(contents.getGstarUser().getId()) == false) {
+			//나의 영상이 아니면 에러.
+			throw new RuntimeException("can not delete. it's not my contents.");
+		}
+		
 		service.deleteGstarContents(contents);
 		
 		return jsonRes;
@@ -203,6 +210,14 @@ public class GstarContentsController {
 		return jsonRes;
 	}
 	
+	/**
+	 * 신고하기
+	 * @param jsonRes
+	 * @param gstarContentsId
+	 * @param warnMemo
+	 * @param warnTypeCd
+	 * @return
+	 */
 	@RequestMapping(value="/{gstarContentsId}/warn", method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleJsonResponse warnGstarContents(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId,
@@ -215,12 +230,26 @@ public class GstarContentsController {
 		return jsonRes;
 	}
 	
+	/**
+	 * 대결 포기 하기.
+	 * @param jsonRes
+	 * @param gstarContentsId
+	 * @param gstarRoomId
+	 * @return
+	 */
 	@RequestMapping(value="/{gstarContentsId}/giveup", method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleJsonResponse giveupBattle(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId,
 			@RequestParam(value = "gstarRoomId") Long gstarRoomId){
 	
 		GstarContents contents = service.getGstarContents(gstarContentsId);
+		
+		Long myUserId = WebUtil.getLoginUserId();
+		
+		if (myUserId.equals(contents.getGstarUser().getId()) == false) {
+			//나의 영상이 아니면 에러.
+			throw new RuntimeException("can not give up. it's not my contents.");
+		}
 		
 		contents.setStatusCd(GemmyConstant.CODE_CNTS_STATUS_GIVEUP);
 		

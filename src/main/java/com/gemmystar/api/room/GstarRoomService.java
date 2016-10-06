@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
 import com.gemmystar.api.GemmyConstant;
+import com.gemmystar.api.common.util.DateUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
 import com.gemmystar.api.contents.domain.GstarInfo;
@@ -99,6 +100,9 @@ public class GstarRoomService {
 			contents.setGstarRoomId(gstarRoom.getId());
 			contentsRepo.save(contents);// update gstar_room_id
 		} else {
+			/*
+			 * 도전자 영상 등록.
+			 */
 			gstarRoom = repository.findOne(contents.getGstarRoomId());
 			
 			if (gstarRoom.getBattleSeq() == 1 && GemmyConstant.CODE_BATTLE_STATUS_READY.equals(gstarRoom.getBattleStatusCd())) {
@@ -141,16 +145,20 @@ public class GstarRoomService {
 		
 		
 		if (gstarRoom.getGstarWeekBattleId() == null) {
-			
+			/*
+			 * 주간배틀 아님.
+			 */
 			// 새로운 주차 등록.
 			roomWeekRepo.save(new GstarRoomWeek(gstarRoom.getId(), battleSeq, startDt));
 			
 			// room 배틀정보 업데이트.
 			gstarRoom.setBattleSeq(battleSeq);
 			gstarRoom.setStartDt(startDt);
+			gstarRoom.setEndDt(DateUtil.addDay(startDt, gstarRoom.getBattleTerm()));
 			gstarRoom.setBattleStatusCd(GemmyConstant.CODE_BATTLE_STATUS_ING);
 			
 		} else {
+			// 주간배틀.
 			// 주간배틀 room은 무조건 finished.
 			gstarRoom.setBattleStatusCd(GemmyConstant.CODE_BATTLE_STATUS_FINISHED);
 		}
@@ -203,6 +211,7 @@ public class GstarRoomService {
 			page = repository.findAll(pageable);
 		}
 		
+		setTopChallenger(page);
 		
 		return page;
 	}
@@ -241,6 +250,8 @@ public class GstarRoomService {
 		
 		Page<GstarRoom> page = repository.findAll(pageable);
 		
+		setTopChallenger(page);
+		
 		return page;
 	}
 	
@@ -253,21 +264,21 @@ public class GstarRoomService {
 	public GstarRoom getGstarRoomWithChallengers(Long roomId){
 		GstarRoom room = repository.findOne(roomId);
 		
-		room.setChallengerContentsList(getChallengerContentsList(roomId));
+		//room.setChallengerContentsList(getChallengerContentsList(roomId));// 별도 api 로 분리. 2016.09.30
 		
 		return room;
 	}
 	
-	public List<GstarContents> getChallengerContentsList(Long roomId) {
+	public Page<GstarContents> getChallengerContentsList(Long roomId, Pageable pageable) {
 		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.challengers(roomId)).and(GstarContentsSpecs.notDeteled());
 		
-		return contentsRepo.findAll(spec);
+		return contentsRepo.findAll(spec, pageable);
 	}
 	
 	public GstarRoom getBestTopGstarRoom() {
 		GstarRoom room = repository.findTopByOrderByPointSumDescCreateDtDesc();
 		
-		room.setChallengerContentsList(getChallengerContentsList(room.getId()));
+		//room.setChallengerContentsList(getChallengerContentsList(room.getId())); 별도 api 로 분리. 2016.09.30
 		
 		return room;
 	}
@@ -275,6 +286,23 @@ public class GstarRoomService {
 	
 	public void deleteGstarRoom(Long roomId){
 		repository.delete(roomId);
+	}
+	
+	private void setTopChallenger(Page<GstarRoom> page) {
+		//if (page.isFirst()) {
+			
+			Sort sort = new Sort(Sort.Direction.DESC, "gstarInfo.pointCnt", "createDt");
+			PageRequest pageable = new PageRequest(0, 1, sort);
+			
+			for (GstarRoom gstarRoom : page) {
+				Page<GstarContents> challengers = getChallengerContentsList(gstarRoom.getId(), pageable);
+				
+				if (challengers.getTotalElements() > 0) {
+					gstarRoom.setTopChallenger(challengers.getContent().get(0));
+				}
+			}
+			
+		//}
 	}
 
 }

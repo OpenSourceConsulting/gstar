@@ -18,4 +18,6 @@ public interface GstarAccountRepository extends JpaRepository<GstarAccount, Long
 	
 	List<GstarAccount> findByGstarUserId(Long gstarUserId);
 	
+	Long deleteByGstarUserIdAndAccountTypeCd(Long gstarUserId, String accountTypeCd);
+	
 }

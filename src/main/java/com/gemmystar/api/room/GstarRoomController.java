@@ -133,7 +133,7 @@ public class GstarRoomController {
 	
 	/**
 	 * <pre>
-	 * 나만의 동영상 업로드 / 도전하기
+	 * 대결 동영상 업로드 / 도전하기
 	 * </pre>
 	 * @param jsonRes
 	 * @param gstarRoom
@@ -193,6 +193,30 @@ public class GstarRoomController {
 		GstarRoom room = service.getGstarRoomWithChallengers(gstarRoomId);
 		
 		jsonRes.setData(room);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarRoomId}/best", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getGstarRoomBest(SimpleJsonResponse jsonRes, @PathVariable("gstarRoomId") Long gstarRoomId,
+			@PageableDefault(sort = { "gstarInfo.pointCnt", "createDt" }, direction = Direction.DESC, size = 5) Pageable pageable){
+	
+		Page<GstarContents> challengers = service.getChallengerContentsList(gstarRoomId, pageable);
+		
+		jsonRes.setData(challengers);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarRoomId}/latest", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getGstarRoomLatest(SimpleJsonResponse jsonRes, @PathVariable("gstarRoomId") Long gstarRoomId,
+			@PageableDefault(sort = { "createDt" }, direction = Direction.DESC, size = 5) Pageable pageable){
+	
+		Page<GstarContents> challengers = service.getChallengerContentsList(gstarRoomId, pageable);
+		
+		jsonRes.setData(challengers);
 		
 		return jsonRes;
 	}

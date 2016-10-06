@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.contents.domain.GstarContents;
+import com.gemmystar.api.contents.domain.GstarInfo;
 import com.gemmystar.api.point.domain.GstarPointHistory;
 import com.gemmystar.api.room.domain.GstarRoomContents;
 import com.gemmystar.api.tag.domain.GstarHashTag;
@@ -68,6 +69,26 @@ public class GstarContentsSpecs {
 		};
 	}
 
+	/**
+	 * 신고 개수 minimum 이상인 대결영상
+	 * @param minimum
+	 * @return
+	 */
+	public static Specification<GstarContents> battleWarn(final int minimum) {
+		
+		return new Specification<GstarContents>() {
+
+			@Override
+			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
+				
+				return cb.and(cb.notEqual(root.<String>get(GemmyConstant.CONTENTS_ATTR_STATUS_CD), GemmyConstant.CODE_CNTS_STATUS_CLOSED),
+						cb.isNotNull(root.<Long>get("gstarRoomId")),
+						cb.greaterThanOrEqualTo(root.<GstarInfo>get("gstarInfo").<Integer>get("warnCnt"), minimum));
+			}
+			
+		};
+	}
+	
 	/**
 	 * <pre>
 	 * 일반 동영상
