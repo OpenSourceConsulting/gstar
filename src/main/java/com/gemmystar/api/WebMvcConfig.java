@@ -18,6 +18,7 @@ import org.springframework.web.multipart.support.StandardServletMultipartResolve
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -45,7 +46,12 @@ import com.gemmystar.api.user.domain.GstarUser;
 @Configuration
 //@EnableAsync
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
-
+	/*
+	@Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addViewController("/change").setViewName("ChangePassword");//test.
+    }
+*/
 
 	@Override
 	public void addFormatters(FormatterRegistry registry) {

@@ -99,7 +99,7 @@ public abstract class FileUtil {
 		if (fileName != null) {
 			int lastIndex = fileName.lastIndexOf(".");
 			if (lastIndex > -1) {
-				ext = fileName.substring(lastIndex + 1);
+				ext = fileName.substring(lastIndex);
 			}
 		}
 		return ext;

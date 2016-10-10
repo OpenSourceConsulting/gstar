@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers(
 					"/", 
 					"/*.html", 
-					"/resources/**", 
+					"/resources/**",
 					
 					"/auth/notLogin*", 
 					"/auth/loginFail*",
@@ -53,7 +53,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					"/user/locale*",
 					"/user/join*",
 					"/account/*/resetPassword",
-					"/account/*/changePassword"
+					"/account/*/changePassword",
+					"/WEB-INF/**"
 				
 				).antMatchers(HttpMethod.GET, 
 					"/code/list/*", 
@@ -72,7 +73,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.anonymous()
 			.disable()
 			.authorizeRequests()
-			//.antMatchers("/user/locale", "/user/join").permitAll()
 			//.antMatchers("/account/*/resetPassword", "/account/*/changePassword").permitAll()
 			//.antMatchers(HttpMethod.GET, "/code/list/*").permitAll()
 			//.antMatchers(HttpMethod.GET, "/room/*").permitAll()

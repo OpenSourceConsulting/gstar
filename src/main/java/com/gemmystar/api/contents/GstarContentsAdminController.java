@@ -111,6 +111,27 @@ public class GstarContentsAdminController {
 		return jsonRes;
 	}
 	
+	/**
+	 * 대결 포기 하기.
+	 * @param jsonRes
+	 * @param gstarContentsId
+	 * @param gstarRoomId
+	 * @return
+	 */
+	@RequestMapping(value="/{gstarContentsId}/closing", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse closing(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId){
+	
+		GstarContents contents = service.getGstarContents(gstarContentsId);
+		
+		
+		contents.setStatusCd(GemmyConstant.CODE_CNTS_STATUS_CLOSED);
+		
+		service.save(contents);
+		
+		return jsonRes;
+	}
+	
 
 }
 //end of GstarContentsController.java

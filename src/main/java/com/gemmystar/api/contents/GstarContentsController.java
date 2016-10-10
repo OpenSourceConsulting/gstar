@@ -129,6 +129,16 @@ public class GstarContentsController {
 		return jsonRes;
 	}
 	
+	/**
+	 * 영상정보 등록 with 동영상 업로드
+	 * - 업로드된 동영상 파일은 background job scheduler({@link com.gemmystar.api.contents.S3UploadScheduledTask} 가 S3 업로드함.
+	 * @param jsonRes
+	 * @param gstarContents
+	 * @param tags
+	 * @param vFile
+	 * @param locale
+	 * @return
+	 */
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarContents gstarContents, String[] tags, 

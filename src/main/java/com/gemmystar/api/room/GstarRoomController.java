@@ -134,6 +134,7 @@ public class GstarRoomController {
 	/**
 	 * <pre>
 	 * 대결 동영상 업로드 / 도전하기
+	 * - 업로드된 동영상 파일은 background job scheduler({@link com.gemmystar.api.contents.S3UploadScheduledTask} 가 S3 업로드함.
 	 * </pre>
 	 * @param jsonRes
 	 * @param gstarRoom

@@ -19,6 +19,9 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 
 /**
+ * https://firebase.google.com/docs/cloud-messaging/server
+ * https://firebase.google.com/docs/cloud-messaging/send-message#http_post_request
+ * 
  * @author Administrator
  *
  */
@@ -59,7 +62,7 @@ public class AndroidFcmSender implements InitializingBean {
             public void initialize(HttpRequest request) { 
 
                 //request.getHeaders().setAccept("application/xml"); 
-            	request.getHeaders().setAuthorization("key=AIzaSyDUficwhs4UPxwM1LMZ9enEsxwNCkBS8zU");
+            	request.getHeaders().setAuthorization("key=AIzaSyDUficwhs4UPxwM1LMZ9enEsxwNCkBS8zU");//server key.
             } 
         });
 		
