@@ -182,13 +182,16 @@ public class GstarUserController {
 	@RequestMapping(value="/settings", method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleJsonResponse settings(SimpleJsonResponse jsonRes, 
-			@RequestParam(name = "mobileNoti") boolean mobileNoti, @RequestParam(name = "mobileAppVer") String mobileAppVer){
+			@RequestParam(name = "mobileNoti") boolean mobileNoti, 
+			@RequestParam(name = "mobileAppVer") String mobileAppVer, 
+			@RequestParam(name = "fcmToken") String fcmToken){
 	
 		Long gstarUserId = WebUtil.getLoginUserId();
 		GstarUser dbUser = service.getGstarUser(gstarUserId);
 		
 		dbUser.setMobileNoti(mobileNoti);
 		dbUser.setMobileAppVer(mobileAppVer);
+		dbUser.setFcmToken(fcmToken);
 		
 		service.save(dbUser);
 		

@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -122,7 +123,7 @@ public class YoutubeService implements InitializingBean{
 
 					// Load client secrets.
 					GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
-							JSON_FACTORY, YoutubeService.class.getResourceAsStream("/client_secret_gemmystar.json"));
+							JSON_FACTORY, new InputStreamReader(YoutubeService.class.getResourceAsStream("/client_secret_gemmystar.json")));
 		
 					// Checks that the defaults have been replaced (Default =
 					// "Enter X here").

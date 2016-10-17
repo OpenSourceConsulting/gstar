@@ -16,7 +16,8 @@ public class ListKeys {
 	private static String bucketName = "gstar-prd";
 	
 	public static void main(String[] args) throws IOException {
-        AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+        //AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
+		AmazonS3 s3client = new AmazonS3Client();
         try {
             System.out.println("Listing objects");
             final ListObjectsV2Request req = new ListObjectsV2Request().withBucketName(bucketName).withMaxKeys(2);

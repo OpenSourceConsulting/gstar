@@ -87,7 +87,7 @@ public class GstarContents implements Serializable {
 	private String locale;
 	
 	@Column(name = "order_seq")
-	private int orderSeq;
+	private Integer orderSeq;
 	
 	@Column(name = "deleted")
 	private boolean deleted;
@@ -280,11 +280,11 @@ public class GstarContents implements Serializable {
 		this.locale = locale;
 	}
 
-	public int getOrderSeq() {
+	public Integer getOrderSeq() {
 		return orderSeq;
 	}
 
-	public void setOrderSeq(int orderSeq) {
+	public void setOrderSeq(Integer orderSeq) {
 		this.orderSeq = orderSeq;
 	}
 

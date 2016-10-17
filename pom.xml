@@ -9,9 +9,6 @@
 	<url>http://maven.apache.org</url>
 	
 	<properties>
-	    <project.youtube.version>v3-rev24-1.13.2-beta</project.youtube.version>
-	    <project.http.version>1.13.1-beta</project.http.version>
-	    <project.oauth.version>1.13.1-beta</project.oauth.version>
 	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	    <querydsl.version>4.1.3</querydsl.version>
 	</properties>
@@ -95,18 +92,18 @@
 	    <dependency>
 	      <groupId>com.google.apis</groupId>
 	      <artifactId>google-api-services-youtube</artifactId>
-	      <version>${project.youtube.version}</version>
+	      <version>v3-rev178-1.22.0</version>
 	    </dependency>
 	
 	    <dependency>
 	      <groupId>com.google.http-client</groupId>
 	      <artifactId>google-http-client-jackson2</artifactId>
-	      <version>${project.http.version}</version>
+	      <version>1.22.0</version>
 	    </dependency>
 	    <dependency>
 	      <groupId>com.google.oauth-client</groupId>
 	      <artifactId>google-oauth-client-jetty</artifactId>
-	      <version>${project.oauth.version}</version>
+	      <version>1.22.0</version>
 	    </dependency>
 	    
 	    <dependency>

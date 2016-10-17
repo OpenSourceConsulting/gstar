@@ -33,6 +33,7 @@
 	
 	<logger name="com.google.api.client" level="DEBUG" />
 	
+	<logger name="com.amazonaws" level="DEBUG" />
 
 	<root level="ERROR">
 	    <appender-ref ref="CONSOLE" />
