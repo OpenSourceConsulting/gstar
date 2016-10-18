@@ -30,6 +30,7 @@ import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
+import com.gemmystar.api.contents.viewmodel.ContentsPointPrice;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.youtube.YoutubeService;
 
@@ -202,6 +203,7 @@ public class GstarContentsController {
 		
 		return jsonRes;
 	}
+	
 	
 	@RequestMapping(value="/view", method = RequestMethod.POST)
 	@ResponseBody

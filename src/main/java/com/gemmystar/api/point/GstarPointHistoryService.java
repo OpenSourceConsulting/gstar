@@ -26,30 +26,27 @@ public class GstarPointHistoryService {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void insertGstarPointHistory(GstarPointHistory gstarPointHistory){
+	public void save(GstarPointHistory gstarPointHistory){
 		repository.save(gstarPointHistory);
+	}
+	
+	public void saveList(List<GstarPointHistory> gstarPointHistories){
+		repository.save(gstarPointHistories);
 	}
 	
 	public List<GstarPointHistory> getGstarPointHistoryAllList(){
 		return repository.findAll();
 	}
 	
-	/*
-	public int getGstarPointHistoryListTotalCount(GridParam gridParam){
-		
-		return repository.getGstarPointHistoryListTotalCount(gridParam);
+	public List<GstarPointHistory> getGstarPointHistories(Long gstarContentsId, String statusCd) {
+		return repository.findByGstarContentsIdAndStatusCd(gstarContentsId, statusCd);
 	}
-	*/
+	
 	
 	public GstarPointHistory getGstarPointHistory(Integer gstarPointHistoryId){
 		return repository.findOne(gstarPointHistoryId);
 	}
 	
-	/*
-	public void updateGstarPointHistory(GstarPointHistory gstarPointHistory){
-		repository.updateGstarPointHistory(gstarPointHistory);
-	}
-	*/
 	
 	public void deleteGstarPointHistory(Integer gstarPointHistoryId){
 		repository.delete(gstarPointHistoryId);

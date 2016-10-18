@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.contents.domain.GstarContents;
 
@@ -49,6 +50,9 @@ public class GstarPointHistory {
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@Column(name = "use_dt", updatable = false)
 	private java.util.Date useDt;//사용일시
+	
+	@Column(name = "status_cd")
+	private String statusCd;
 	
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -176,8 +180,18 @@ public class GstarPointHistory {
 		this.gstarUserPoint = gstarUserPoint;
 	}
 	
+	public String getStatusCd() {
+		return statusCd;
+	}
+
+	public void setStatusCd(String statusCd) {
+		this.statusCd = statusCd;
+	}
+
 	@PrePersist
 	public void preInsert() {
+		
+		this.statusCd = GemmyConstant.CODE_POINT_HS_STATUS_NORMAL;
 		this.useDt = new Date();
 	}
 

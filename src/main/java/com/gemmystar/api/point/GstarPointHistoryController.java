@@ -55,7 +55,7 @@ public class GstarPointHistoryController {
 	@ResponseBody
 	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarPointHistory gstarPointHistory){
 		
-		service.insertGstarPointHistory(gstarPointHistory);
+		service.save(gstarPointHistory);
 		//jsonRes.setMsg(" 정상적으로 생성되었습니다.");
 		
 		

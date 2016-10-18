@@ -33,6 +33,7 @@ import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.common.converter.JsonUserSerializer;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.point.domain.GstarPointHistory;
+import com.gemmystar.api.point.domain.GstarUserPoint;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.room.domain.GstarRoomContents;
 import com.gemmystar.api.room.domain.GstarRoomContentsWeek;

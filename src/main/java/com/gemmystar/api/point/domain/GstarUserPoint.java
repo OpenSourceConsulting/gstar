@@ -50,6 +50,9 @@ import com.gemmystar.api.common.converter.JsonDateSerializer;
 @Entity
 @Table(name = "gstar_user_point")
 public class GstarUserPoint {
+	
+	/** 포인트 개당 단가. */
+	public static final int UNIT_PRICE = 100;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -31,7 +31,13 @@ import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.contents.domain.GstarContents;
+import com.gemmystar.api.contents.viewmodel.ContentsPointPrice;
+import com.gemmystar.api.point.GstarPointHistoryService;
+import com.gemmystar.api.point.GstarPointPaymentService;
+import com.gemmystar.api.point.domain.GstarPointHistory;
+import com.gemmystar.api.point.domain.GstarPointPayment;
 import com.gemmystar.api.user.domain.GstarAccount;
+import com.gemmystar.api.user.domain.GstarUser;
 import com.gemmystar.api.youtube.YoutubeService;
 
 
@@ -51,6 +57,12 @@ public class GstarContentsAdminController {
 	
 	@Autowired
 	private GstarContentsService service;
+	
+	@Autowired
+	private GstarPointPaymentService pointPaymentService;
+	
+	@Autowired
+	private GstarPointHistoryService pointHistoryService;
 	
 	/**
 	 * <pre>
@@ -86,6 +98,39 @@ public class GstarContentsAdminController {
 		Iterable<GstarContents> list = service.getRecommandList(true);
 
 		jsonRes.setData(list);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarContentsId}/pointprice", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getGstarContentsPointPrice(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId){
+	
+		List<GstarPointHistory> gstarPointHistories = pointHistoryService.getGstarPointHistories(gstarContentsId, GemmyConstant.CODE_POINT_HS_STATUS_NORMAL);
+		
+		jsonRes.setData(new ContentsPointPrice(gstarContentsId, gstarPointHistories));
+		
+		return jsonRes;
+	}
+	
+	/**
+	 * <pre>
+	 * gstarContentsId 컨텐츠에 대한 쨈(포인트) 계좌입금정보 저장.
+	 * </pre>
+	 * 
+	 * @param jsonRes
+	 * @param gstarContentsId
+	 * @param pointPayment
+	 * @return
+	 */
+	@RequestMapping(value="/{gstarContentsId}/payment", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse saveContentsPayment(SimpleJsonResponse jsonRes, @PathVariable("gstarContentsId") Long gstarContentsId, GstarPointPayment pointPayment){
+	
+		
+		pointPayment.setGstarContentsId(gstarContentsId);
+		
+		pointPaymentService.saveAndUpdateStatus(pointPayment);
 		
 		return jsonRes;
 	}

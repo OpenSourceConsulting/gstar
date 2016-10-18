@@ -1,6 +1,5 @@
 package com.gemmystar.api;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -8,34 +7,27 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.gemmystar.api.common.converter.JsonPageSerializer;
 import com.gemmystar.api.common.converter.JsonSimpleJsonResSerializer;
-import com.gemmystar.api.common.converter.JsonUserSerializer;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
-import com.gemmystar.api.user.domain.GstarUser;
 
 /**
  * Spring MVC Configuration
@@ -57,7 +49,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	public void addFormatters(FormatterRegistry registry) {
 
 		// 'yyyy-MM-dd' format string to Date converting.
-		//registry.addFormatter(new DateFormatter("yyyy-MM-dd"));
+		registry.addFormatter(new DateFormatter("yyyy-MM-dd HH:mm:ss"));
 
 		//registry.removeConvertible(String.class, Number.class);// remove default converter.
 		//registry.addConverterFactory(new StringToNumberConverterFactory());

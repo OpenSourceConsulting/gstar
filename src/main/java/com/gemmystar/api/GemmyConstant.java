@@ -68,6 +68,13 @@ public class GemmyConstant {
 	/** 관리자계정 */
 	public static final String CODE_ACCOUNT_TYPE_ADMIN = "4";
 	
+	/** 포인트 사용이력 상태: 정상사용 */
+	public static final String CODE_POINT_HS_STATUS_NORMAL = "1";
+	/** 포인트 사용이력 상태: 지급완료 */
+	public static final String CODE_POINT_HS_STATUS_PAID = "2";
+	/** 포인트 사용이력 상태: 사용취소 */
+	public static final String CODE_POINT_HS_STATUS_CANCEL = "3";
+	
 	
 	public static final String S3_KEY_PREFIX_VIDEO = "video/";
 
