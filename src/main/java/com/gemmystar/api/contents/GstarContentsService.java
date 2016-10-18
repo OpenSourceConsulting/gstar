@@ -123,11 +123,12 @@ public class GstarContentsService {
 	
 	public void backupForS3(File uploadedFile, Long gstarContentsId, String youtubeId) {
 		
-        String backupFileName = "C" + gstarContentsId + "_" + youtubeId + "." + FileUtil.getExtension(uploadedFile);
+        String backupFileName = FileUtil.getS3FileName(uploadedFile, gstarContentsId, youtubeId);
         uploadedFile.renameTo(new File(s3Uploader.getBackupPath() + File.separator + backupFileName));
         
         LOGGER.debug("backup {}", backupFileName);
 	}
+	
 	
 	public Page<GstarContents> getGstarContentsList(Pageable pageable, String search){
 		
@@ -240,6 +241,11 @@ public class GstarContentsService {
 	
 	@Transactional
 	public void deleteGstarContents(GstarContents contents){
+		
+		if (contents.getBattleHistories() != null && contents.getBattleHistories().size() > 0) {
+			
+			throw new RuntimeException("대결이 진행중이어서 삭제가 불가능합니다.");
+		}
 		
 		if (contents.getGstarPointHistories().size() > 0) {
 			

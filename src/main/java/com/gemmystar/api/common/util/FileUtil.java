@@ -56,6 +56,10 @@ public abstract class FileUtil {
 
 		return chk;
 	}
+	
+	public static String getS3FileName(File uploadedFile, Long gstarContentsId, String youtubeId) {
+		return "C" + gstarContentsId + "_" + youtubeId + "_" + uploadedFile.getName();
+	}
 
 	/**
 	 * 주어진 File 에서 파일 확장자를 반환한다. File 은 isFile() true 조건을 만족해야한다.

@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.util.DateUtil;
+import com.gemmystar.api.contents.S3Service;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
 import com.gemmystar.api.contents.domain.GstarInfo;
@@ -75,6 +76,9 @@ public class GstarRoomService {
 	@Autowired
 	private GstarInfoRepository infoRepo;
 	
+	@Autowired
+	private S3Service s3Service;
+	
 	
 	public GstarRoomService() {
 		
@@ -121,6 +125,29 @@ public class GstarRoomService {
 			contentsTagsService.save(new GstarContentsTags(contents.getId(), tag.getId()));
 		}
 		
+	}
+	
+	public void saveChallenger(Long gstarRoomId, GstarContents contents, String[] tags) {
+		
+		contents.setGstarRoomId(gstarRoomId);
+		contents.setMemberTypeCd(GemmyConstant.CODE_MEMBER_TYPE_CHALLENGER);
+		
+		GstarRoom gstarRoom = repository.findOne(contents.getGstarRoomId());
+		
+		if (gstarRoom.getBattleSeq() == 1 && GemmyConstant.CODE_BATTLE_STATUS_READY.equals(gstarRoom.getBattleStatusCd())) {
+			/*
+			 * 최초 1주차 배틀: 최초 도전자가 등록되면서 시작.
+			 */
+			startBattle(gstarRoom, gstarRoom.getBattleSeq());
+		}
+		
+		roomContentsRepo.save(new GstarRoomContents(contents.getGstarRoomId(), contents.getId()));
+		
+		for (int i = 0; i < tags.length; i++) {
+			GstarHashTag tag = hashTagService.save(new GstarHashTag(tags[i]));
+			
+			contentsTagsService.save(new GstarContentsTags(contents.getId(), tag.getId()));
+		}
 	}
 	
 	/**

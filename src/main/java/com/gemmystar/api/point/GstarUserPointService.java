@@ -28,7 +28,7 @@ import com.gemmystar.api.point.specs.GstarUserPointSpecs;
  */
 @Service
 public class GstarUserPointService {
-
+	
 	@Autowired
 	private GstarUserPointRepository repository;
 	
@@ -75,6 +75,13 @@ public class GstarUserPointService {
 			Long pointId = pointIds[i];
 			Integer point = points[i];
 			pointSum = pointSum + point;
+			
+			
+			GstarUserPoint userPoint = getGstarUserPoint(pointId);
+			int usedPoint = userPoint.getUsedPoint() + point;
+			if (usedPoint > userPoint.getPoint()) {
+				throw new RuntimeException("포인트 초과 사용: 보유한 포인트보다 많은 포인트를 사용할수 없습니다. pointId="+pointId+", point=" + point);
+			}
 		
 			pointHistoryRepo.save(new GstarPointHistory(gstarUserId, gstarContentsId, pointId, point));
 		}

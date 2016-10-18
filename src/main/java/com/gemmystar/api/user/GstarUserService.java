@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.contents.GstarContentsService;
 import com.gemmystar.api.contents.domain.GstarContents;
+import com.gemmystar.api.point.GstarPointService;
+import com.gemmystar.api.point.GstarUserPointService;
+import com.gemmystar.api.point.domain.GstarPoint;
+import com.gemmystar.api.point.domain.GstarUserPoint;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarUser;
 import com.gemmystar.api.user.domain.GstarUserRepository;
@@ -41,6 +45,12 @@ public class GstarUserService {
 	@Autowired
 	private GstarContentsService contentsService;
 	
+	@Autowired
+	private GstarPointService pointservice;
+	
+	@Autowired
+	private GstarUserPointService userPointservice;
+	
 	public GstarUserService() {
 	}
 	
@@ -52,6 +62,14 @@ public class GstarUserService {
 		account.setGstarUser(gstarUser);
 		
 		accountService.save(account);
+		
+		/*
+		 * 회원가입시 기본 무료포인트 제공
+		 */
+		GstarPoint gstarPoint = pointservice.getGstarPoint(GstarPointService.FREE_POINT_ID);
+		GstarUserPoint gstarUserPoint = new GstarUserPoint(gstarUser.getId(), gstarPoint, GstarPointService.FREE_PG_ID);
+		
+		userPointservice.insertGstarUserPoint(gstarUserPoint);
 		
 	}
 	

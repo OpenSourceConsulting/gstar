@@ -35,6 +35,7 @@ import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.point.domain.GstarPointHistory;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.room.domain.GstarRoomContents;
+import com.gemmystar.api.room.domain.GstarRoomContentsWeek;
 import com.gemmystar.api.tag.domain.GstarHashTag;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarUser;
@@ -133,6 +134,12 @@ public class GstarContents implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.REMOVE})
 	@JoinColumn(name = "gstar_contents_id")
 	private List<GstarVictory> gstarVictories;
+	
+	
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "gstar_contents_id")
+	private List<GstarRoomContentsWeek> battleHistories;
+	
 
 	/**
 	 * <pre>
@@ -365,6 +372,14 @@ public class GstarContents implements Serializable {
 
 	public void setGstarVictories(List<GstarVictory> gstarVictories) {
 		this.gstarVictories = gstarVictories;
+	}
+
+	public List<GstarRoomContentsWeek> getBattleHistories() {
+		return battleHistories;
+	}
+
+	public void setBattleHistories(List<GstarRoomContentsWeek> battleHistories) {
+		this.battleHistories = battleHistories;
 	}
 
 	@PrePersist

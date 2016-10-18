@@ -23,9 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
+import com.gemmystar.api.common.util.FileUtil;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.contents.GstarContentsService;
+import com.gemmystar.api.contents.S3Service;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.room.domain.GstarRoom;
 import com.gemmystar.api.youtube.YoutubeService;
@@ -59,6 +62,9 @@ public class GstarRoomController {
 	
 	@Value("${gemmy.upload.location}")
 	private String uploadPath;
+	
+	@Autowired
+	private S3Service s3Service;
 
 	/**
 	 * <pre>
@@ -194,6 +200,38 @@ public class GstarRoomController {
 		GstarRoom room = service.getGstarRoomWithChallengers(gstarRoomId);
 		
 		jsonRes.setData(room);
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarRoomId}/challenge", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse challenge(SimpleJsonResponse jsonRes, @PathVariable("gstarRoomId") Long gstarRoomId, 
+			GstarContents contents, String[] tags,	@RequestParam(name = "s3key") String s3key, Locale locale){
+		
+		
+		try {
+		
+			File downloadedFile = s3Service.download(s3key);
+			
+			String videoId = youtubeService.uploadVideo(new FileInputStream(downloadedFile), downloadedFile.length(), contents);
+			jsonRes.setData(videoId);
+			
+			contents.setUrl(videoId);
+			contents.setLocale(locale.getLanguage());
+			
+			service.saveChallenger(gstarRoomId, contents, tags);
+			
+			s3Service.renameObject(s3key, GemmyConstant.S3_KEY_PREFIX_VIDEO +  FileUtil.getS3FileName(downloadedFile, contents.getId(), videoId));
+			
+			downloadedFile.delete();
+		
+		} catch (IOException e) {
+			LOGGER.error(e.toString(), e);
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg("도전하기 실패. " + e.toString());
+		}
+		
 		
 		return jsonRes;
 	}

@@ -20,6 +20,12 @@ import com.gemmystar.api.point.domain.GstarPointRepository;
  */
 @Service
 public class GstarPointService {
+	
+	/** 회원가입시 기본제공 포인트ID */
+	public static final Integer FREE_POINT_ID = 90;
+	
+	/** 회원가입시 기본제공 포인트 pgId = free */
+	public static final String FREE_PG_ID = "free";
 
 	@Autowired
 	private GstarPointRepository repository;
@@ -36,22 +42,10 @@ public class GstarPointService {
 		return repository.findAll(pageable);
 	}
 	
-	/*
-	public int getGstarPointListTotalCount(GridParam gridParam){
-		
-		return repository.getGstarPointListTotalCount(gridParam);
-	}
-	*/
 	
 	public GstarPoint getGstarPoint(Integer gstarPointId){
 		return repository.findOne(gstarPointId);
 	}
-	
-	/*
-	public void updateGstarPoint(GstarPoint gstarPoint){
-		repository.updateGstarPoint(gstarPoint);
-	}
-	*/
 	
 	public void deleteGstarPoint(Integer gstarPointId){
 		repository.delete(gstarPointId);

@@ -132,25 +132,21 @@ public class GstarUserController {
 	
 	@RequestMapping(value="/my", method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse saveMyInfo(SimpleJsonResponse jsonRes, @RequestParam("id") Long gstarUserId, GstarUser gstarUser, Locale locale){
+	public SimpleJsonResponse saveMyInfo(SimpleJsonResponse jsonRes, GstarUser gstarUser, Locale locale){
 	
 		GstarAccount account = (GstarAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		
-		if (account.getGstarUser().getId() != gstarUser.getId()) {
-			jsonRes.setSuccess(false);
-			jsonRes.setMsg(messageSource.getMessage("user.my.update.denied", null, locale));
-		} else {
-			
-			GstarUser dbUser = service.getGstarUser(account.getGstarUser().getId());
-			
-			dbUser.setName(gstarUser.getName());
-			dbUser.setNickname(gstarUser.getNickname());
-			dbUser.setEmail(gstarUser.getEmail());
-			dbUser.setBankCmpyCd(gstarUser.getBankCmpyCd());
-			dbUser.setBankAccount(gstarUser.getBankAccount());
-			
-			service.save(dbUser);
-		}
+		GstarUser dbUser = service.getGstarUser(account.getGstarUser().getId());
+		
+		dbUser.setName(gstarUser.getName());
+		dbUser.setNickname(gstarUser.getNickname());
+		dbUser.setEmail(gstarUser.getEmail());
+		dbUser.setBankCmpyCd(gstarUser.getBankCmpyCd());
+		dbUser.setBankAccount(gstarUser.getBankAccount());
+		
+		service.save(dbUser);
+		
+		account.setGstarUser(dbUser);
 		
 		return jsonRes;
 	}

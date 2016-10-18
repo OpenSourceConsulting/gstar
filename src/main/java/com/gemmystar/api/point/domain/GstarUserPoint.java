@@ -34,6 +34,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.gemmystar.api.GemmyConstant;
@@ -87,6 +88,9 @@ public class GstarUserPoint {
 	
 	@Column(name = "cancel_reason")
 	private String cancelReason;//환불사유
+	
+	@Transient
+	private int usedPoint;
 	
 	@OneToMany(mappedBy = "gstarUserPoint", fetch = FetchType.EAGER)
 	private List<GstarPointHistory> gstarPointHistories;
@@ -263,6 +267,27 @@ public class GstarUserPoint {
 
 	public void setGstarPointHistories(List<GstarPointHistory> gstarPointHistories) {
 		this.gstarPointHistories = gstarPointHistories;
+	}
+	
+	
+
+	public int getUsedPoint() {
+		
+		List<GstarPointHistory> gstarPointHistories = getGstarPointHistories();
+		
+		if (gstarPointHistories != null && gstarPointHistories.size() > 0) {
+			usedPoint = 0;
+			for (GstarPointHistory gstarPointHistory : gstarPointHistories) {
+				usedPoint = usedPoint + gstarPointHistory.getUsePoint();
+			}
+		}
+		
+		
+		return usedPoint;
+	}
+
+	public void setUsedPoint(int usedPoint) {
+		this.usedPoint = usedPoint;
 	}
 
 	@PrePersist

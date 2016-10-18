@@ -3,6 +3,8 @@
  */
 package com.gemmystar.api.ad;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -43,9 +45,15 @@ public class GstarAd {
 	
 	@Column(name = "click_cnt")
 	private int clickCnt;//
+	/*
+	@Column(name = "start_dt")
+	private Date startDt;
 	
+	@Column(name = "end_dt")
+	private Date endDt;
+	*/
 	@Column(name = "create_dt", updatable = false)
-	private java.util.Date createDt;//
+	private Date createDt;//
 
 	/**
 	 * 
@@ -165,7 +173,23 @@ public class GstarAd {
 	public void setClickCnt(int clickCnt) {
 		this.clickCnt = clickCnt;
 	}
+/*
+	public Date getStartDt() {
+		return startDt;
+	}
 
+	public void setStartDt(Date startDt) {
+		this.startDt = startDt;
+	}
+
+	public Date getEndDt() {
+		return endDt;
+	}
+
+	public void setEndDt(Date endDt) {
+		this.endDt = endDt;
+	}
+*/
 	/**
 	 * @return the createDt
 	 */
