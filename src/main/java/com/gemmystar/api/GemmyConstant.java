@@ -62,8 +62,10 @@ public class GemmyConstant {
 	/** 주간배틀 대결종료 */
 	public static final String CODE_WEEK_BATTLE_STATUS_FINISHED = "2";
 	
-	/** 정상구매 */
+	/** 사용자포인트: 정상구매 */
 	public static final String CODE_PC_STATUS_OK = "1";
+	/** 사용자포인트: 환불완료 */
+	public static final String CODE_PC_STATUS_CANCEL = "3";
 	
 	/** 관리자계정 */
 	public static final String CODE_ACCOUNT_TYPE_ADMIN = "4";

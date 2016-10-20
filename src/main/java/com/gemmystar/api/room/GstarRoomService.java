@@ -98,6 +98,10 @@ public class GstarRoomService {
 			/*
 			 * 방장 영상 등록.
 			 */
+			if (gstarRoom.getSubject() == null) {
+				throw new RuntimeException("필수항목 누락: 대결방 제목(rSubject)이 누락되었습니다.");
+			}
+			
 			gstarRoom.setMasterContentsId(contents.getId());
 			repository.save(gstarRoom);
 			
@@ -198,6 +202,7 @@ public class GstarRoomService {
 	/**
 	 * <pre>
 	 * 이전 주차의 배틀 정보(포인트수, 조회수)를 백업하고 초기화 한다.
+	 * ----- 2016-10-20 : 초기화하지 않음.
 	 * </pre>
 	 * @param gstarRoomId
 	 * @param preBattleSeq 이전 배틀 주차수
@@ -211,11 +216,12 @@ public class GstarRoomService {
 			roomContentsWeekRepo.save(new GstarRoomContentsWeek(gstarRoomId, gstarInfo.getGstarContentsId(), preBattleSeq, gstarInfo.getPointCnt(), gstarInfo.getViewCnt()));
 			
 			/*
-			 * info 초기화.
-			 */
+			 * info 초기화. 
+			
 			gstarInfo.setPointCnt(0L);
 			gstarInfo.setViewCnt(0L);
 			infoRepo.save(gstarInfo);
+			 */
 		}
 	}
 	

@@ -147,6 +147,15 @@ public class GstarUserAdminController {
 		return jsonRes;
 	}
 	
+	@RequestMapping(value="/member/{gstarUserId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public SimpleJsonResponse deleteMemberUser(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){
+		
+		service.deleteUserWithChildren(userId);
+		
+		return jsonRes;
+	}
+	
 	@RequestMapping(value="/user/{gstarUserId}/accounts", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse getGstarUserAccounts(SimpleJsonResponse jsonRes, @PathVariable("gstarUserId") Long userId){

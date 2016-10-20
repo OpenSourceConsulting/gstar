@@ -94,10 +94,27 @@ public class GstarAccountService implements UserDetailsService {
 		Assert.isTrue(GemmyConstant.CODE_ACCOUNT_TYPE_ADMIN.equals(account.getAccountTypeCd()), "삭제하려는 계정이 관리자 계정이 아닙니다.");
 		
 		if(tokenRepo.findOne(account.getId()) != null) {
+			
 			tokenRepo.delete(account.getId());//위 if문 없으면 에러남.
 		}
 		
 		repository.delete(account);
+	}
+	
+	@Transactional
+	public void deleteAccountByUserId(Long gstarUserId, List<GstarAccount> accounts) {
+		
+		
+		for (GstarAccount gstarAccount : accounts) {
+			
+			if(tokenRepo.findOne(gstarAccount.getId()) != null) {
+				
+				tokenRepo.delete(gstarAccount.getId());//위 if문 없으면 에러남.
+			}
+			
+			repository.delete(gstarAccount);
+		}
+		
 	}
 	
 	public void deleteGstarAccount(Long accountId){

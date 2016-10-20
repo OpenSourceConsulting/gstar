@@ -20,5 +20,5 @@ public interface GstarUserPointRepository extends JpaRepository<GstarUserPoint, 
 	@Modifying
 	@Query(value = "update GstarUserPoint g set g.cancelReason = ?3, g.cancelReqDt = NOW(), g.pcStatusCd = '2' where g.id = ?1 and g.gstarUserId = ?2 ")
 	int updateCancelInfo(Long gstarUserPointId, Long gstarUserId, String cancelReason);
-
+	
 }

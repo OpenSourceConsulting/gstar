@@ -58,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				
 				).antMatchers(HttpMethod.GET, 
 					"/code/list/*", 
-					"/room/*", 
+					"/room/**", 
 					"/hashtag/mains*", 
 					"/contents/list*", 
 					"/contents/recommands*",

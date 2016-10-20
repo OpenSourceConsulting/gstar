@@ -165,10 +165,10 @@ public class BattleJudgementScheduleTask {
 		//List<GstarInfo> gstarInfos = infoRepo.getTopGstarInfos(gstarRoom.getId());
 		List<GstarInfo> gstarInfos = infoRepo.findAll(infoSpec);
 		
-		GstarInfo info = null;
+		GstarInfo winnerInfo = null;
 		if (gstarInfos.size() == 1) {
 			
-			info = gstarInfos.get(0);
+			winnerInfo = gstarInfos.get(0);
 		} else {
 			
 			/*
@@ -187,18 +187,18 @@ public class BattleJudgementScheduleTask {
 				
 				if (max == gstarInfo.getViewCnt()) {
 					
-					if (info != null) {
+					if (winnerInfo != null) {
 						/*
 						 * 조회수까지 같으면 최근 등록한 영상이 우승.
 						 */
-						GstarContents infoContents = contentsRepo.findOne(info.getGstarContentsId());
+						GstarContents infoContents = contentsRepo.findOne(winnerInfo.getGstarContentsId());
 						GstarContents otherContents = contentsRepo.findOne(gstarInfo.getGstarContentsId());
 						if(infoContents.getCreateDt().before(otherContents.getCreateDt())){
-							info = gstarInfo;
+							winnerInfo = gstarInfo;
 						}
 					} else {
 					
-						info = gstarInfo;
+						winnerInfo = gstarInfo;
 					}
 				} 
 			}
@@ -206,35 +206,33 @@ public class BattleJudgementScheduleTask {
 		}
 		
 		// 우승 이력 저장.
-		victoryRepo.save(new GstarVictory(gstarRoom.getId(), info.getGstarContentsId()));
-		LOGGER.info("judged victory room.id={}, contents.id={}", gstarRoom.getId(), info.getGstarContentsId());
+		victoryRepo.save(new GstarVictory(gstarRoom.getId(), winnerInfo.getGstarContentsId()));
+		LOGGER.info("judged victory room.id={}, contents.id={}", gstarRoom.getId(), winnerInfo.getGstarContentsId());
 		
 		// 우승 횟수 증가.
-		short victoryCnt = (short)(info.getVictoryCnt() + 1);
-		info.setVictoryCnt(victoryCnt);
-		infoRepo.save(info);
+		short victoryCnt = (short)(winnerInfo.getVictoryCnt() + 1);
+		winnerInfo.setVictoryCnt(victoryCnt);
+		infoRepo.save(winnerInfo);
 		
+		if(winnerInfo.getGstarContents().getId() != gstarRoom.getMasterContentsId()) {
+			//우승자가 도전자라면 방장으로 교체.
+			changeRoomMaster(gstarRoom, winnerInfo.getGstarContents());
+		}
 		
-		if (victoryCnt < 5) {
-			//5회 우승 이하일때는
-			
-			if(info.getGstarContents().getId() != gstarRoom.getMasterContentsId()) {
-				//우승자가 도전자라면 방장으로 교체.
-				changeRoomMaster(gstarRoom, info.getGstarContents());
-			}
+		if (victoryCnt < gstarRoom.getBattleMax()) {
 			
 			// 새로운 배틀차수 시작.
 			roomService.startBattle(gstarRoom, gstarRoom.getBattleSeq() + 1);
 		} else {
 			/*
-			 * 5회 우승자가 나오면 대결종료.
+			 * 대결종료.
 			 */
 			gstarRoom.setBattleStatusCd(GemmyConstant.CODE_BATTLE_STATUS_FINISHED);
 			roomService.save(gstarRoom);
 		}
 		
 		
-		sendPushMessage(gstarRoom, info.getGstarContents().getGstarUser());
+		sendPushMessage(gstarRoom, winnerInfo.getGstarContents().getGstarUser());
 		
 	}
 	
@@ -282,7 +280,7 @@ public class BattleJudgementScheduleTask {
 		}
 	}
 	
-	private void sendPushMessage(GstarRoom room, GstarUser user) {
+	protected void sendPushMessage(GstarRoom room, GstarUser user) {
 		
 		if (user.getFcmToken() != null && user.isMobileNoti()) {
 			try {
@@ -301,7 +299,7 @@ public class BattleJudgementScheduleTask {
 	}
 	
 	private String makeVictoryMessage(GstarRoom room, GstarUser user) {
-		return "안녕하세요. "+ user.getName() + "님. 귀하의 동영상이 '" + room.getSubject() + "'배틀의 주간 우승자로 선정되었습니다.";
+		return "축하드립니다. "+ user.getName() + "님. 귀하의 동영상이 '" + room.getSubject() + "'배틀의 "+(room.getBattleSeq() -1)+"회차 우승자로 선정되었습니다.";
 	}
 
 }

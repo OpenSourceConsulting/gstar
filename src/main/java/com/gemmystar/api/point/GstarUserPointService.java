@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
+import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.contents.GstarContentsService;
 import com.gemmystar.api.point.domain.GstarPointHistory;
 import com.gemmystar.api.point.domain.GstarPointHistoryRepository;
@@ -58,9 +59,31 @@ public class GstarUserPointService {
 		return repository.findAll(spec, pageable);
 	}
 	
+	public Page<GstarUserPoint> getGstarUserPointList(Pageable pageable, String pcStatusCd){
+		
+		
+		if (StringUtils.isEmpty(pcStatusCd) == false) {
+			
+			Specifications<GstarUserPoint> spec = Specifications.where(GstarUserPointSpecs.eqStatus(pcStatusCd));
+			
+			return repository.findAll(spec, pageable);
+		}
+		
+		return repository.findAll(pageable);
+	}
+	
 	@Transactional
 	public void requestCancel(Long gstarUserPointId, Long gstarUserId, String cancelReason){
 		repository.updateCancelInfo(gstarUserPointId, gstarUserId, cancelReason);
+	}
+	
+	public void cancel(Long gstarUserPointId){
+		
+		GstarUserPoint userPoint = getGstarUserPoint(gstarUserPointId);
+		
+		userPoint.setPcStatusCd(GemmyConstant.CODE_PC_STATUS_CANCEL);
+		
+		repository.save(userPoint);
 	}
 	
 	@Transactional

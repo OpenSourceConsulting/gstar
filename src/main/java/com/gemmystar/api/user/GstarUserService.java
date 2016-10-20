@@ -184,8 +184,23 @@ public class GstarUserService {
 		
 		accountService.deleteAdminAccountByUserId(userId, dbUser.getAccounts().get(0));
 		
+		deleteUser(dbUser);
+	}
+	
+	@Transactional
+	public void deleteUserWithChildren(Long userId){
+		
+		GstarUser dbUser = getGstarUser(userId);
+		
+		accountService.deleteAccountByUserId(userId, dbUser.getAccounts());
+		
+		deleteUser(dbUser);
+	}
+	
+	public void deleteUser(GstarUser user){
+		
 		try{
-			repository.delete(userId);
+			repository.delete(user);
 		} catch (Exception e) {
 			LOGGER.error(e.toString(), e);
 			
@@ -194,12 +209,12 @@ public class GstarUserService {
 			 */
 			GstarUser deleteUser = new GstarUser();
 			
-			deleteUser.setId(dbUser.getId());
-			deleteUser.setName(dbUser.getName());
-			deleteUser.setNickname(dbUser.getNickname());
+			deleteUser.setId(user.getId());
+			deleteUser.setName(user.getName());
+			deleteUser.setNickname(user.getNickname());
 			deleteUser.setMobileNoti(false);
 			deleteUser.setEmailNoti(false);
-			deleteUser.setCreateDt(dbUser.getCreateDt());
+			deleteUser.setCreateDt(user.getCreateDt());
 			
 			repository.save(deleteUser);
 		}

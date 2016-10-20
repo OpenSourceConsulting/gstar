@@ -151,7 +151,8 @@ public class GstarRoomController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleJsonResponse saveWithContents(SimpleJsonResponse jsonRes, GstarRoom gstarRoom, GstarContents contents, String[] tags,
-			@RequestParam("vFile") MultipartFile vFile, Locale locale){
+			@RequestParam("vFile") MultipartFile vFile, 
+			@RequestParam(name = "rSubject", required = false) String rSubject, Locale locale){
 		
 		
 		try{
@@ -164,6 +165,7 @@ public class GstarRoomController {
 			contents.setUrl(videoId);
 			contents.setLocale(locale.getLanguage());
 			
+			gstarRoom.setSubject(rSubject);
 			service.saveWithContents(gstarRoom, contents, tags);
 			
 			contentsService.backupForS3(uploadedFile, contents.getId(), videoId);

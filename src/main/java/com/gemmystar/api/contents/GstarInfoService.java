@@ -3,6 +3,8 @@ package com.gemmystar.api.contents;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,7 @@ public class GstarInfoService {
 		repository.delete(infoId);
 	}
 	
+	@Transactional
 	public void increaseViewCnt(Long gstarContentsId) {
 		repository.increaseViewCnt(gstarContentsId);
 	}

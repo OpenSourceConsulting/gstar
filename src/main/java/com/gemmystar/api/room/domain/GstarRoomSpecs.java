@@ -35,7 +35,7 @@ public class GstarRoomSpecs {
 			@Override
 			public Predicate toPredicate(Root<GstarRoom> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				
-				return cb.like(root.<String>get("subject"), search +"%");
+				return cb.like(root.<String>get("subject"), "%" + search +"%");
 			}
 			
 		};
@@ -57,7 +57,7 @@ public class GstarRoomSpecs {
 				Join<GstarContents, GstarHashTag> tagJoin = contentsJoin.join("gstarHashTags");
 				query.distinct(true);
 				
-				return cb.like(tagJoin.<String>get("tag"), search +"%");
+				return cb.like(tagJoin.<String>get("tag"), "%" + search +"%");
 			}
 			
 		};

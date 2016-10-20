@@ -39,7 +39,7 @@ public class AndroidFcmSender implements InitializingBean {
 	
 	
 	public void sendPushMessage(String message, String clientFcmToken) throws IOException {
-		String requestBody = "{\"data\": {\"message\":\""+message+"\"},\"to\": \""+clientFcmToken+"\"}";
+		String requestBody = "{\"notification\": {\"title\":\"재미스타 알림\", \"text\":\""+message+"\"},\"to\": \""+clientFcmToken+"\"}";
 
 		HttpRequest request = requestFactory.buildPostRequest(url, ByteArrayContent.fromString(null, requestBody));
 		request.getHeaders().setContentType("application/json");
