@@ -86,7 +86,7 @@ public class GstarRoom implements Serializable{
 	private int battleTerm = 7;// 배틀기간
 	
 	@Column(name = "battle_max")
-	private int battleMax = 5;// 배틀총횟수
+	private Integer battleMax = 5;// 배틀총횟수
 	
 	@Column(name = "battle_seq")
 	private int battleSeq = 1;// 배틀 순차수
@@ -224,11 +224,15 @@ public class GstarRoom implements Serializable{
 		this.battleTerm = battleTerm;
 	}
 
-	public int getBattleMax() {
+	public Integer getBattleMax() {
+		
+		if (battleMax == null) {
+			battleMax = 0;
+		}
 		return battleMax;
 	}
 
-	public void setBattleMax(int battleMax) {
+	public void setBattleMax(Integer battleMax) {
 		this.battleMax = battleMax;
 	}
 

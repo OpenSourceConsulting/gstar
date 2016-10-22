@@ -35,7 +35,7 @@ public class AccountNotFoundException extends RuntimeException {
 	
 	private static final long serialVersionUID = -3809407621045665477L;
 	
-	private Long accountId;
+	private String loginId;
 	private Locale locale;
 
 	/**
@@ -43,18 +43,18 @@ public class AccountNotFoundException extends RuntimeException {
 	 * 
 	 * </pre>
 	 */
-	public AccountNotFoundException(Long accountId, String message) {
+	public AccountNotFoundException(String loginId, String message) {
 		super(message);
-		this.accountId = accountId;
+		this.loginId = loginId;
 	}
 	
-	public AccountNotFoundException(Long accountId, Locale locale) {
-		this.accountId = accountId;
+	public AccountNotFoundException(String loginId, Locale locale) {
+		this.loginId = loginId;
 		this.locale = locale;
 	}
 
-	public Long getAccountId() {
-		return accountId;
+	public String getLoginId() {
+		return loginId;
 	}
 
 	public Locale getLocale() {
@@ -64,7 +64,7 @@ public class AccountNotFoundException extends RuntimeException {
 	@Override
 	public String getMessage() {
 		if (super.getMessage() == null) {
-			return this.accountId + " account is not found.";
+			return this.loginId + " account is not found.";
 		}
 		
 		return super.getMessage();

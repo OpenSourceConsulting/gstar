@@ -103,7 +103,7 @@ public class GstarAccountController {
 		GstarAccount account = service.getGstarAccount(accountId);
 		
         if (account == null) {
-            throw new AccountNotFoundException(accountId, locale);
+            throw new AccountNotFoundException("" + accountId, locale);
         }
 		
 		jsonRes.setData(account);
@@ -111,15 +111,15 @@ public class GstarAccountController {
 		return jsonRes;
 	}
 	
-	@RequestMapping(value = "/{accountId}/resetPassword", method = RequestMethod.POST)
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST)
     @ResponseBody
     public SimpleJsonResponse resetPassword(SimpleJsonResponse jsonRes, HttpServletRequest request, Locale locale,
-    		@PathVariable("accountId") Long accountId, @RequestParam("email") String userEmail) {
+    		@RequestParam("email") String userEmail) {
 		
-		GstarAccount account = service.getGstarAccount(accountId);
+		GstarAccount account = service.getGstarAccountByLoginId(userEmail);
 		
         if (account == null) {
-            throw new AccountNotFoundException(accountId, locale);
+            throw new AccountNotFoundException(userEmail, locale);
         }
         
         if (account.getGstarUser().getEmail().equals(userEmail) == false) {
@@ -131,13 +131,13 @@ public class GstarAccountController {
         
         String token = service.createPasswordResetToken(account);
         
-        sendMail(getAppUrl(request), locale, accountId, token, userEmail);
+        sendMail(getAppUrl(request), locale, account.getId(), token, userEmail);
         LOGGER.info("email sended to {}", userEmail);
         
         return jsonRes;
     }
 	
-	private void sendMail(final String appUrl, final Locale locale, Long accountId, String token, String toEmail) {
+	protected void sendMail(final String appUrl, final Locale locale, Long accountId, String token, String toEmail) {
         final String url = appUrl + "/account/"+accountId+"/changePassword?token=" + token;
         final String message = messageSource.getMessage("account.email.resetPassword.msg", null, locale);
         mailSender.sendMail("Reset Password", message + " \r\n" + url, toEmail);

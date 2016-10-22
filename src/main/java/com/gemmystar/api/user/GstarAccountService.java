@@ -73,15 +73,13 @@ public class GstarAccountService implements UserDetailsService {
 	public List<GstarAccount> getGstarAccountList(Long gstarUserId){
 		return repository.findByGstarUserId(gstarUserId);
 	}
-	/*
-	public int getGstarAccountListTotalCount(GridParam gridParam){
-		
-		return repository.getGstarAccountListTotalCount(gridParam);
-	}
-	*/
 	
 	public GstarAccount getGstarAccount(Long accountId){
 		return repository.findOne(accountId);
+	}
+	
+	public GstarAccount getGstarAccountByLoginId(String loginId) {
+		return repository.findByLoginId(loginId);
 	}
 
 	/**

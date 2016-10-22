@@ -52,7 +52,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					
 					"/user/locale*",
 					"/user/join*",
-					"/account/*/resetPassword",
+					"/account/resetPassword",
 					"/account/*/changePassword",
 					"/WEB-INF/**"
 				
@@ -73,7 +73,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.anonymous()
 			.disable()
 			.authorizeRequests()
-			//.antMatchers("/account/*/resetPassword", "/account/*/changePassword").permitAll()
+			.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
 			//.antMatchers(HttpMethod.GET, "/code/list/*").permitAll()
 			//.antMatchers(HttpMethod.GET, "/room/*").permitAll()
 			//.antMatchers(HttpMethod.GET, "/hashtag/mains").permitAll()

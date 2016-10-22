@@ -46,7 +46,7 @@ class GlobalDefaultExceptionHandler {
         	
         	AccountNotFoundException ex = (AccountNotFoundException)e;
         	
-        	json.setMsg(messageSource.getMessage("ex.msg.account.notFound", new Long[]{ex.getAccountId()}, ex.getLocale()));
+        	json.setMsg(messageSource.getMessage("ex.msg.account.notFound", new String[]{ex.getLoginId()}, ex.getLocale()));
         } else {
         	//json.setMsg(e.toString());
         	json.setMsg(e.getMessage());
