@@ -85,6 +85,17 @@ public class YoutubeServiceTest {
 		}
 		
 	}
+	
+	@Test
+	public void testDeleteVideo() {
+		
+		try {
+			youtubeService.deleteVideo("1owGvgt8TRM");
+		} catch (Exception e) {
+			fail(e.toString());
+			e.printStackTrace();
+		}
+	}
 
 }
 //end of YoutubeServiceTest.java

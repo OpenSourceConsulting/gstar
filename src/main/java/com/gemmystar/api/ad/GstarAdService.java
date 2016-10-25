@@ -10,6 +10,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 
+import com.gemmystar.api.ad.domain.GstarAd;
+import com.gemmystar.api.ad.domain.GstarAdRepository;
+
 
 /**
  * <pre>

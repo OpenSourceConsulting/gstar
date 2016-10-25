@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.board.domain.GstarBoard;
 import com.gemmystar.api.common.converter.JsView;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
@@ -67,8 +68,10 @@ public class GstarBoardController {
 	@ResponseBody
 	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarBoard gstarBoard){
 		
+		gstarBoard.setBoardTypeCd(GemmyConstant.CODE_BOARD_TYPE_BOARD);
 		service.save(gstarBoard);
-		//jsonRes.setMsg(messageSource.getMessage("account.email.not.reg", new String[]{userEmail}, locale));
+		
+		service.sendMessageToAllUser(gstarBoard.getSubject(), gstarBoard.getContents());
 		
 		
 		return jsonRes;
@@ -90,6 +93,17 @@ public class GstarBoardController {
 	public SimpleJsonResponse getGstarBoard(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
 	
 		jsonRes.setData(service.getGstarBoard(gstarBoardId));
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarBoardId}/messaging", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse sendBoardMessage(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
+		
+		GstarBoard gstarBoard = service.getGstarBoard(gstarBoardId);
+	
+		service.sendMessageToAllUser(gstarBoard.getSubject(), gstarBoard.getContents());
 		
 		return jsonRes;
 	}

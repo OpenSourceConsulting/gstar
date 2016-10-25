@@ -71,5 +71,10 @@ public class S3Service {
 		s3.deleteObject(s3BucketName, originKey);
 	}
 	
+	public void deleteObject(String s3key) {
+		
+		s3.deleteObject(s3BucketName, s3key);
+	}
+	
 	
 }

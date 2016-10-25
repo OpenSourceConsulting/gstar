@@ -1,15 +1,12 @@
-package com.gemmystar.api.ad;
+package com.gemmystar.api.board;
 
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.Locale;
 
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -18,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,7 +22,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.ad.domain.GstarAd;
+import com.gemmystar.api.board.domain.GstarBoard;
+import com.gemmystar.api.common.converter.JsView;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.FileUtil;
 
@@ -40,15 +40,13 @@ import com.gemmystar.api.common.util.FileUtil;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/ad")
-public class GstarAdController implements InitializingBean {
+@RequestMapping("/admin/event")
+public class GstarEventController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(GstarAdController.class);
-	
-	public static String IMG_URI;
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarEventController.class);
 	
 	@Autowired
-	private GstarAdService service;
+	private GstarBoardService service;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -58,22 +56,23 @@ public class GstarAdController implements InitializingBean {
 	
 	@Value("${gemmy.img.uri}")
 	private String imgUri;
+	
 
 	/**
 	 * <pre>
 	 * 
 	 * </pre>
 	 */
-	public GstarAdController() {
-		// TODO Auto-generated constructor stub
+	public GstarEventController() {
+		
 	}
 	
-	
+	@JsonView(JsView.BordList.class)
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
 	
-		Page<GstarAd> list = service.getGstarAdList(pageable, search);
+		Page<GstarBoard> list = service.getGstarEventList(pageable, search);
 
 		jsonRes.setData(list);
 		
@@ -82,26 +81,25 @@ public class GstarAdController implements InitializingBean {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
-	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarAd gstarAd, @RequestParam("imgFile") MultipartFile imgFile, Locale locale){
+	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarBoard gstarBoard, 
+			@RequestParam(name="imgFile", required = false) MultipartFile imgFile, Locale locale) {
 		
 		
-		GstarAd dbAd = null;
-		if (gstarAd.getId() != null && gstarAd.getId() > 0) {
-			dbAd = service.getGstarAd(gstarAd.getId());
-			
-			gstarAd.setViewCnt(dbAd.getViewCnt());
-			gstarAd.setClickCnt(dbAd.getClickCnt());
+		
+		GstarBoard dbBoard = null;
+		if (gstarBoard.getId() != null && gstarBoard.getId() > 0) {
+			dbBoard = service.getGstarBoard(gstarBoard.getId());
 		}
 		
 		
 		try {
 			
-			if (dbAd != null && imgFile != null && imgFile.getSize() > 0) {
+			if (dbBoard != null && imgFile != null && imgFile.getSize() > 0) {
 				/*
 				 * When modify, delete old file.
 				 */
 				
-				File uploadedFile = new File(uploadImgPath + dbAd.getImgUrl());
+				File uploadedFile = new File(uploadImgPath + dbBoard.getImgUrl());
 				uploadedFile.delete();
 			}
 			
@@ -112,7 +110,7 @@ public class GstarAdController implements InitializingBean {
 				imgFile.transferTo(uploadedFile);
 				
 				
-				gstarAd.setImgUrl(savedFileName);
+				gstarBoard.setImgUrl(savedFileName);
 			}
 			
 			
@@ -122,8 +120,8 @@ public class GstarAdController implements InitializingBean {
 			jsonRes.setMsg(messageSource.getMessage("ex.msg.img.upload.fail", null, locale));
 		}
 		
-		service.save(gstarAd);
-		//jsonRes.setMsg(messageSource.getMessage("account.email.not.reg", new String[]{userEmail}, locale));
+		
+		service.save(gstarBoard);
 		
 		
 		return jsonRes;
@@ -131,41 +129,41 @@ public class GstarAdController implements InitializingBean {
 	
 	private String getUniqueName(String fileName) {
 		
-		return System.currentTimeMillis() + "_" + fileName;
+		return "event" + File.separator + System.currentTimeMillis() + "_" + fileName;
 		
 	}
 	
-	@RequestMapping(value="/{gstarAdId}", method = RequestMethod.DELETE)
+	@RequestMapping(value="/{gstarBoardId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarAdId") Integer gstarAdId){
+	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
 		
-		GstarAd dbAd = service.getGstarAd(gstarAdId);
-		
-		File uploadedFile = new File(uploadImgPath + dbAd.getImgUrl());
-		uploadedFile.delete();
-		
-		service.deleteGstarAd(dbAd);
+		service.deleteGstarBoard(gstarBoardId);
 		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(value="/{gstarAdId}", method = RequestMethod.GET)
+	@JsonView(JsView.BordAll.class)
+	@RequestMapping(value="/{gstarBoardId}", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getGstarAd(SimpleJsonResponse jsonRes, @PathVariable("gstarAdId") Integer gstarAdId){
+	public SimpleJsonResponse getGstarBoard(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
 	
-		jsonRes.setData(service.getGstarAd(gstarAdId));
+		jsonRes.setData(service.getGstarBoard(gstarBoardId));
 		
 		return jsonRes;
 	}
-
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
+	
+	@RequestMapping(value="/{gstarBoardId}/messaging", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse sendEventMessage(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
 		
-		Assert.notNull(this.imgUri);
-		IMG_URI = this.imgUri;
+		GstarBoard gstarBoard = service.getGstarBoard(gstarBoardId);
+	
+		service.sendMessageToAllUser(gstarBoard.getSubject(), gstarBoard.getContents());
+		
+		return jsonRes;
 	}
+	
 
 }
-//end of GstarAdController.java
+//end of GstarBoardController.java

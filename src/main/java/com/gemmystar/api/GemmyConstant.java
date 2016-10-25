@@ -44,6 +44,8 @@ public class GemmyConstant {
 	public static final String CODE_CNTS_STATUS_GIVEUP = "2";
 	/** 영상 게시 종료 */
 	public static final String CODE_CNTS_STATUS_CLOSED = "3";
+	/** 영상 삭제중. */
+	public static final String CODE_CNTS_STATUS_DELETING = "9";
 	
 	/** 추천 영상 */
 	public static final String CODE_CNTS_DIV_RECOMMAND = "2";
@@ -76,6 +78,13 @@ public class GemmyConstant {
 	public static final String CODE_POINT_HS_STATUS_PAID = "2";
 	/** 포인트 사용이력 상태: 사용취소 */
 	public static final String CODE_POINT_HS_STATUS_CANCEL = "3";
+	
+	/** Board type: 공지사항 */
+	public static final String CODE_BOARD_TYPE_BOARD = "1";
+	/** Board type: 이벤트 */
+	public static final String CODE_BOARD_TYPE_EVENT = "2";
+	/** Board type: 공지이벤트 */
+	public static final String CODE_BOARD_TYPE_NEVENT = "3";
 	
 	
 	public static final String S3_KEY_PREFIX_VIDEO = "video/";

@@ -26,12 +26,14 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -114,8 +116,8 @@ public class GstarRoom implements Serializable{
 	@Transient
 	private GstarContents topChallenger;
 	
-	//@Transient
-	//private List<GstarContents> challengerContentsList;
+	@OneToMany(mappedBy = "gstarRoom", cascade = {CascadeType.REMOVE})
+	private List<GstarRoomContents> gstarRoomContentsList;
 
 	/**
 	 * <pre>
@@ -274,6 +276,14 @@ public class GstarRoom implements Serializable{
 
 	public void setTopChallenger(GstarContents topChallenger) {
 		this.topChallenger = topChallenger;
+	}
+
+	public List<GstarRoomContents> getGstarRoomContentsList() {
+		return gstarRoomContentsList;
+	}
+
+	public void setGstarRoomContentsList(List<GstarRoomContents> gstarRoomContentsList) {
+		this.gstarRoomContentsList = gstarRoomContentsList;
 	}
 
 	@PrePersist

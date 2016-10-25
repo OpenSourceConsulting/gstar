@@ -85,6 +85,9 @@ public class GstarContents implements Serializable {
 	@Column(name = "status_cd")
 	private String statusCd = "1";
 	
+	@Column(name = "s3key")
+	private String s3key;
+	
 	@Column(name = "locale")
 	private String locale;
 	
@@ -262,6 +265,14 @@ public class GstarContents implements Serializable {
 
 	public void setDivCd(String divCd) {
 		this.divCd = divCd;
+	}
+
+	public String getS3key() {
+		return s3key;
+	}
+
+	public void setS3key(String s3key) {
+		this.s3key = s3key;
 	}
 
 	public Long getGstarRoomId() {

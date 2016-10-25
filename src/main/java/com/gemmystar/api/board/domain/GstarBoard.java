@@ -40,9 +40,9 @@ public class GstarBoard {
 	@JsonView(JsView.BordList.class)
 	private Integer id;//
 	
-	@Column(name = "border_type_cd", updatable = false)
+	@Column(name = "board_type_cd", updatable = false)
 	@JsonView(JsView.BordList.class)
-	private String borderTypeCd = "1";//
+	private String boardTypeCd = "1";//
 	
 	@Column(name = "subject")
 	@JsonView(JsView.BordList.class)
@@ -52,9 +52,27 @@ public class GstarBoard {
 	@JsonView(JsView.BordAll.class)
 	private String contents;//
 	
+	@Column(name = "img_url")
+	@JsonView(JsView.BordList.class)
+	private String imgUrl;
+	
+	@Column(name = "youtubeId")
+	@JsonView(JsView.BordList.class)
+	private String youtubeId;
+	
 	@Column(name = "gstar_user_id", updatable = false)
 	@JsonView(JsView.BordAll.class)
 	private Long gstarUserId;//
+	
+	@Column(name = "start_dt", updatable = false)
+	@JsonView(JsView.BordList.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	private java.util.Date startDt;//
+	
+	@Column(name = "end_dt", updatable = false)
+	@JsonView(JsView.BordList.class)
+	@JsonSerialize(using = JsonDateSerializer.class)
+	private java.util.Date endDt;//
 	
 	@Column(name = "create_dt", updatable = false)
 	@JsonView(JsView.BordList.class)
@@ -74,13 +92,15 @@ public class GstarBoard {
 	public GstarBoard() {
 	}
 	
-	public GstarBoard(Integer id, String subject, Long gstarUserId, Date createDt, GstarUser writer) {
+	public GstarBoard(Integer id, String subject, Long gstarUserId, Date createDt, GstarUser writer, Date startDt, Date endDt) {
 		super();
 		this.id = id;
 		this.subject = subject;
 		this.gstarUserId = gstarUserId;
 		this.createDt = createDt;
 		this.writer = writer;
+		this.startDt = startDt;
+		this.endDt = endDt;
 	}
 
 
@@ -98,18 +118,12 @@ public class GstarBoard {
 		this.id = id;
 	}
 
-	/**
-	 * @return the borderTypeCd
-	 */
-	public String getBorderTypeCd() {
-		return borderTypeCd;
+	public String getBoardTypeCd() {
+		return boardTypeCd;
 	}
 
-	/**
-	 * @param borderTypeCd the borderTypeCd to set
-	 */
-	public void setBorderTypeCd(String borderTypeCd) {
-		this.borderTypeCd = borderTypeCd;
+	public void setBoardTypeCd(String boardTypeCd) {
+		this.boardTypeCd = boardTypeCd;
 	}
 
 	/**
@@ -152,6 +166,38 @@ public class GstarBoard {
 	 */
 	public void setGstarUserId(Long gstarUserId) {
 		this.gstarUserId = gstarUserId;
+	}
+
+	public String getImgUrl() {
+		return imgUrl;
+	}
+
+	public void setImgUrl(String imgUrl) {
+		this.imgUrl = imgUrl;
+	}
+
+	public String getYoutubeId() {
+		return youtubeId;
+	}
+
+	public void setYoutubeId(String youtubeId) {
+		this.youtubeId = youtubeId;
+	}
+
+	public java.util.Date getStartDt() {
+		return startDt;
+	}
+
+	public void setStartDt(java.util.Date startDt) {
+		this.startDt = startDt;
+	}
+
+	public java.util.Date getEndDt() {
+		return endDt;
+	}
+
+	public void setEndDt(java.util.Date endDt) {
+		this.endDt = endDt;
 	}
 
 	/**

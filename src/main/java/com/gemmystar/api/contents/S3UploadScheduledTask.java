@@ -26,9 +26,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 
+import org.eclipse.jdt.internal.compiler.batch.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.util.FileUtil;
+import com.gemmystar.api.contents.domain.GstarContents;
 
 /**
  * <pre>
@@ -57,6 +60,9 @@ public class S3UploadScheduledTask implements InitializingBean {
 	
 	@Value("${gemmy.s3.bucketName}")
 	private String s3BucketName;
+	
+	@Autowired
+	private GstarContentsService contentsService;
 	
 	private File uploadDir;
 
@@ -113,6 +119,8 @@ public class S3UploadScheduledTask implements InitializingBean {
 	        String keyName = GemmyConstant.S3_KEY_PREFIX_VIDEO + uploadedFile.getName();
 	        s3client.putObject(new PutObjectRequest(s3BucketName, keyName, uploadedFile));
 	        
+	        contentsService.saveS3Key(getContentsId(uploadedFile.getName()), keyName);
+	        
 	        LOGGER.debug("upload success.");
 	        
 	        uploadedFile.delete();
@@ -125,6 +133,12 @@ public class S3UploadScheduledTask implements InitializingBean {
 	public String getBackupPath() {
 		return uploadPath + File.separator + "s3";
 	}
-
+	
+	private Long getContentsId(String fileName) {
+		int pos = fileName.indexOf("_");
+		
+		return Long.parseLong(fileName.substring(1, pos));
+	}
+	
 }
 //end of S3UploadScheduledTask.java

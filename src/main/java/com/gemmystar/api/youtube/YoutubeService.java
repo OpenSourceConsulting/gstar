@@ -24,12 +24,9 @@ package com.gemmystar.api.youtube;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -93,6 +90,9 @@ public class YoutubeService implements InitializingBean{
 	private File apiJsonFile = new File(System.getProperty("user.home"), ".credentials/" + API_JSON_FILE_NAME);
 	
 	private MediaHttpUploaderProgressListener progressListener = new UploadProgressListener();
+	
+	// Scope required to upload/delete to YouTube.
+	private List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtubepartner", "https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl");
 
 	/**
 	 * <pre>
@@ -109,7 +109,8 @@ public class YoutubeService implements InitializingBean{
 	 * @param scopes
 	 *            list of scopes needed to run youtube upload.
 	 */
-	private Credential authorize(List<String> scopes) throws Exception {
+	private Credential authorize() throws Exception {
+		
 		
 		if (apiJsonFile.exists() == false) {
 			throw new FileNotFoundException("file not found. " + apiJsonFile.getAbsolutePath());
@@ -170,13 +171,11 @@ public class YoutubeService implements InitializingBean{
 	public String uploadVideo(InputStream inputStream, long fileSize, GstarContents contents) {
 		
 		String videoID = null;
-		// Scope required to upload to YouTube.
-	    List<String> scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
 
 	    try {
 	    	
 	        // Authorization.
-	        Credential credential = authorize(scopes);
+	        Credential credential = authorize();
 
 	        // YouTube object used to make all API requests.
 	        youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(
@@ -249,6 +248,45 @@ public class YoutubeService implements InitializingBean{
 	        LOGGER.debug("  - Tags: {}", returnedVideo.getSnippet().getTags());
 	        LOGGER.debug("  - Privacy Status: {}", returnedVideo.getStatus().getPrivacyStatus());
 	        LOGGER.debug("  - Video Count: {}", returnedVideo.getStatistics().getViewCount());
+
+	    } catch (GoogleJsonResponseException e) {
+	    	LOGGER.error("GoogleJsonResponseException code: " + e.getDetails().getCode() + " : " + e.getDetails().getMessage(), e);
+	    	throw new RuntimeException(e);
+	    } catch (Exception e) {
+	    	LOGGER.error(e.toString(), e);
+	    	throw new RuntimeException(e);
+	    } 
+	    
+	    return videoID;
+	}
+	
+	public String deleteVideo(String videoID) {
+		
+
+	    try {
+	    	
+	        // Authorization.
+	        Credential credential = authorize();
+
+	        // YouTube object used to make all API requests.
+	        youtube = new YouTube.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(
+	          "youtube-cmdline-uploadvideo-sample").build();
+
+
+	        /*
+	         * The upload command includes: 1. Information we want returned after file is successfully
+	         * uploaded. 2. Metadata we want associated with the uploaded video. 3. Video file itself.
+	         */
+	        YouTube.Videos.Delete videoDelete = youtube.videos().delete(videoID);
+	        
+
+	        // Execute upload.
+	        Void vd = videoDelete.execute();
+	      
+
+	        // Print out returned results.
+	        LOGGER.debug("================== Returned Video ==================\n");
+
 
 	    } catch (GoogleJsonResponseException e) {
 	    	LOGGER.error("GoogleJsonResponseException code: " + e.getDetails().getCode() + " : " + e.getDetails().getMessage(), e);

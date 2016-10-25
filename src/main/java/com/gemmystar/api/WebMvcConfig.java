@@ -12,6 +12,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
@@ -36,7 +37,7 @@ import com.gemmystar.api.common.model.SimpleJsonResponse;
  * 
  */
 @Configuration
-//@EnableAsync
+@EnableAsync
 public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	/*
 	@Override

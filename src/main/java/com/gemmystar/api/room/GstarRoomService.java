@@ -136,6 +136,8 @@ public class GstarRoomService {
 		contents.setGstarRoomId(gstarRoomId);
 		contents.setMemberTypeCd(GemmyConstant.CODE_MEMBER_TYPE_CHALLENGER);
 		
+		contentsRepo.save(contents);
+		
 		GstarRoom gstarRoom = repository.findOne(contents.getGstarRoomId());
 		
 		if (gstarRoom.getBattleSeq() == 1 && GemmyConstant.CODE_BATTLE_STATUS_READY.equals(gstarRoom.getBattleStatusCd())) {

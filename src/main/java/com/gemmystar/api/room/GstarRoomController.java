@@ -222,9 +222,15 @@ public class GstarRoomController {
 			contents.setUrl(videoId);
 			contents.setLocale(locale.getLanguage());
 			
+			
 			service.saveChallenger(gstarRoomId, contents, tags);
 			
-			s3Service.renameObject(s3key, GemmyConstant.S3_KEY_PREFIX_VIDEO +  FileUtil.getS3FileName(downloadedFile, contents.getId(), videoId));
+			String newS3key = GemmyConstant.S3_KEY_PREFIX_VIDEO +  FileUtil.getS3FileName(downloadedFile, contents.getId(), videoId);
+			
+			s3Service.renameObject(s3key, newS3key);
+			
+			contents.setS3key(newS3key);
+			contentsService.save(contents);
 			
 			downloadedFile.delete();
 		

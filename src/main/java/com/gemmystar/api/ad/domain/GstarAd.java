@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gemmystar.api.ad;
+package com.gemmystar.api.ad.domain;
 
 import java.util.Date;
 

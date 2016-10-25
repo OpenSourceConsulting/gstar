@@ -39,6 +39,7 @@ import com.gemmystar.api.tag.domain.GstarHashTag;
 import com.gemmystar.api.view.domain.GstarView;
 import com.gemmystar.api.view.domain.GstarViewPK;
 import com.gemmystar.api.view.domain.GstarViewRepository;
+import com.gemmystar.api.youtube.YoutubeService;
 
 /**
  * <pre>
@@ -85,6 +86,13 @@ public class GstarContentsService {
 	@Autowired
 	private S3UploadScheduledTask s3Uploader;
 	
+	@Autowired
+	private S3Service s3service;
+	
+	@Autowired
+	private YoutubeService youtubeService;
+	
+	
 	
 	public GstarContentsService() {
 		
@@ -112,6 +120,15 @@ public class GstarContentsService {
 			
 			contentsTagsService.save(new GstarContentsTags(gstarContents.getId(), tag.getId()));
 		}
+	}
+	
+	public void saveS3Key(Long gstarContentsId, String s3key) {
+		
+		GstarContents contents = getGstarContents(gstarContentsId);
+		
+		contents.setS3key(s3key);
+		
+		save(contents);
 	}
 	
 	public void uploadToS3(File uploadedFile, Long gstarContentsId, String youtubeId) {
@@ -244,8 +261,9 @@ public class GstarContentsService {
 		
 		if (contents.getBattleHistories() != null && contents.getBattleHistories().size() > 0) {
 			
-			throw new RuntimeException("대결이 진행중이어서 삭제가 불가능합니다.");
+			throw new RuntimeException("대결이 진행중이어서 삭제할수 없습니다.");
 		}
+		
 		
 		if (contents.getGstarPointHistories().size() > 0) {
 			
@@ -254,8 +272,38 @@ public class GstarContentsService {
 			
 			save(contents);
 		} else {
+			
+			if (contents.getGstarRoom() != null && contents.getGstarRoom().getMasterContentsId().equals(contents.getId())) {
+				/*
+				 * 대결방 방장인경우
+				 */
+				
+				if (contents.getGstarRoom().getGstarRoomContentsList().size() == 1) {
+					/*
+					 * 도전자들이 없으면 대결방까지 삭제.
+					 */
+					Long roomId = contents.getGstarRoomId();
+					
+					contents.setGstarRoomId(null);
+					repository.saveAndFlush(contents);// save 만 하면 update 안됨.
+					
+					
+					roomService.deleteGstarRoom(roomId);
+					
+					
+				} else {
+					throw new RuntimeException("현재 대결방의 방장이어서 삭제할수 없습니다.");
+				}
+				
+			}
+			
+			
 			repository.delete(contents);
 		}
+		
+		s3service.deleteObject(contents.getS3key());
+		youtubeService.deleteVideo(contents.getUrl()); // url is youtube id.
+		
 	}
 	
 	@Transactional
