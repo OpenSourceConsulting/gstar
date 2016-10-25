@@ -112,9 +112,9 @@ public class YoutubeService implements InitializingBean{
 	private Credential authorize() throws Exception {
 		
 		
-		if (apiJsonFile.exists() == false) {
-			throw new FileNotFoundException("file not found. " + apiJsonFile.getAbsolutePath());
-		}
+		//if (apiJsonFile.exists() == false) {
+		//	throw new FileNotFoundException("file not found. " + apiJsonFile.getAbsolutePath());
+		//}
 
 		if (authCodeInstalledApp == null) {
 			

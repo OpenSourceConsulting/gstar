@@ -301,7 +301,10 @@ public class GstarContentsService {
 			repository.delete(contents);
 		}
 		
-		s3service.deleteObject(contents.getS3key());
+		if (contents.getS3key() != null) {
+			s3service.deleteObject(contents.getS3key());
+		}
+		
 		youtubeService.deleteVideo(contents.getUrl()); // url is youtube id.
 		
 	}

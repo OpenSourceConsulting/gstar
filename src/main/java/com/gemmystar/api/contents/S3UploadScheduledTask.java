@@ -75,7 +75,7 @@ public class S3UploadScheduledTask implements InitializingBean {
 		
 	}
 	
-	@Scheduled(cron="0 0/10 * * * *")
+	@Scheduled(cron="0 0/5 * * * *")
 	//@Scheduled(fixedRate = 15000)
 	public void upload() {
 		

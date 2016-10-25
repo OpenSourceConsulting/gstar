@@ -44,8 +44,6 @@ public class GemmyConstant {
 	public static final String CODE_CNTS_STATUS_GIVEUP = "2";
 	/** 영상 게시 종료 */
 	public static final String CODE_CNTS_STATUS_CLOSED = "3";
-	/** 영상 삭제중. */
-	public static final String CODE_CNTS_STATUS_DELETING = "9";
 	
 	/** 추천 영상 */
 	public static final String CODE_CNTS_DIV_RECOMMAND = "2";

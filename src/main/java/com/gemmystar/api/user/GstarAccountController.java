@@ -5,16 +5,21 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,7 +57,10 @@ public class GstarAccountController {
 	@Autowired
 	@Qualifier("gemmyMailSender")
     private MailSender mailSender;
-
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
 	/**
 	 * <pre>
 	 * 
@@ -150,7 +158,8 @@ public class GstarAccountController {
     }
     
     @RequestMapping(value = "/{accountId}/changePassword", method = RequestMethod.GET)
-    public String showChangePasswordPage(Locale locale, Model model, @PathVariable("accountId") Long accountId, @RequestParam("token") String token) {
+    public String showChangePasswordPage(HttpServletRequest request, HttpServletResponse response, 
+    		Locale locale, Model model, @PathVariable("accountId") Long accountId, @RequestParam("token") String token) throws Exception {
          
     	GstarPassresetToken passToken = service.getPasswordResetToken(token);
         GstarAccount user = null;
@@ -170,10 +179,14 @@ public class GstarAccountController {
         }
      
         if (invalidMsg == null) {
-        	UserDetails userDetail = service.loadUserByUsername(user.getLoginId());
+        	//UserDetails userDetail = service.loadUserByUsername(user.getLoginId());
             
-            Authentication auth = new UsernamePasswordAuthenticationToken(userDetail, null, userDetail.getAuthorities());
+            Authentication auth = new UsernamePasswordAuthenticationToken(user, user.getPasswd(), user.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
+            
+            HttpSession session = request.getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, SecurityContextHolder.getContext());
+            
             
 		} else {
 			model.addAttribute("message", invalidMsg);
@@ -185,12 +198,14 @@ public class GstarAccountController {
     
     @RequestMapping(value = "/save/password", method = RequestMethod.POST)
     @ResponseBody
-    public SimpleJsonResponse savePassword(SimpleJsonResponse jsonRes, Locale locale, @RequestParam("password") String password) {
+    public SimpleJsonResponse savePassword(SimpleJsonResponse jsonRes, Locale locale, @RequestParam("password") String password, HttpSession session) {
         GstarAccount user = (GstarAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         
         service.changeUserPassword(user, password);
         
         jsonRes.setMsg(messageSource.getMessage("message.update.success.password", null, locale));
+        
+        session.invalidate();
         
         return jsonRes;
     }
