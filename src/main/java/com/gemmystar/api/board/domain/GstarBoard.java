@@ -20,6 +20,7 @@ import org.hibernate.annotations.NotFoundAction;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.gemmystar.api.ad.GstarAdController;
 import com.gemmystar.api.common.converter.JsView;
 import com.gemmystar.api.common.converter.JsonDateSerializer;
 import com.gemmystar.api.common.converter.JsonUserSerializer;
@@ -169,6 +170,11 @@ public class GstarBoard {
 	}
 
 	public String getImgUrl() {
+		
+		if (imgUrl != null) {
+			return GstarAdController.IMG_URI + imgUrl;
+		}
+		
 		return imgUrl;
 	}
 

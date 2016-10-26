@@ -12,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.gemmystar.api.ad.GstarAdController;
+
 /**
  * @author BongJin Kwon
  *
@@ -108,6 +110,11 @@ public class GstarAd {
 	 * @return the imgUrl
 	 */
 	public String getImgUrl() {
+		
+		if (imgUrl != null) {
+			return GstarAdController.IMG_URI + imgUrl;
+		}
+		
 		return imgUrl;
 	}
 

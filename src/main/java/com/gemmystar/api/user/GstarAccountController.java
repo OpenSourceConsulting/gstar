@@ -58,9 +58,6 @@ public class GstarAccountController {
 	@Qualifier("gemmyMailSender")
     private MailSender mailSender;
 	
-	@Autowired
-	private AuthenticationManager authenticationManager;
-	
 	/**
 	 * <pre>
 	 * 
