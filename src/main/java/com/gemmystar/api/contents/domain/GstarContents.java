@@ -70,6 +70,9 @@ public class GstarContents implements Serializable {
 	@Column(name = "memo")
 	private String memo;//
 	
+	@Column(name = "thumbnail_url")
+	private String thumbnailUrl;
+	
 	@Column(name = "gstar_room_id")
 	private Long gstarRoomId;
 	
@@ -221,6 +224,14 @@ public class GstarContents implements Serializable {
 	 */
 	public void setMemo(String memo) {
 		this.memo = memo;
+	}
+
+	public String getThumbnailUrl() {
+		return thumbnailUrl;
+	}
+
+	public void setThumbnailUrl(String thumbnailUrl) {
+		this.thumbnailUrl = thumbnailUrl;
 	}
 
 	/**

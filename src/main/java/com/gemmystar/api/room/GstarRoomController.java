@@ -152,6 +152,7 @@ public class GstarRoomController {
 	@ResponseBody
 	public SimpleJsonResponse saveWithContents(SimpleJsonResponse jsonRes, GstarRoom gstarRoom, GstarContents contents, String[] tags,
 			@RequestParam("vFile") MultipartFile vFile, 
+			@RequestParam(name = "thumbFile", required = false) MultipartFile thumbFile,
 			@RequestParam(name = "rSubject", required = false) String rSubject, Locale locale){
 		
 		
@@ -166,7 +167,7 @@ public class GstarRoomController {
 			contents.setLocale(locale.getLanguage());
 			
 			gstarRoom.setSubject(rSubject);
-			service.saveWithContents(gstarRoom, contents, tags);
+			service.saveWithContents(gstarRoom, contents, thumbFile, tags);
 			
 			contentsService.backupForS3(uploadedFile, contents.getId(), videoId);
 			
@@ -209,7 +210,8 @@ public class GstarRoomController {
 	@RequestMapping(value="/{gstarRoomId}/challenge", method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleJsonResponse challenge(SimpleJsonResponse jsonRes, @PathVariable("gstarRoomId") Long gstarRoomId, 
-			GstarContents contents, String[] tags,	@RequestParam(name = "s3key") String s3key, Locale locale){
+			GstarContents contents, String[] tags,	
+			@RequestParam(name = "s3key") String s3key, Locale locale){
 		
 		
 		try {

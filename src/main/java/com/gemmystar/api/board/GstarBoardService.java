@@ -69,13 +69,19 @@ public class GstarBoardService {
 		return repository.findAll(spec, pageable);
 		*/
 		
-		return repository.findList(pageable);
+		return repository.findBoardList(pageable);
 	}
 	
 	public Page<GstarBoard> getGstarEventList(Pageable pageable, String search){
 		
 		
 		return repository.findEventList(pageable);
+	}
+	
+	public Page<GstarBoard> getCurrentEventList(Pageable pageable){
+		
+		
+		return repository.findCurrentEventList(pageable);
 	}
 	
 	

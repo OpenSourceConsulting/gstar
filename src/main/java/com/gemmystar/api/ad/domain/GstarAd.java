@@ -47,13 +47,13 @@ public class GstarAd {
 	
 	@Column(name = "click_cnt")
 	private int clickCnt;//
-	/*
+	
 	@Column(name = "start_dt")
 	private Date startDt;
 	
 	@Column(name = "end_dt")
 	private Date endDt;
-	*/
+	
 	@Column(name = "create_dt", updatable = false)
 	private Date createDt;//
 
@@ -180,7 +180,7 @@ public class GstarAd {
 	public void setClickCnt(int clickCnt) {
 		this.clickCnt = clickCnt;
 	}
-/*
+
 	public Date getStartDt() {
 		return startDt;
 	}
@@ -196,7 +196,7 @@ public class GstarAd {
 	public void setEndDt(Date endDt) {
 		this.endDt = endDt;
 	}
-*/
+
 	/**
 	 * @return the createDt
 	 */

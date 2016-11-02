@@ -93,7 +93,7 @@ public class GstarBoard {
 	public GstarBoard() {
 	}
 	
-	public GstarBoard(Integer id, String subject, Long gstarUserId, Date createDt, GstarUser writer, Date startDt, Date endDt) {
+	public GstarBoard(Integer id, String subject, Long gstarUserId, Date createDt, GstarUser writer, Date startDt, Date endDt, String boardTypeCd, String imgUrl, String youtubeId) {
 		super();
 		this.id = id;
 		this.subject = subject;
@@ -102,6 +102,9 @@ public class GstarBoard {
 		this.writer = writer;
 		this.startDt = startDt;
 		this.endDt = endDt;
+		this.boardTypeCd = boardTypeCd;
+		this.imgUrl = imgUrl;
+		this.youtubeId = youtubeId;
 	}
 
 

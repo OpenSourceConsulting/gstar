@@ -56,6 +56,11 @@ public class GstarAdService {
 		return repository.findAll(pageable);
 	}
 	
+	public Page<GstarAd> getCurrentAdList(Pageable pageable){
+		
+		return repository.findCurrentAds(pageable);
+	}
+	
 	
 	public GstarAd getGstarAd(Integer gstarAdId){
 		return repository.findOne(gstarAdId);

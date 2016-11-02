@@ -18,12 +18,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GstarBoardRepository extends JpaRepository<GstarBoard, Integer>, JpaSpecificationExecutor<GstarBoard> {
 	
-	public static final String FIND_BOARDS = "SELECT new GstarBoard(b.id, b.subject, b.gstarUserId, b.createDt, b.writer, b.startDt, b.endDt) FROM GstarBoard b LEFT JOIN b.writer u";
+	public static final String FIND_BOARDS = "SELECT b FROM GstarBoard b";
 
 	@Query(value = FIND_BOARDS + " WHERE b.boardTypeCd = '1'")
-	Page<GstarBoard> findList(Pageable pageable);
+	Page<GstarBoard> findBoardList(Pageable pageable);
 	
 	@Query(value = FIND_BOARDS + " WHERE b.boardTypeCd = '2' or b.boardTypeCd = '3'")
 	Page<GstarBoard> findEventList(Pageable pageable);
+	
+	@Query(value = FIND_BOARDS + " WHERE (b.boardTypeCd = '2' or b.boardTypeCd = '3') and NOW() BETWEEN b.startDt AND b.endDt")
+	Page<GstarBoard> findCurrentEventList(Pageable pageable);
 	
 }

@@ -71,81 +71,11 @@ public class GstarAdController implements InitializingBean {
 	
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
+	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable){
 	
-		Page<GstarAd> list = service.getGstarAdList(pageable, search);
+		Page<GstarAd> list = service.getCurrentAdList(pageable);
 
 		jsonRes.setData(list);
-		
-		return jsonRes;
-	}
-	
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseBody
-	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarAd gstarAd, @RequestParam("imgFile") MultipartFile imgFile, Locale locale){
-		
-		
-		GstarAd dbAd = null;
-		if (gstarAd.getId() != null && gstarAd.getId() > 0) {
-			dbAd = service.getGstarAd(gstarAd.getId());
-			
-			gstarAd.setViewCnt(dbAd.getViewCnt());
-			gstarAd.setClickCnt(dbAd.getClickCnt());
-		}
-		
-		
-		try {
-			
-			if (dbAd != null && imgFile != null && imgFile.getSize() > 0) {
-				/*
-				 * When modify, delete old file.
-				 */
-				
-				File uploadedFile = new File(uploadImgPath + dbAd.getImgUrl());
-				uploadedFile.delete();
-			}
-			
-			if (imgFile != null && imgFile.getSize() > 0) {
-				String savedFileName = getUniqueName(imgFile.getOriginalFilename());
-				
-				File uploadedFile = new File(uploadImgPath + savedFileName);
-				imgFile.transferTo(uploadedFile);
-				
-				
-				gstarAd.setImgUrl(savedFileName);
-			}
-			
-			
-		} catch (IOException e) {
-			LOGGER.error(e.toString(), e);
-			jsonRes.setSuccess(false);
-			jsonRes.setMsg(messageSource.getMessage("ex.msg.img.upload.fail", null, locale));
-		}
-		
-		service.save(gstarAd);
-		//jsonRes.setMsg(messageSource.getMessage("account.email.not.reg", new String[]{userEmail}, locale));
-		
-		
-		return jsonRes;
-	}
-	
-	private String getUniqueName(String fileName) {
-		
-		return System.currentTimeMillis() + "_" + fileName;
-		
-	}
-	
-	@RequestMapping(value="/{gstarAdId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarAdId") Integer gstarAdId){
-		
-		GstarAd dbAd = service.getGstarAd(gstarAdId);
-		
-		File uploadedFile = new File(uploadImgPath + dbAd.getImgUrl());
-		uploadedFile.delete();
-		
-		service.deleteGstarAd(dbAd);
-		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
 		
 		return jsonRes;
 	}

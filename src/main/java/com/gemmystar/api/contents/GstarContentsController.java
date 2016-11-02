@@ -143,7 +143,8 @@ public class GstarContentsController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseBody
 	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarContents gstarContents, String[] tags, 
-			@RequestParam("vFile") MultipartFile vFile, Locale locale){
+			@RequestParam("vFile") MultipartFile vFile, 
+			@RequestParam("thumbFile") MultipartFile thumbFile, Locale locale){
 		
 		try {
 			
@@ -155,10 +156,10 @@ public class GstarContentsController {
 			
 			gstarContents.setUrl(videoId);
 			gstarContents.setLocale(locale.getLanguage());
-			service.save(gstarContents, tags);
+			service.save(gstarContents, thumbFile, tags);
 			
 			service.backupForS3(uploadedFile, gstarContents.getId(), videoId);
-		
+			
 		} catch (IOException e) {
 			LOGGER.error(e.toString(), e);
 			jsonRes.setSuccess(false);

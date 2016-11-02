@@ -1,25 +1,21 @@
 package com.gemmystar.api.contents;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.exception.ContentsNotFoundException;
 import com.gemmystar.api.common.util.FileUtil;
@@ -80,9 +76,6 @@ public class GstarContentsService {
 	@Autowired
 	private GstarContentsWarnRepository warnRepo;
 	
-	@Value("${gemmy.s3.bucketName}")
-	private String s3BucketName;
-	
 	@Autowired
 	private S3UploadScheduledTask s3Uploader;
 	
@@ -110,10 +103,16 @@ public class GstarContentsService {
 	 * @param tags
 	 */
 	@Transactional
-	public void save(GstarContents gstarContents, String[] tags){
+	public void save(GstarContents gstarContents, MultipartFile thumbFile, String[] tags) throws IOException{
+		
 		
 		gstarContents.setMemberTypeCd(null);
-		repository.save(gstarContents);
+		repository.saveAndFlush(gstarContents);// insert or update.
+		
+		String thumbnailUrl = uploadThumbnailFileToS3(thumbFile, gstarContents.getId(), gstarContents.getUrl());
+		gstarContents.setThumbnailUrl(thumbnailUrl);
+		
+		repository.saveAndFlush(gstarContents);// update.
 		
 		for (int i = 0; i < tags.length; i++) {
 			GstarHashTag tag = hashTagService.save(new GstarHashTag(tags[i]));
@@ -132,10 +131,9 @@ public class GstarContentsService {
 	}
 	
 	public void uploadToS3(File uploadedFile, Long gstarContentsId, String youtubeId) {
-		AmazonS3 s3client = new AmazonS3Client(new ProfileCredentialsProvider());
-        LOGGER.debug("Uploading a new object to S3 from a file\n");
-        String keyName = GemmyConstant.S3_KEY_PREFIX_VIDEO + "C" + gstarContentsId + "_" + youtubeId + "." + FileUtil.getExtension(uploadedFile);
-        s3client.putObject(new PutObjectRequest(s3BucketName, keyName, uploadedFile));
+		
+        String s3key = getS3KeyPrefix(gstarContentsId, youtubeId) + "." + FileUtil.getExtension(uploadedFile);
+        s3service.uploadToS3(uploadedFile, s3key);
 	}
 	
 	public void backupForS3(File uploadedFile, Long gstarContentsId, String youtubeId) {
@@ -144,6 +142,25 @@ public class GstarContentsService {
         uploadedFile.renameTo(new File(s3Uploader.getBackupPath() + File.separator + backupFileName));
         
         LOGGER.debug("backup {}", backupFileName);
+	}
+	
+	/**
+	 * 컨텐츠 썸네일 이미지를 s3 로 업로드한다.
+	 * @param thumbFile
+	 * @param gstarContentsId
+	 * @param youtubeId
+	 * @return 업로드된 이미지 url
+	 */
+	public String uploadThumbnailFileToS3(MultipartFile thumbFile, Long gstarContentsId, String youtubeId) throws IOException {
+		
+		String s3key = getS3KeyPrefix(gstarContentsId, youtubeId) + FileUtil.getExtension(thumbFile.getOriginalFilename());
+		s3service.uploadToS3(thumbFile, s3key, true);
+		
+		return s3service.getS3ImgURL(s3key);
+	}
+	
+	private String getS3KeyPrefix(Long gstarContentsId, String youtubeId) {
+		return GemmyConstant.S3_KEY_PREFIX_VIDEO + "C" + gstarContentsId + "_" + youtubeId;
 	}
 	
 	

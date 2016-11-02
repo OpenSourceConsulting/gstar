@@ -1,5 +1,6 @@
 package com.gemmystar.api.room;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -16,9 +17,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.util.DateUtil;
+import com.gemmystar.api.contents.GstarContentsService;
 import com.gemmystar.api.contents.S3Service;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.domain.GstarContentsRepository;
@@ -59,6 +62,9 @@ public class GstarRoomService {
 	private GstarContentsRepository contentsRepo;
 	
 	@Autowired
+	private GstarContentsService contentsService;
+	
+	@Autowired
 	private GstarHashTagService hashTagService;
 	
 	@Autowired
@@ -86,13 +92,25 @@ public class GstarRoomService {
 	
 	@Transactional
 	//@CacheEvict(cacheNames="rooms", allEntries=true, condition = "#contents.gstarRoomId == null")
-	public void saveWithContents(GstarRoom gstarRoom, GstarContents contents, String[] tags){
+	public void saveWithContents(GstarRoom gstarRoom, GstarContents contents, MultipartFile thumbFile, String[] tags) throws IOException {
 		
 		if (contents.getGstarRoomId() != null) {
 			contents.setMemberTypeCd(GemmyConstant.CODE_MEMBER_TYPE_CHALLENGER);
 		}
 		
-		contentsRepo.save(contents);
+		contentsRepo.saveAndFlush(contents);
+		
+		if (thumbFile != null) {
+			
+			if (thumbFile.isEmpty()) {
+				LOGGER.warn("thumbFile is empty.");
+			} else {
+				String thumbnailUrl = contentsService.uploadThumbnailFileToS3(thumbFile, contents.getId(), contents.getUrl());
+				contents.setThumbnailUrl(thumbnailUrl);
+				contentsRepo.saveAndFlush(contents);
+			}
+		}
+		
 		
 		if (contents.getGstarRoomId() == null) {
 			/*
@@ -131,12 +149,13 @@ public class GstarRoomService {
 		
 	}
 	
-	public void saveChallenger(Long gstarRoomId, GstarContents contents, String[] tags) {
+	@Transactional
+	public void saveChallenger(Long gstarRoomId, GstarContents contents, String[] tags) throws IOException {
 		
 		contents.setGstarRoomId(gstarRoomId);
 		contents.setMemberTypeCd(GemmyConstant.CODE_MEMBER_TYPE_CHALLENGER);
 		
-		contentsRepo.save(contents);
+		contentsRepo.saveAndFlush(contents);
 		
 		GstarRoom gstarRoom = repository.findOne(contents.getGstarRoomId());
 		

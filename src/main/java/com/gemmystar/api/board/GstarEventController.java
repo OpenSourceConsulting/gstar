@@ -40,7 +40,7 @@ import com.gemmystar.api.common.util.FileUtil;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/admin/event")
+@RequestMapping("/event")
 public class GstarEventController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(GstarEventController.class);
@@ -67,103 +67,28 @@ public class GstarEventController {
 		
 	}
 	
-	@JsonView(JsView.BordList.class)
+	//@JsonView(JsView.BordList.class)
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
+	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable) {
 	
-		Page<GstarBoard> list = service.getGstarEventList(pageable, search);
+		Page<GstarBoard> list = service.getCurrentEventList(pageable);
 
 		jsonRes.setData(list);
 		
 		return jsonRes;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
-	@ResponseBody
-	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarBoard gstarBoard, 
-			@RequestParam(name="imgFile", required = false) MultipartFile imgFile, Locale locale) {
-		
-		
-		
-		GstarBoard dbBoard = null;
-		if (gstarBoard.getId() != null && gstarBoard.getId() > 0) {
-			dbBoard = service.getGstarBoard(gstarBoard.getId());
-		}
-		
-		
-		try {
-			
-			if (dbBoard != null && imgFile != null && imgFile.getSize() > 0) {
-				/*
-				 * When modify, delete old file.
-				 */
-				
-				File uploadedFile = new File(uploadImgPath + dbBoard.getImgUrl());
-				uploadedFile.delete();
-			}
-			
-			if (imgFile != null && imgFile.getSize() > 0) {
-				String savedFileName = getUniqueName(imgFile.getOriginalFilename());
-				
-				File uploadedFile = new File(uploadImgPath + savedFileName);
-				imgFile.transferTo(uploadedFile);
-				
-				
-				gstarBoard.setImgUrl(savedFileName);
-			}
-			
-			
-		} catch (IOException e) {
-			LOGGER.error(e.toString(), e);
-			jsonRes.setSuccess(false);
-			jsonRes.setMsg(messageSource.getMessage("ex.msg.img.upload.fail", null, locale));
-		}
-		
-		
-		service.save(gstarBoard);
-		
-		
-		return jsonRes;
-	}
-	
-	private String getUniqueName(String fileName) {
-		
-		return "event" + File.separator + System.currentTimeMillis() + "_" + fileName;
-		
-	}
-	
-	@RequestMapping(value="/{gstarBoardId}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
-		
-		service.deleteGstarBoard(gstarBoardId);
-		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
-		
-		return jsonRes;
-	}
 	
 	@JsonView(JsView.BordAll.class)
 	@RequestMapping(value="/{gstarBoardId}", method = RequestMethod.GET)
 	@ResponseBody
-	public SimpleJsonResponse getGstarBoard(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
+	public SimpleJsonResponse getGstarBoard(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId) {
 	
 		jsonRes.setData(service.getGstarBoard(gstarBoardId));
 		
 		return jsonRes;
 	}
-	
-	@RequestMapping(value="/{gstarBoardId}/messaging", method = RequestMethod.POST)
-	@ResponseBody
-	public SimpleJsonResponse sendEventMessage(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
-		
-		GstarBoard gstarBoard = service.getGstarBoard(gstarBoardId);
-	
-		service.sendMessageToAllUser(gstarBoard.getSubject(), gstarBoard.getContents());
-		
-		return jsonRes;
-	}
-	
 
 }
 //end of GstarBoardController.java

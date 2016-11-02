@@ -31,10 +31,10 @@ import com.gemmystar.api.common.model.SimpleJsonResponse;
  * @version 1.0
  */
 @Controller
-@RequestMapping("/board")
-public class GstarBoardController {
+@RequestMapping("/admin/board")
+public class GstarBoardAdminController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(GstarBoardController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarBoardAdminController.class);
 	
 	@Autowired
 	private GstarBoardService service;
@@ -48,7 +48,7 @@ public class GstarBoardController {
 	 * 
 	 * </pre>
 	 */
-	public GstarBoardController() {
+	public GstarBoardAdminController() {
 		
 	}
 	
@@ -64,6 +64,28 @@ public class GstarBoardController {
 		return jsonRes;
 	}
 	
+	@RequestMapping(method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse save(SimpleJsonResponse jsonRes, GstarBoard gstarBoard){
+		
+		gstarBoard.setBoardTypeCd(GemmyConstant.CODE_BOARD_TYPE_BOARD);
+		service.save(gstarBoard);
+		
+		service.sendMessageToAllUser(gstarBoard.getSubject(), gstarBoard.getContents());
+		
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarBoardId}", method = RequestMethod.DELETE)
+	@ResponseBody
+	public SimpleJsonResponse delete(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
+		
+		service.deleteGstarBoard(gstarBoardId);
+		//jsonRes.setMsg("사용자 정보가 정상적으로 삭제되었습니다.");
+		
+		return jsonRes;
+	}
 	
 	@JsonView(JsView.BordAll.class)
 	@RequestMapping(value="/{gstarBoardId}", method = RequestMethod.GET)
@@ -71,6 +93,17 @@ public class GstarBoardController {
 	public SimpleJsonResponse getGstarBoard(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
 	
 		jsonRes.setData(service.getGstarBoard(gstarBoardId));
+		
+		return jsonRes;
+	}
+	
+	@RequestMapping(value="/{gstarBoardId}/messaging", method = RequestMethod.POST)
+	@ResponseBody
+	public SimpleJsonResponse sendBoardMessage(SimpleJsonResponse jsonRes, @PathVariable("gstarBoardId") Integer gstarBoardId){
+		
+		GstarBoard gstarBoard = service.getGstarBoard(gstarBoardId);
+	
+		service.sendMessageToAllUser(gstarBoard.getSubject(), gstarBoard.getContents());
 		
 		return jsonRes;
 	}
