@@ -85,6 +85,18 @@ public class GstarContents implements Serializable {
 	@Column(name = "div_cd")
 	private String divCd = "1";
 	
+	// 작사
+	@Column(name = "lyrics")
+	private String lyrics;
+	
+	// 작곡
+	@Column(name = "composition")
+	private String composition;
+	
+	// 편곡
+	@Column(name = "arrangement")
+	private String arrangement;
+	
 	@Column(name = "status_cd")
 	private String statusCd = "1";
 	
@@ -276,6 +288,48 @@ public class GstarContents implements Serializable {
 
 	public void setDivCd(String divCd) {
 		this.divCd = divCd;
+	}
+	
+	/**
+	 * @return the lyrics
+	 */
+	public String getLyrics() {
+		return lyrics;
+	}
+
+	/**
+	 * @param lyrics the lyrics to set
+	 */
+	public void setLyrics(String lyrics) {
+		this.lyrics = lyrics;
+	}
+
+	/**
+	 * @return the composition
+	 */
+	public String getComposition() {
+		return composition;
+	}
+
+	/**
+	 * @param composition the composition to set
+	 */
+	public void setComposition(String composition) {
+		this.composition = composition;
+	}
+
+	/**
+	 * @return the arrangement
+	 */
+	public String getArrangement() {
+		return arrangement;
+	}
+
+	/**
+	 * @param arrangement the arrangement to set
+	 */
+	public void setArrangement(String arrangement) {
+		this.arrangement = arrangement;
 	}
 
 	public String getS3key() {
