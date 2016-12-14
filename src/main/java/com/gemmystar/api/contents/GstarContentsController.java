@@ -71,6 +71,13 @@ public class GstarContentsController {
 		
 	}
 	
+	/**
+	 * 최신 영상 리스트를 조회하여 반환한다.
+	 * @param jsonRes
+	 * @param pageable
+	 * @param search
+	 * @return
+	 */
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){

@@ -102,7 +102,7 @@ public class GstarContentsSpecs {
 			@Override
 			public Predicate toPredicate(Root<GstarContents> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 				
-				return cb.and(cb.isNull(root.<Long>get("gstarRoomId")), 
+				return cb.and(cb.isNotNull(root.<Long>get("gstarRoomId")), 
 						cb.notEqual(root.<String>get(GemmyConstant.CONTENTS_ATTR_STATUS_CD), GemmyConstant.CODE_CNTS_STATUS_CLOSED));
 			}
 			
