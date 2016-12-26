@@ -264,7 +264,7 @@ public class GstarContentsService {
 		
 		Specifications<GstarContents> spec = Specifications.where(GstarContentsSpecs.myHeartContents(gstarUserId)).and(GstarContentsSpecs.notDeteled());
 		
-		Page<GstarContents> page = repository.findAll(spec, pageable);
+		Page<GstarContents> page = repository.findAll(spec, pageable); 
 		
 		return page;
 	}

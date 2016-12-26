@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.WebUtil;
+import com.gemmystar.api.user.dao.UserDao;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.user.domain.GstarUser;
 
@@ -47,6 +48,9 @@ public class GstarUserController {
 	
 	@Autowired
 	private GstarAccountService accountService;
+	
+	@Autowired
+	private UserDao userDao;
 
 	/**
 	 * <pre>
@@ -56,6 +60,27 @@ public class GstarUserController {
 	public GstarUserController() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	@RequestMapping(value="/mybatis", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse myBatisTest(SimpleJsonResponse jsonRes){
+		
+		
+		String now = userDao.getCurrentDateTime();
+		
+		if (now != null) {
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg(now);
+			
+			return jsonRes;
+		}
+		
+		
+		return jsonRes;
+	}
+	
+	
+	
 	
 	@RequestMapping(value="/all", method = RequestMethod.GET)
 	@ResponseBody
