@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gemmystar.api.contents.ContentsMapper">
+	<select id="likeList" resultType="com.gemmystar.api.contents.domain.GstarContents">
+		select gs.id
+			,gs.gstar_user_id as userId
+ 			,gs.subject as subject
+			,gs.url as url
+			,gs.memo as memo
+			,gs.thumbnail_url as thumbnailUrl
+			,gs.gstar_category_id as gstarCategoryId
+			,gs.gstar_room_id as gstarRoomId
+			,gs.member_type_cd as memberTypeCd
+			,gs.status_cd as statusCd
+			,gs.s3key as s3key
+			,gs.div_cd as divCd
+			,gs.lyrics as lyrics
+			,gs.composition as composition
+			,gs.arrangement as arrangement
+			,gs.locale as locale
+			,gs.create_dt as createDt
+		from gstar_contents gs
+		inner join gstar_point_history po on gs.id = po.gstar_contents_id
+		where po.gstar_user_id = #{gstarUserId} and gs.deleted = false
+		group by gs.id
+	</select>
+	
+	<select id="hashTagList" resultType="com.gemmystar.api.tag.domain.GstarHashTag">
+		select htag.id as id,
+			   htag.tag as tag,
+			   htag.cnt as cnt
+		from gstar.gstar_hash_tag htag
+		where htag.id = ANY(select gstar_hash_tag_id from gstar.gstar_contents_tags where gstar_contents_id = #{gstarContentsId})
+	</select>
+	
+	<select id="getContentsCreator" resultType="com.gemmystar.api.user.domain.GstarUser">
+		select id, 
+			   name, 
+			   nickname 
+		from gstar.gstar_user 
+		where id = #{gstarUserId};
+	</select>
+</mapper>

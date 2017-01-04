@@ -29,6 +29,7 @@ import com.gemmystar.api.common.exception.ContentsNotFoundException;
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.WebUtil;
+import com.gemmystar.api.contents.dao.GstarContentsDao;
 import com.gemmystar.api.contents.domain.GstarContents;
 import com.gemmystar.api.contents.viewmodel.ContentsPointPrice;
 import com.gemmystar.api.user.domain.GstarAccount;
@@ -58,6 +59,9 @@ public class GstarContentsController {
 	@Autowired
 	private YoutubeService youtubeService;
 	
+	@Autowired
+	private GstarContentsDao dao;
+	
 	@Value("${gemmy.upload.location}")
 	private String uploadPath;
 
@@ -81,6 +85,24 @@ public class GstarContentsController {
 	@RequestMapping(value="/list", method = RequestMethod.GET)
 	@ResponseBody
 	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
+	
+		Page<GstarContents> list = service.getGstarContentsList(pageable, search);
+
+		jsonRes.setData(list);
+		
+		return jsonRes;
+	}
+	
+	/**
+	 * 다양한 형태의 검색을 허용하고 반환한다. 검색의 타입은 실시간 급상승, 랭킹, 최신
+	 * @param jsonRes
+	 * @param pageable
+	 * @param search
+	 * @return
+	 */
+	@RequestMapping(value="/search", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse getSearchList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
 	
 		Page<GstarContents> list = service.getGstarContentsList(pageable, search);
 
@@ -131,6 +153,27 @@ public class GstarContentsController {
 		Long gstarUserId = WebUtil.getLoginUserId();
 		
 		Page<GstarContents> list = service.getUserHeartGstarContentsList(pageable, gstarUserId);
+		
+		System.out.println("Page Type: " + list.getClass().getName());
+
+		jsonRes.setData(list);
+		
+		return jsonRes;
+	}
+	
+	/**
+	 * MyBatis용 포인트 히스토리에 대한 처리를 수행한다. 
+	 * @param jsonRes
+	 * @param pageable
+	 * @return
+	 */
+	@RequestMapping(value="/likes", method = RequestMethod.GET)
+	@ResponseBody
+	public SimpleJsonResponse likeList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable){
+	
+		Long gstarUserId = WebUtil.getLoginUserId();
+		
+		Page<GstarContents> list = dao.getUserLikeGstarContentsList(pageable, gstarUserId);
 
 		jsonRes.setData(list);
 		

@@ -61,6 +61,9 @@ public class GstarContents implements Serializable {
 	@Column(name = "id")
 	private Long id;//
 	
+	@Transient
+	private Long userId;
+	
 	@Column(name = "subject")
 	private String subject;//제목
 	
@@ -186,6 +189,21 @@ public class GstarContents implements Serializable {
 	 */
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+
+	/**
+	 * @return the userId
+	 */
+	public Long getUserId() {
+		return userId;
+	}
+
+	/**
+	 * @param userId the userId to set
+	 */
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public GstarUser getGstarUser() {

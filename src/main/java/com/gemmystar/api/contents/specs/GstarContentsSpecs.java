@@ -49,7 +49,7 @@ public class GstarContentsSpecs {
 				
 				Join<GstarContents, GstarHashTag> tagJoin = root.join("gstarHashTags");
 				
-				return cb.or(cb.like(root.<String>get("subject"), search +"%"), cb.like(tagJoin.<String>get("tag"), search +"%"));
+				return cb.or(cb.like(root.<String>get("subject"), "%" + search +"%"), cb.like(tagJoin.<String>get("tag"), "%" + search +"%"));
 			}
 			
 		};
