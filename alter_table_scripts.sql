@@ -101,3 +101,8 @@ ADD CONSTRAINT `fk_gstar_room_gstar_tab_menu1`
   REFERENCES `gstar`.`gstar_tab_menu` (`id`)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
+  
+ 
+//사용자 프로파일 이미지에 대한 업로드를 위하여 user table에 profile_img_url 필드를 추가하는 작업이 필요함
+alter table gstar.gstar_user add profile_img_url varchar(100); 
+

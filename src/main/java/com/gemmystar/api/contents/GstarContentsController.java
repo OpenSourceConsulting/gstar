@@ -4,7 +4,6 @@ package com.gemmystar.api.contents;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -26,12 +25,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gemmystar.api.GemmyConstant;
 import com.gemmystar.api.common.exception.ContentsNotFoundException;
-import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
 import com.gemmystar.api.common.util.WebUtil;
 import com.gemmystar.api.contents.dao.GstarContentsDao;
 import com.gemmystar.api.contents.domain.GstarContents;
-import com.gemmystar.api.contents.viewmodel.ContentsPointPrice;
 import com.gemmystar.api.user.domain.GstarAccount;
 import com.gemmystar.api.youtube.YoutubeService;
 

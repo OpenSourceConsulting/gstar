@@ -5,4 +5,10 @@
     <select id="getCurrentDateTime" resultType="String">
         SELECT NOW()
     </select>
+    
+    <update id="updateProfileImg" parameterType="hashmap">
+		update gstar_user
+		set profile_img_url = #{imgUrl}
+		where id = #{gstarUserId}
+	</update>
 </mapper>

@@ -1,12 +1,16 @@
 package com.gemmystar.api.user;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.gemmystar.api.common.model.GridJsonResponse;
 import com.gemmystar.api.common.model.SimpleJsonResponse;
@@ -35,6 +40,7 @@ import com.gemmystar.api.user.domain.GstarUser;
  * 
  * </pre>
  * @author Bong-Jin Kwon
+ * @author Ji-Woong Choi(jchoi@osci.kr) 
  * @version 1.0
  */
 @Controller
@@ -55,6 +61,8 @@ public class GstarUserController {
 	
 	@Value("${gemmy.upload.profile.location}")
 	private String profileUploadPath;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(GstarUserController.class);
 
 	/**
 	 * <pre>
@@ -134,6 +142,30 @@ public class GstarUserController {
 		//jsonRes.setMsg(" 정상적으로 생성되었습니다.");
 		
 		
+		return jsonRes;
+	}
+	
+	
+	/**
+	 * 사용자 프로필 업로드를 수행한다. 해당 내용은 별도의 업로드 프로세스를 거친다.
+	 * @param jsonRes
+	 * @param profileImgFile
+	 * @param locale
+	 * @return
+	 */
+	@RequestMapping(value="profile", method = RequestMethod.POST)
+	@ResponseBody 
+	public SimpleJsonResponse profile(SimpleJsonResponse jsonRes, 
+									  @RequestParam("profileImg") MultipartFile profileImgFile, Locale locale) {
+		
+		try {
+			File uploadedFile = new File(profileUploadPath + profileImgFile.getOriginalFilename());
+			profileImgFile.transferTo(uploadedFile);
+		} catch (IOException e) {
+			LOGGER.error(e.toString(), e);
+			jsonRes.setSuccess(false);
+			jsonRes.setMsg(messageSource.getMessage("ex.msg.img.upload.fail", null, locale));
+		}
 		return jsonRes;
 	}
 

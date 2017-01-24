@@ -71,7 +71,7 @@ public class GstarAccountController {
 	@ResponseBody
 	public GridJsonResponse allList(){
 	
-		List list = service.getGstarAccountAllList();
+		List<GstarAccount> list = service.getGstarAccountAllList();
 		
 		GridJsonResponse jsonRes = new GridJsonResponse();
 		jsonRes.setTotal(list.size());
