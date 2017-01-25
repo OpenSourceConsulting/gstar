@@ -62,6 +62,9 @@ public class GstarUserController {
 	@Value("${gemmy.upload.profile.location}")
 	private String profileUploadPath;
 	
+	@Value("${gemmy.profile.uri}")
+	private String profileUri;
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(GstarUserController.class);
 
 	/**
@@ -158,9 +161,19 @@ public class GstarUserController {
 	public SimpleJsonResponse profile(SimpleJsonResponse jsonRes, 
 									  @RequestParam("profileImg") MultipartFile profileImgFile, Locale locale) {
 		
+		Long gstarUserId = WebUtil.getLoginUserId();
+		
 		try {
-			File uploadedFile = new File(profileUploadPath + profileImgFile.getOriginalFilename());
+			String originName = profileImgFile.getOriginalFilename();
+			String postfix = originName.substring(originName.lastIndexOf("."));
+			
+			File uploadedFile = new File(profileUploadPath + gstarUserId + postfix);
 			profileImgFile.transferTo(uploadedFile);
+
+			LOGGER.info("Upload File Info: " + uploadedFile.toString());
+			
+			// Update database
+			userDao.updateProfileImageUrl(gstarUserId, profileUri + uploadedFile.getName());
 		} catch (IOException e) {
 			LOGGER.error(e.toString(), e);
 			jsonRes.setSuccess(false);

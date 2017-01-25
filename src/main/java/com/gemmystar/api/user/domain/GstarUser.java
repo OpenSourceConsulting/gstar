@@ -97,6 +97,9 @@ public class GstarUser implements Serializable {
 	@Column(name = "mobile_app_ver")
 	private String mobileAppVer;
 	
+	@Column(name = "profile_img_url")
+	private String profileImgUrl;
+	
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@Column(name = "create_dt", updatable = false)
 	private java.util.Date createDt;//생성일시
@@ -256,9 +259,17 @@ public class GstarUser implements Serializable {
 	public String getMobileAppVer() {
 		return mobileAppVer;
 	}
+	
+	public String getProfileImgUrl() {
+		return profileImgUrl;
+	}
 
 	public void setMobileAppVer(String mobileAppVer) {
 		this.mobileAppVer = mobileAppVer;
+	}
+	
+	public void setProfileImgUrl(String profileImgUrl) {
+		this.profileImgUrl = profileImgUrl;
 	}
 
 	public List<GstarContents> getGstarContents() {

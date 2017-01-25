@@ -29,23 +29,11 @@
 		    <input type="submit" value="upload" />
 		</form>
 		
-		<h2>45. 사용자 프로파일 이미지 업로드  (POST /contents)</h2>
-      	<form action="contents" method="POST" enctype="multipart/form-data" >
+		<h2>45. User Profile Image  (POST /profile)</h2>
+      	<form action="user/profile" method="POST" enctype="multipart/form-data" >
       		<table>
-      			<tr>
-      				<td>영상제목</td><td><input type="text" name="subject" /></td>
-      			</tr>
-      			<tr>
-      				<td>내용</td><td><textarea name="memo" rows="" cols=""></textarea> </td>
-      			</tr>
-      			<tr>
-      				<td>태그</td><td><input type="text" name="tags" value="tag1,tag2,tag3,tag4"/></td>
-      			</tr>
 	      		<tr>
-      				<td>동영상파일 선택</td><td><input type="file" name="vFile" /></td>
-      			</tr>
-      			<tr>
-      				<td>동영상이미지 선택</td><td><input type="file" name="thumbFile" /></td>
+      				<td>Profile Image</td><td><input type="file" name="profileImg" /></td>
       			</tr>
 		    </table>
 		    <input type="submit" value="upload" />
