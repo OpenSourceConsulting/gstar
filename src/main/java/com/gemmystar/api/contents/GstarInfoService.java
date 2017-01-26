@@ -1,6 +1,5 @@
 package com.gemmystar.api.contents;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;

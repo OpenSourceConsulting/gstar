@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * GstarRoomRepository
@@ -22,10 +23,12 @@ public interface GstarRoomRepository extends JpaRepository<GstarRoom, Long>, Jpa
 	GstarRoom findTopByOrderByPointSumDescCreateDtDesc();
 	
 	@Modifying
+	@Transactional
 	@Query(value = "update GstarRoom gr set gr.viewSum = gr.viewSum + 1 where gr.id = ?1")
 	int increaseViewSum(Long gstarRoomId);
 	
 	@Modifying
+	@Transactional
 	@Query(value = "update GstarRoom gr set gr.pointSum = gr.pointSum + ?2 where gr.id = ?1")
 	int increasePointSum(Long gstarRoomId, Long usePoint);
 	
