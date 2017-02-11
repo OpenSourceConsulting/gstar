@@ -2,28 +2,77 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.gemmystar.api.contents.ContentsMapper">
+
+	<sql id="contentListBase" >
+		select gc.id
+			,gc.gstar_user_id as userId
+ 			,gc.subject as subject
+			,gc.url as url
+			,gc.memo as memo
+			,gc.thumbnail_url as thumbnailUrl
+			,gc.gstar_category_id as gstarCategoryId
+			,gc.gstar_room_id as gstarRoomId
+			,gc.member_type_cd as memberTypeCd
+			,gc.status_cd as statusCd
+			,gc.s3key as s3key
+			,gc.div_cd as divCd
+			,gc.lyrics as lyrics
+			,gc.composition as composition
+			,gc.arrangement as arrangement
+			,gc.locale as locale
+			,gc.create_dt as createDt
+		from gstar_contents gc
+	</sql>
+
 	<select id="likeList" resultType="com.gemmystar.api.contents.domain.GstarContents">
-		select gs.id
-			,gs.gstar_user_id as userId
- 			,gs.subject as subject
-			,gs.url as url
-			,gs.memo as memo
-			,gs.thumbnail_url as thumbnailUrl
-			,gs.gstar_category_id as gstarCategoryId
-			,gs.gstar_room_id as gstarRoomId
-			,gs.member_type_cd as memberTypeCd
-			,gs.status_cd as statusCd
-			,gs.s3key as s3key
-			,gs.div_cd as divCd
-			,gs.lyrics as lyrics
-			,gs.composition as composition
-			,gs.arrangement as arrangement
-			,gs.locale as locale
-			,gs.create_dt as createDt
-		from gstar_contents gs
-		inner join gstar_point_history po on gs.id = po.gstar_contents_id
-		where po.gstar_user_id = #{gstarUserId} and gs.deleted = false
-		group by gs.id
+		<include refid="contentListBase"/>
+		inner join gstar_point_history po on gc.id = po.gstar_contents_id
+		where po.gstar_user_id = #{gstarUserId} and gc.deleted = false
+		group by gc.id
+	</select>
+	
+	<select id="searchListCount" resultType="int">
+		 select count(distinct gc.id)
+		 from gstar_contents gc, gstar_contents_tags tags, gstar_hash_tag has
+		 where tags.gstar_contents_id = gc.id
+		 and has.id = tags.gstar_hash_tag_id
+		 and (gc.gstar_room_id is not null) 
+		 and gc.status_cd != 3 and gc.deleted = false 
+		 <if test="search != null">
+		 	and (gc.subject LIKE concat('%',#{search},'%') or has.tag LIKE concat('%',#{search},'%'))
+		 </if>
+	</select>
+	
+	<select id="searchList" resultType="com.gemmystar.api.contents.domain.GstarContents">
+		 select distinct  gc.id
+			,gc.gstar_user_id as userId
+ 			,gc.subject as subject
+			,gc.url as url
+			,gc.memo as memo
+			,gc.thumbnail_url as thumbnailUrl
+			,gc.gstar_category_id as gstarCategoryId
+			,gc.gstar_room_id as gstarRoomId
+			,gc.member_type_cd as memberTypeCd
+			,gc.status_cd as statusCd
+			,gc.s3key as s3key
+			,gc.div_cd as divCd
+			,gc.lyrics as lyrics
+			,gc.composition as composition
+			,gc.arrangement as arrangement
+			,gc.locale as locale
+			,gc.create_dt as createDt
+		 from gstar_contents gc, gstar_contents_tags tags, gstar_hash_tag has
+		 where tags.gstar_contents_id = gc.id
+		 and has.id = tags.gstar_hash_tag_id
+		 and (gc.gstar_room_id is not null) 
+		 and gc.status_cd != 3 and gc.deleted = false 
+		 <if test="search != null">
+		 	and (gc.subject LIKE concat('%',#{search},'%') or has.tag LIKE concat('%',#{search},'%'))
+		 </if>
+		 	order by gc.create_dt desc
+		 <if test="start != null and end != null">
+		 	limit ${start}, ${end}
+		 </if>
 	</select>
 	
 	<select id="hashTagList" resultType="com.gemmystar.api.tag.domain.GstarHashTag">
@@ -32,6 +81,18 @@
 			   htag.cnt as cnt
 		from gstar.gstar_hash_tag htag
 		where htag.id = ANY(select gstar_hash_tag_id from gstar.gstar_contents_tags where gstar_contents_id = #{gstarContentsId})
+	</select>
+	
+	<select id="getGstarInfo" resultType="com.gemmystar.api.contents.domain.GstarInfo">
+		select gs.id, 
+				gs.gstar_contents_id as gstarContentsId, 
+		        gs.point_cnt as pointCnt, 
+		        gs.update_dt as updateDt, 
+		        gs.victory_cnt as victoryCnt, 
+		        gs.view_cnt as viewCnt, 
+		        gs.warn_cnt as pointCnt 
+		from gstar_info gs 
+		where gs.gstar_contents_id = #{gstarContentsId}
 	</select>
 	
 	<select id="getContentsCreator" resultType="com.gemmystar.api.user.domain.GstarUser">

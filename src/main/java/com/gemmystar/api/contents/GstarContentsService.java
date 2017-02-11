@@ -171,7 +171,7 @@ public class GstarContentsService {
 		if (search != null) {
 			spec = spec.and(GstarContentsSpecs.search(search));
 		}
-		
+
 		return repository.findAll(spec, pageable);
 	}
 	

@@ -83,8 +83,12 @@ public class GstarContentsController {
 	@ResponseBody
 	public SimpleJsonResponse getList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
 	
-		Page<GstarContents> list = service.getGstarContentsList(pageable, search);
-
+		//Page<GstarContents> list = service.getGstarContentsList(pageable, search);
+		
+		LOGGER.info("Search: " + search);
+		// 중복 쿼리 검색으로 인해 dao에서 dynamic하게 처리
+		Page<GstarContents> list = dao.getSearchContentsList(pageable, search);
+		
 		jsonRes.setData(list);
 		
 		return jsonRes;
@@ -101,7 +105,10 @@ public class GstarContentsController {
 	@ResponseBody
 	public SimpleJsonResponse getSearchList(SimpleJsonResponse jsonRes, @PageableDefault(sort = { "createDt" }, direction = Direction.DESC) Pageable pageable, String search){
 	
-		Page<GstarContents> list = service.getGstarContentsList(pageable, search);
+		//Page<GstarContents> list = service.getGstarContentsList(pageable, search);
+		LOGGER.info("Search: " + search);
+		// 중복 쿼리 검색으로 인해 dao에서 dynamic하게 처리
+		Page<GstarContents> list = dao.getSearchContentsList(pageable, search);
 
 		jsonRes.setData(list);
 		
@@ -151,8 +158,6 @@ public class GstarContentsController {
 		
 		Page<GstarContents> list = service.getUserHeartGstarContentsList(pageable, gstarUserId);
 		
-		System.out.println("Page Type: " + list.getClass().getName());
-
 		jsonRes.setData(list);
 		
 		return jsonRes;

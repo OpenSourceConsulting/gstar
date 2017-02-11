@@ -18,14 +18,15 @@ import com.gemmystar.api.user.domain.GstarUser;
  * @version 1.0
  */
 @Repository
-public interface GstarContentsRepository extends JpaRepository<GstarContents, Long>, JpaSpecificationExecutor<GstarContents> {
+public interface GstarContentsRepository
+		extends JpaRepository<GstarContents, Long>, JpaSpecificationExecutor<GstarContents> {
 
 	List<GstarContents> findByGstarRoomId(Long roomId);
-	
+
 	@Query(value = "select gm from GstarContents gm where gm.gstarRoomId = ?1 and gm.memberTypeCd = '2' and gm.statusCd != '3'")
 	List<GstarContents> findChallengerContents(Long roomId);
-	
+
 	@Query(value = "SELECT DISTINCT gc FROM GstarContents gc INNER JOIN gc.gstarInfo gi INNER JOIN gc.gstarHashTags ht WHERE gc.gstarUser = ?1")
 	Page<GstarContents> getMyContents(GstarUser gstarUser, Pageable pageable);
-	
+
 }
